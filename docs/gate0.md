@@ -33,6 +33,12 @@ ctest --test-dir build-gate0-host --output-on-failure
 
 Validation checks JSON Schema and semantic consistency, including evidence references, actual/advertised hashes, sample counts, nearest-rank quantiles and critical-operator counts. It always reports `hardware_execution_verified=false` and `license_clearance_verified=false`. A structurally valid statement does not prove that its observations occurred or establish legal rights. The positive future-NPU fixture is prominently marked synthetic and exists only to test constraints; it is not a benchmark.
 
+Selected fields from validating the current candidate record:
+
+```json
+{"status":"VALID","kind":"provenance","hardware_execution_verified":false,"license_clearance_verified":false}
+```
+
 ## Graph inspector
 
 ```sh
@@ -41,6 +47,12 @@ Validation checks JSON Schema and semantic consistency, including evidence refer
 ```
 
 The report contains the actual file SHA-256, IR/opsets, graph inputs/outputs and tensor types/static/symbolic dimensions, domain/operator histograms, quantization markers, initializer statistics, external-data references, unresolved conditions, tool versions and UTC inspection time. It emits `GRAPH_INSPECTION` evidence with NPU compatibility `NOT_EVALUATED`. It does not execute operators, perform shape inference or expose initializer tensor values.
+
+Selected fields from the executed owned-fixture inspection (not SESR):
+
+```json
+{"status":"INSPECTED","evidence":"GRAPH_INSPECTION","model":{"filename":"tiny_model.onnx","sha256":"a727c297a0ab739e1e0f6d47847bee6958be09c8e6067d5de0cd624abd246cc9","size_bytes":341},"scope":{"inference_executed":false,"npu_compatibility":"NOT_EVALUATED","external_data_loaded":false}}
+```
 
 The CLI parses in an isolated worker with bounded file/report/message/node/depth budgets, a 30-second deadline and 1 GiB address-space limit. External tensors are reported **UNREAD** and never loaded; unsafe absolute/traversal/URI locations or duplicate external metadata keys fail. Multiple tensors can correctly refer to one external weights file. New output JSON files are private and never overwrite an existing destination. The direct Python API has byte/structure budgets but is not an execution sandbox; use the CLI for the worker limits.
 
@@ -58,6 +70,14 @@ The first runner supports one numeric input/output and standard ONNX domains onl
 The new 0700 output directory contains 0600 `input.npy`, `output.npy` and `report.json`. Existing directories are protected; failed attempts do not leave a success artifact. Repeats within one CPU run must be bit-identical. Host-session reproducibility is independently tested on the owned fixture, not asserted for every graph/provider/platform. The default future comparison policy is `atol=1e-6, rtol=1e-5`; real NPU tolerances must be declared and justified for that graph/quantization rather than assumed from these host defaults.
 
 Current retained evidence is under ignored `results/session-007/owned-reference/`: two fresh CPU CLI sessions on an owned Resize+Add graph agree with an independent NumPy `repeat + 0.125` result. That is **REAL_CPU**, not SESR accuracy, image quality, game FPS or NPU performance. No rights-cleared natural-image inputs were supplied, so natural-image references are NOT RUN.
+
+Selected fields from an executed owned-fixture CPU report:
+
+```json
+{"status":"PASS","evidence":"REAL_CPU","runs":{"warmup_count":2,"sample_count":5,"successful_inferences":7,"failed_inferences":0},"provider_assignment":{"configured":["CPUExecutionProvider"],"active":["CPUExecutionProvider"],"npu_executed":false}}
+```
+
+With the optional packages absent, the CPU CLI instead returns exit code 1 and selected fields `{"status":"NOT_RUN","evidence":"NONE","error":{"code":"OPTIONAL_DEPENDENCY_MISSING"},"npu_executed":false}`. These excerpts omit other report fields; the complete retained JSON is authoritative.
 
 ## Future hardware evidence and compatibility
 
