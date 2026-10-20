@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0.0",
+  "document_type": "docksr_model_provenance",
+  "model_id": "synthetic/provenance-schema-example",
+  "inspection_date": "2000-01-01",
+  "repository": {
+    "url": "https://example.invalid/synthetic-model",
+    "revision": null,
+    "revision_status": "UNKNOWN"
+  },
+  "artifact": {
+    "filename": null,
+    "source_url": null,
+    "sha256": null,
+    "advertised_sha256": null,
+    "size_bytes": null,
+    "verification_status": "UNKNOWN"
+  },
+  "acquisition": {
+    "status": "BLOCKED",
+    "reason": "Synthetic unavailable artifact fixture."
+  },
+  "licenses": {
+    "model_weights": {
+      "status": "UNKNOWN",
+      "identifier": null,
+      "evidence_refs": [],
+      "notes": "Synthetic UNKNOWN example; no license clearance."
+    },
+    "source_code": {
+      "status": "UNKNOWN",
+      "identifier": null,
+      "evidence_refs": [],
+      "notes": "Synthetic UNKNOWN example; no license clearance."
+    },
+    "runtime": {
+      "status": "UNKNOWN",
+      "identifier": null,
+      "evidence_refs": [],
+      "notes": "Synthetic UNKNOWN example; no license clearance."
+    },
+    "dataset": {
+      "status": "UNKNOWN",
+      "identifier": null,
+      "evidence_refs": [],
+      "notes": "Synthetic UNKNOWN example; no license clearance."
+    }
+  },
+  "training_data": {
+    "status": "UNKNOWN",
+    "datasets": [],
+    "notes": "Not disclosed in synthetic example."
+  },
+  "runtime_intent": {
+    "name": "Synthetic test runtime",
+    "version": null,
+    "version_status": "UNKNOWN",
+    "execution_status": "NOT_RUN",
+    "notes": "No runtime executed."
+  },
+  "redistribution": {
+    "status": "unresolved",
+    "scope": "model_artifact_only",
+    "evidence_refs": [],
+    "notes": "No artifact or rights clearance."
+  },
+  "evidence_references": [],
+  "outstanding_questions": [
+    "Acquire and inspect a real artifact in a separately authorized operation."
+  ],
+  "fixture_notice": "SYNTHETIC SCHEMA FIXTURE - not model acquisition, license clearance, or hardware evidence."
+}

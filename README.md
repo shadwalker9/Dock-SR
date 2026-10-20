@@ -6,6 +6,8 @@ Dock SR is an early Linux development prototype for NPU-assisted game upscaling,
 
 **S005-PRE smoke preparation** packages the existing tools for non-root, relocatable Linux x86_64 checks. See [device-day instructions](docs/device-day.md) and [maintainer continuity](docs/MAINTAINER_CONTINUITY.md). This does not establish physical-display or SteamOS/Bazzite acceptance. Source checkpoints are backed up to this repository; private progress reports and generated device artifacts are excluded.
 
+**R005-G0A evidence tooling** adds optional [ONNX inspection and CPU references](docs/gate0.md), pinned model provenance and future hardware-evidence validation. The SESR artifact download is blocked at its CDN; model-specific inspection/inference is unrun. These tools do not activate an NPU or change ordinary application dependencies.
+
 The current code includes:
 
 - A CPU-only nearest/bilinear image-scaling command with deterministic input, bounded P6 PPM file support and a truthful completed-output status snapshot.

@@ -2,6 +2,8 @@
 
 Updated 2026-10-19. This is the implementation decision record; it does not replace private session reports.
 
+Current directive: **v1.5 Gate-0A**. Earlier entries below preserve the decisions and next-task suggestions at their original stage; the appended v1.5 entry governs current scope.
+
 ## Reading order and authority
 
 The owner explicitly directed us to read the deep-research DOCX first. It has placeholder 1970 creation/modification metadata, and the TXT notes provide dates at most, not reliable times. No intraday chronology is invented. After the DOCX, the text notes were applied in the order presented: R-003, O-002, EGR-001, then the pre-hardware visible-demo addendum v1.1. Execution Handoff v1.2 authorized S004. v1.3 required reconciliation before advancement; the latest v1.4 explicitly permits S005-PRE safe preparation while S004 physical acceptance remains pending. Approved O-002 requirements remain. Only the short v1.4 assignment was supplied; its reference to a longer Kepler handoff does not establish that file was read. Referenced v1.0 was not supplied. Actual inspected checkout and explicit owner instructions govern over unverified handoff claims.
@@ -33,3 +35,16 @@ R-004 proposes adaptive 3× polyphase filtering, preserved raw RGB plus signed h
 ## Comparison contract
 
 Always separate composed resolution from reconstructed detail. Compare equal source/settings/power, measure native-720p retention independently, and compare quality with higher-resolution ground truth. Windows Auto SR is a reference with OS/driver/device differences recorded, not proven parity. Do not attribute individual NPU watts from unsupported indirect telemetry. The cost-saving MVP still requires a functioning plugin plus a declared, matched-quality comparative efficiency result.
+
+## v1.5 — R-005 Gate-0A adoption (2026-10-19 America/Chicago)
+
+The owner directed R-005 to be read first, then the full v1.5 handoff, and authorized its bounded Gate-0A assignment. Identical reuploads do not supersede that scope. The handoff's footer says v1.4; its filename/header and requested milestone identify it as v1.5.
+
+- Implement provenance/dependency metadata, ONNX inspection, deterministic CPU reference and a separate future hardware-evidence schema. Existing runtime status/clients remain unchanged and cannot activate a real NPU.
+- SESR-M7-256 is a proposed first physical inference-proof model, not an approved final game scaler. Exact revision/license text can be observed while actual artifact SHA, graph signature and reference execution remain unknown. Publisher LFS identity must not be relabeled as a local hash. No weights, datasets or AMD runtime binaries are redistributed.
+- Current HF metadata/card/LICENSE access works; the pinned artifact redirects to `us.aws.cdn.hf.co`, whose CONNECT request is denied. A known-domain network addition was saved to an environment draft; it is not an applied runtime change. Model-specific validation stays blocked until the exact bytes are acquired and verified.
+- R-005's GPU exact-3× plus compact NPU guide remains a research hypothesis. The current CPU/Vulkan nearest/bilinear references are not an implemented adaptive filter bank. Keep a useful GPU-only option as a product direction, without claiming learned reconstruction exists.
+- Gate-0B scheduling/payload/adapter/corpus/interop scaffolding and hardware Gates 1–5 are future work, not automatically authorized by this implementation. No neural training, NPU execution, drivers, Gamescope/Decky or game capture in this cycle.
+- Prior owner approval for reviewed source backups to the existing repository remains in force. Preserve repository visibility and private-data boundaries; no final source license, release, deployment or driver authorization is inferred. R-005's description of repo privacy is not a new independent visibility check.
+
+The separate model, source-code, runtime and dataset license evidence and current candidate blockers are canonical in [the provenance manifest](../models/sesr-m7-256.provenance.json) and [acquisition notes](model-acquisition.md). Schema validation is not license clearance or hardware attestation.

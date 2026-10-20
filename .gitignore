@@ -4,3 +4,7 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+# Model bytes remain local; only provenance manifests belong in source.
+/models/*.onnx
+/models/**/*.onnx
+/models/cache/

@@ -2,7 +2,9 @@
 
 Start with [PROJECT_STATE.md](PROJECT_STATE.md) and [DECISIONS.md](DECISIONS.md), then the current task's code and newest owner handoff. Do not re-ingest every historical research paper. Inspect the current branch, HEAD and dirty files; preserve unrelated work. Cloud tasks are isolated and do not need an extra worktree unless requested.
 
-The project owner approves priorities and external publication. The current v1.4 assignment authorizes S005-PRE pre-hardware packaging without declaring S004 physically validated. The owner's accompanying chat explicitly authorizes backing up source changes to the existing GitHub repository. Preserve visibility; no release, deployment or driver installation was requested. Private progress reports remain outside every checkout and must never enter Git, bundles, PRs or releases.
+The latest scope is v1.5 **Gate-0A**; [gate0.md](gate0.md) is its reproduction guide. Optional ONNX/CPU-reference packages live in a separate hash-locked environment. The original runtime status contract still refuses NPU activation. Actual SESR bytes are blocked at the download CDN, so graph/reference validation for that candidate is not a completed result. Complete the blocked Gate-0A items before starting proposed Gate-0B work. Earlier v1.4 descriptions below remain historical context.
+
+The project owner approves priorities and external publication. The earlier v1.4 assignment authorized S005-PRE pre-hardware packaging without declaring S004 physically validated. The owner's accompanying chat explicitly authorizes backing up reviewed source changes to the existing GitHub repository; that authorization persists for v1.5. Preserve visibility; no release, deployment or driver installation was requested. Private progress reports remain outside every checkout and must never enter Git, bundles, PRs or releases.
 
 ## What exists
 
@@ -24,6 +26,6 @@ Before publication, review the exact staged file list and source diff for privat
 
 At each session close, deliver a concise private `.txt` report outside Git plus its complete copyable text in chat. Include changed paths/reasons, exact checks and evidence classes, actual versus expected benefits, research/decisions, future value and MVP blockers, branch/HEAD/dirty state, commit/push/publication status and one next task. Reserve budget for delivery. Reporting instructions may be retained in environment configuration; report bodies may not.
 
-## Scope after S005-PRE
+## Deferred research after Gate-0A
 
-Propose one offline EGR-001/R-004 experiment; do not silently start training. A learned-filter/NPU guide is still a hypothesis. Use rights-cleared inputs, raw-preserving ablations, matched sharpness, held-out motion and an explicit stop criterion. R-003 scheduling must precede serious neural training. Actual NPU execution/operator placement, buffer binding, synchronization, concurrency and whole-system power remain independent hardware gates. A functional smoke package is not the requested lower-cost Decky MVP.
+An offline EGR-001/R-004 experiment remains deferred by the current Gate-0A assignment; do not silently start training. A learned-filter/NPU guide is still a hypothesis. Any future experiment needs rights-cleared inputs, raw-preserving ablations, matched sharpness, held-out motion and an explicit stop criterion. R-003 scheduling must precede serious neural training. Actual NPU execution/operator placement, buffer binding, synchronization, concurrency and whole-system power remain independent hardware gates. A functional smoke package is not the requested lower-cost Decky MVP.

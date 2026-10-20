@@ -10,6 +10,7 @@ option(DOCKSR_ENABLE_VULKAN "Build the standalone Vulkan spatial baseline when t
 option(DOCKSR_REQUIRE_VULKAN "Fail configuration when the Vulkan baseline cannot be built" OFF)
 option(BUILD_CLI "Build the standalone scaling and simulation commands" ON)
 option(BUILD_PREVIEW "Build the standalone X11 visible preview" OFF)
+option(DOCKSR_ENABLE_GATE0_TESTS "Run optional ONNX inspection/CPU-reference tests (requires the Gate-0 Python environment)" OFF)
 
 include(CTest)
 find_package(Python3 3.10 REQUIRED COMPONENTS Interpreter)
@@ -49,6 +50,12 @@ endforeach()
 if(BUILD_TESTING)
   add_test(NAME detection COMMAND "${Python3_EXECUTABLE}" "${PROJECT_SOURCE_DIR}/tests/test_detection.py")
   add_test(NAME telemetry COMMAND "${Python3_EXECUTABLE}" "${PROJECT_SOURCE_DIR}/tests/test_telemetry.py")
+  add_test(NAME gate0_schemas COMMAND "${Python3_EXECUTABLE}" "${PROJECT_SOURCE_DIR}/tests/test_gate0_schemas.py")
+  if(DOCKSR_ENABLE_GATE0_TESTS)
+    add_test(NAME gate0_onnx_inspector COMMAND "${Python3_EXECUTABLE}" "${PROJECT_SOURCE_DIR}/tests/test_onnx_inspect.py")
+    add_test(NAME gate0_cpu_reference COMMAND "${Python3_EXECUTABLE}" "${PROJECT_SOURCE_DIR}/tests/test_onnx_reference.py")
+    set_tests_properties(gate0_onnx_inspector gate0_cpu_reference PROPERTIES LABELS "gate0;host" TIMEOUT 120)
+  endif()
   if(BUILD_CLI)
     add_test(NAME docksr-smoke-bundle
              COMMAND "${Python3_EXECUTABLE}" "${PROJECT_SOURCE_DIR}/tests/test_smoke_bundle.py"

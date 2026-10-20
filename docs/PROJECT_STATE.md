@@ -1,6 +1,6 @@
 # Dock SR project state
 
-Updated 2026-10-19 (America/Chicago). Read this and [DECISIONS.md](DECISIONS.md) before resuming. Latest assignment: **v1.4 S005-PRE**, safe pre-hardware preparation. Only the short assignment was supplied; its longer referenced handoff was not provided. No AGENTS.md or docs/OWNER_UPDATES.md exists here; approved O-002 targets are recorded in DECISIONS.md.
+Updated 2026-10-19 (America/Chicago; 2026-10-20 UTC). Read this and [DECISIONS.md](DECISIONS.md) before resuming. Latest assignment: **v1.5 R005-G0A**, read R-005 research first, then implement Gate-0A evidence/model readiness. No AGENTS.md or docs/OWNER_UPDATES.md exists here; approved O-002 targets are recorded in DECISIONS.md.
 
 ## Implemented scope
 
@@ -12,19 +12,22 @@ The CPU self-test checks every RGB pixel for nearest/bilinear at 1280×720→192
 
 The bundle verifies exact files, modes, sizes/hashes and manifest identity, rejects unexpected/escaping/symlink/hardlink content and isolates Python imports before verification. Diagnostics copy only bounded allowlisted observations; exports are private, atomic and do not overwrite a concurrent owner file. No raw logs, environment values, screenshots, private reports, driver libraries or models are packaged. Hash integrity is not a cryptographic signature.
 
+**R005-G0A infrastructure is complete; model-specific validation is blocked.** [Gate-0 tooling](gate0.md) adds separate provenance/hardware-evidence contracts, semantic validation, an isolated bounded ONNX inspector, deterministic CPU-only reference inference and optional hash-locked host dependencies. A pinned [SESR candidate record](../models/sesr-m7-256.provenance.json) preserves unknown actual artifact identity, runtime/dataset rights and redistribution scope. The artifact redirects to `us.aws.cdn.hf.co`, which the current proxy rejects. The hostname is saved in an environment draft, not applied/published. See [acquisition evidence](model-acquisition.md). No Gate-0B implementation or full Gate-0 PASS is claimed.
+
 ## Observed checks and limits
 
-- Full preview build: **22/22 CTest groups passed**, zero failures/skips, including unchanged core/CPU/Vulkan behavior, actual Xvfb window checks, shader relocation and smoke packaging. Local logs: ignored `results/session-006/full-preview-build.log` and `full-preview-ctest.log`.
-- CPU-only host: **16/16 groups passed**, zero failures/skips. Its CPU command does not link X11 or Vulkan. Logs: `results/session-006/host-build.log`, `host-ctest.log`.
+- Full preview with optional Gate-0 SDK tests: **25/25 CTest groups passed**, zero failures/skips. Ordinary preview without that SDK: **23/23 passed**. Existing core/CPU/software-Vulkan, actual Xvfb window, shader relocation and smoke packaging checks remain passing. Logs: ignored `results/session-007/gate0-final.log` and `preview-final.log`.
+- CPU-only host without the optional SDK: **17/17 groups passed**; library-only: **5/5 passed**, zero failures/skips. Logs: `results/session-007/host-final.log`, `library-no-sdk.log`. The ordinary CPU command has no X11/Vulkan link dependency.
+- New focused checks: **15 schema tests, 12 inspector tests and 12 CPU-reference tests passed**. They cover missing dependencies, unsafe external references, bounded input, graph signatures, nonfinite/wrong/identity output and false NPU claims. Two fresh executions of an owned tiny resize-plus-add graph matched an independent NumPy golden and identical input/output file hashes. This is REAL_CPU evidence, not SESR or an NPU test. Actual SESR graph/reference and natural-image quality checks remain blocked/not run.
 - Packaging suite: **15/15 tests passed**, including moving to a path with spaces, real CPU self-test/status, valid status replacement, privacy canaries, tampering/missing/extra/escaping/link rejection, safe permissions, bounded subprocesses and atomic export races. The import regression covers `json.py`, `__future__.py` and `os.py` before verification.
 - Shader relocation: three real software-Vulkan tests passed; an isolated additional check executed with the original shader hidden. Missing/corrupt bundled assets fail. Software results do not forecast physical GPU timing.
 - Earlier S003/S004 logs/captures remain under ignored `results/session-003/` and `results/session-004/`. Authentic virtual-window captures are in `session-004/executed-window-final/`; PNGs are lossless format conversions of executed-window PPMs. Prior library-only 4/4 and CPU-preview-without-CLI 8/8 checks remain historical evidence.
 
 The cloud has no physical GPU/NPU or physical desktop. The owner confirmed no Linux desktop is available yet; the Ryzen AI Z2 Extreme device is forthcoming. Intel NPU work is deferred. SteamOS/Bazzite Desktop Mode, physical window/GPU, Gaming Mode and target ABI are **UNRUN**. A relocatable directory is not proof of ABI compatibility: the manifest records host GLIBC/GLIBCXX/CXXABI and shared-library requirements. No system libraries or drivers should be replaced to make this smoke check run.
 
-## Next independent work
+## Next bounded milestone
 
-Propose one bounded **EGR-001/R-004 offline reconstruction experiment**, using owned/licensed synthetic moving-scene pairs, preserved raw RGB, raw-only/high-pass/pre-sharpen controls, matched final sharpening, held-out fidelity/artifact/temporal evaluation and an explicit go/no-go criterion. Do not start training merely because the proposal exists. Research architecture is unapproved; any close learned-filter implementation needs the recorded source-rights review. The R-003 timing grid must precede serious neural training.
+Complete blocked **R005-G0A model-specific validation**: after permitted CDN access is active, acquire the immutable SESR artifact outside Git, independently verify actual size/hash, inspect its graph and establish documented CPU reference behavior if supported. Preserve an explicit NOT RUN/BLOCKED result if host operators or preprocessing remain unresolved. Do not alter the model to manufacture support. Resolve model/runtime/data distribution scopes separately. Gate-0B remains proposed and unstarted; do not substitute scheduler, payload, driver, training, EGR or integration work for this gate.
 
 When a physical Linux desktop is available, run the existing preview acceptance controls and retain real evidence. When the target arrives, identify the device/OS/runtime and prove actual non-identity NPU inference/operator placement before interop, ownership/coherency/synchronization and measured concurrency. Decky/game integration is later work.
 

@@ -88,7 +88,12 @@ def build_bundle(build_dir: Path, output: Path, include_preview=False, include_b
         raise RuntimeError("Vulkan benchmark requires its compiled shader")
     if (include_preview or include_bench) and shader.is_file():
         sources.append((shader, "share/docksr/scale.comp.spv", "shader", False))
-    sources.extend((path, "share/docksr/schemas/" + path.name, "schema", False) for path in sorted((ROOT / "schemas").glob("*.schema.json")))
+    # The device smoke package has no Gate-0 model/SDK dependency. Keep its
+    # original document contracts explicit as development schemas are added.
+    smoke_schemas = ("detection.schema.json", "mock-state.schema.json",
+                     "runtime-status.schema.json", "vulkan-benchmark.schema.json")
+    sources.extend((ROOT / "schemas" / name, "share/docksr/schemas/" + name, "schema", False)
+                   for name in smoke_schemas)
     sources.extend((ROOT / "docs" / name, "docs/" + name, "documentation", False)
                    for name in ("device-day.md", "MAINTAINER_CONTINUITY.md"))
     binary_metadata = {}

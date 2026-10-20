@@ -1,0 +1,2086 @@
+{
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "document_type": {
+      "const": "docksr_hardware_evidence"
+    },
+    "record_purpose": {
+      "enum": [
+        "MEASUREMENT",
+        "SCHEMA_EXAMPLE",
+        "NOT_RUN_TEMPLATE"
+      ]
+    },
+    "target": {
+      "const": "Ryzen AI Z2 Extreme / XDNA2"
+    },
+    "runtime_state": {
+      "enum": [
+        "NOT_RUN",
+        "STARTING",
+        "NPU_READY",
+        "NPU_ACTIVE",
+        "FALLBACK",
+        "ERROR",
+        "BYPASS",
+        "CPU_REFERENCE_ACTIVE",
+        "GPU_BASELINE_ACTIVE",
+        "SOFTWARE_VULKAN",
+        "MOCK_NPU_ACTIVE"
+      ]
+    },
+    "evidence": {
+      "enum": [
+        "NONE",
+        "REAL_CPU",
+        "REAL_GPU",
+        "SOFTWARE_VULKAN",
+        "SIMULATED",
+        "REAL_NPU"
+      ]
+    },
+    "backend_name": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      ]
+    },
+    "backend_kind": {
+      "enum": [
+        "UNKNOWN",
+        "CPU",
+        "GPU",
+        "SOFTWARE_VULKAN",
+        "MOCK",
+        "SIMULATION",
+        "NPU_HARDWARE"
+      ]
+    },
+    "execution_environment": {
+      "enum": [
+        "NOT_RUN",
+        "HOST_ONLY",
+        "MOCK",
+        "SIMULATION",
+        "SOFTWARE_VULKAN",
+        "NON_TARGET_PHYSICAL",
+        "TARGET_PHYSICAL"
+      ]
+    },
+    "npu_device": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "device_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "architecture": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "physical": {
+              "type": "boolean"
+            },
+            "is_target_hardware": {
+              "type": "boolean"
+            },
+            "validation": {
+              "enum": [
+                "NOT_TESTED",
+                "DETECTED",
+                "INFERENCE_VERIFIED"
+              ]
+            },
+            "evidence_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/artifact_ref"
+              },
+              "minItems": 0,
+              "maxItems": 128
+            }
+          },
+          "required": [
+            "device_id",
+            "architecture",
+            "physical",
+            "is_target_hardware",
+            "validation",
+            "evidence_refs"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "runtime_version": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      ]
+    },
+    "driver_version": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      ]
+    },
+    "model_id": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      ]
+    },
+    "model_sha256": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      ]
+    },
+    "model_validation": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "enum": [
+                "NOT_TESTED",
+                "VALIDATED",
+                "FAILED"
+              ]
+            },
+            "correct_output": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "non_identity": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "input_sha256": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                }
+              ]
+            },
+            "cpu_reference_sha256": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                }
+              ]
+            },
+            "npu_output_sha256": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                }
+              ]
+            },
+            "comparison": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "method": {
+                      "enum": [
+                        "max_abs_error",
+                        "allclose"
+                      ]
+                    },
+                    "atol": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "rtol": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "max_abs_error": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "passed": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "method",
+                    "atol",
+                    "rtol",
+                    "max_abs_error",
+                    "passed"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "evidence_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/artifact_ref"
+              },
+              "minItems": 0,
+              "maxItems": 128
+            }
+          },
+          "required": [
+            "status",
+            "correct_output",
+            "non_identity",
+            "input_sha256",
+            "cpu_reference_sha256",
+            "npu_output_sha256",
+            "comparison",
+            "evidence_refs"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "input_shape": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "minItems": 1,
+          "maxItems": 8
+        }
+      ]
+    },
+    "output_shape": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "minItems": 1,
+          "maxItems": 8
+        }
+      ]
+    },
+    "operator_assignment": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "enum": [
+                "NOT_RUN",
+                "UNVERIFIED",
+                "VERIFIED"
+              ]
+            },
+            "critical_graph_assignment": {
+              "enum": [
+                "UNKNOWN",
+                "NPU_ONLY",
+                "CPU_PRESENT",
+                "MIXED"
+              ]
+            },
+            "critical_cpu_nodes": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              ]
+            },
+            "critical_npu_nodes": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              ]
+            },
+            "critical_unassigned_nodes": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              ]
+            },
+            "assignment_source": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512
+                }
+              ]
+            },
+            "nodes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "node_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "operator": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "assignment": {
+                    "enum": [
+                      "NPU",
+                      "CPU",
+                      "GPU",
+                      "UNKNOWN"
+                    ]
+                  },
+                  "critical": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "node_id",
+                  "operator",
+                  "assignment",
+                  "critical"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 0,
+              "maxItems": 100000
+            },
+            "evidence_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/artifact_ref"
+              },
+              "minItems": 0,
+              "maxItems": 128
+            }
+          },
+          "required": [
+            "status",
+            "critical_graph_assignment",
+            "critical_cpu_nodes",
+            "critical_npu_nodes",
+            "critical_unassigned_nodes",
+            "assignment_source",
+            "nodes",
+            "evidence_refs"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "warmup_count": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "integer",
+          "minimum": 0
+        }
+      ]
+    },
+    "sample_count": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "integer",
+          "minimum": 0
+        }
+      ]
+    },
+    "samples_ms": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0
+          },
+          "minItems": 0,
+          "maxItems": 100000
+        }
+      ]
+    },
+    "npu_or_pipeline_ms_p50": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "number",
+          "minimum": 0
+        }
+      ]
+    },
+    "npu_or_pipeline_ms_p95": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "number",
+          "minimum": 0
+        }
+      ]
+    },
+    "npu_or_pipeline_ms_p99": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "number",
+          "minimum": 0
+        }
+      ]
+    },
+    "successful_runs": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "integer",
+          "minimum": 0
+        }
+      ]
+    },
+    "failed_runs": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "integer",
+          "minimum": 0
+        }
+      ]
+    },
+    "last_error": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "timestamp": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "format": "date-time"
+        }
+      ]
+    },
+    "measurement_provenance": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "collector": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "collector_version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "clock": {
+              "enum": [
+                "HOST_MONOTONIC",
+                "NPU_DEVICE_TIMESTAMP",
+                "PIPELINE_MONOTONIC"
+              ]
+            },
+            "timing_scope": {
+              "enum": [
+                "NPU_SERVICE",
+                "PIPELINE"
+              ]
+            },
+            "warmups_excluded": {
+              "type": "boolean"
+            },
+            "evidence_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/artifact_ref"
+              },
+              "minItems": 0,
+              "maxItems": 128
+            }
+          },
+          "required": [
+            "collector",
+            "collector_version",
+            "clock",
+            "timing_scope",
+            "warmups_excluded",
+            "evidence_refs"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "additional_measurements": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "gpu_npu_copy_count": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              ]
+            },
+            "memory_transfer": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "anyOf": [
+                        {
+                          "type": "null"
+                        },
+                        {
+                          "type": "number",
+                          "minimum": 0
+                        }
+                      ]
+                    },
+                    "unit": {
+                      "const": "ms"
+                    },
+                    "evidence_refs": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/artifact_ref"
+                      },
+                      "minItems": 0,
+                      "maxItems": 128
+                    }
+                  },
+                  "required": [
+                    "value",
+                    "unit",
+                    "evidence_refs"
+                  ],
+                  "additionalProperties": false,
+                  "allOf": [
+                    {
+                      "if": {
+                        "properties": {
+                          "value": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "value"
+                        ]
+                      },
+                      "then": {
+                        "properties": {
+                          "evidence_refs": {
+                            "minItems": 1
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "synchronization": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "anyOf": [
+                        {
+                          "type": "null"
+                        },
+                        {
+                          "type": "number",
+                          "minimum": 0
+                        }
+                      ]
+                    },
+                    "unit": {
+                      "const": "ms"
+                    },
+                    "evidence_refs": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/artifact_ref"
+                      },
+                      "minItems": 0,
+                      "maxItems": 128
+                    }
+                  },
+                  "required": [
+                    "value",
+                    "unit",
+                    "evidence_refs"
+                  ],
+                  "additionalProperties": false,
+                  "allOf": [
+                    {
+                      "if": {
+                        "properties": {
+                          "value": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "value"
+                        ]
+                      },
+                      "then": {
+                        "properties": {
+                          "evidence_refs": {
+                            "minItems": 1
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "in_flight_frames": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              ]
+            },
+            "queue_depth": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              ]
+            },
+            "dropped_frames": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              ]
+            },
+            "bypassed_frames": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              ]
+            },
+            "gpu_workload": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1024
+                }
+              ]
+            },
+            "gpu_frame": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "anyOf": [
+                        {
+                          "type": "null"
+                        },
+                        {
+                          "type": "number",
+                          "minimum": 0
+                        }
+                      ]
+                    },
+                    "unit": {
+                      "const": "ms"
+                    },
+                    "evidence_refs": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/artifact_ref"
+                      },
+                      "minItems": 0,
+                      "maxItems": 128
+                    }
+                  },
+                  "required": [
+                    "value",
+                    "unit",
+                    "evidence_refs"
+                  ],
+                  "additionalProperties": false,
+                  "allOf": [
+                    {
+                      "if": {
+                        "properties": {
+                          "value": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "value"
+                        ]
+                      },
+                      "then": {
+                        "properties": {
+                          "evidence_refs": {
+                            "minItems": 1
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "power": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "scope": {
+                      "enum": [
+                        "UNKNOWN",
+                        "WHOLE_DEVICE",
+                        "PACKAGE",
+                        "NPU_ISOLATED"
+                      ]
+                    },
+                    "watts": {
+                      "anyOf": [
+                        {
+                          "type": "null"
+                        },
+                        {
+                          "type": "number",
+                          "minimum": 0
+                        }
+                      ]
+                    },
+                    "method": {
+                      "anyOf": [
+                        {
+                          "type": "null"
+                        },
+                        {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 512
+                        }
+                      ]
+                    },
+                    "evidence_refs": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/artifact_ref"
+                      },
+                      "minItems": 0,
+                      "maxItems": 128
+                    }
+                  },
+                  "required": [
+                    "scope",
+                    "watts",
+                    "method",
+                    "evidence_refs"
+                  ],
+                  "additionalProperties": false,
+                  "allOf": [
+                    {
+                      "if": {
+                        "properties": {
+                          "watts": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "watts"
+                        ]
+                      },
+                      "then": {
+                        "properties": {
+                          "scope": {
+                            "not": {
+                              "const": "UNKNOWN"
+                            }
+                          },
+                          "method": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 512
+                          },
+                          "evidence_refs": {
+                            "minItems": 1
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "evidence_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/artifact_ref"
+              },
+              "minItems": 0,
+              "maxItems": 128
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "fixture_notice": {
+      "const": "SYNTHETIC SCHEMA FIXTURE - not a hardware run or proof that any stated execution occurred."
+    }
+  },
+  "required": [
+    "schema_version",
+    "document_type",
+    "record_purpose",
+    "target",
+    "runtime_state",
+    "evidence",
+    "backend_name",
+    "backend_kind",
+    "execution_environment",
+    "npu_device",
+    "runtime_version",
+    "driver_version",
+    "model_id",
+    "model_sha256",
+    "model_validation",
+    "input_shape",
+    "output_shape",
+    "operator_assignment",
+    "warmup_count",
+    "sample_count",
+    "samples_ms",
+    "npu_or_pipeline_ms_p50",
+    "npu_or_pipeline_ms_p95",
+    "npu_or_pipeline_ms_p99",
+    "successful_runs",
+    "failed_runs",
+    "last_error",
+    "timestamp",
+    "measurement_provenance"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "runtime_state": {
+            "const": "NPU_ACTIVE"
+          }
+        },
+        "required": [
+          "runtime_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "runtime_state": {
+            "const": "NPU_ACTIVE"
+          },
+          "evidence": {
+            "const": "REAL_NPU"
+          },
+          "backend_kind": {
+            "const": "NPU_HARDWARE"
+          },
+          "execution_environment": {
+            "const": "TARGET_PHYSICAL"
+          },
+          "backend_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "runtime_version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "driver_version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "model_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "model_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "input_shape": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "minItems": 1,
+            "maxItems": 8
+          },
+          "output_shape": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "minItems": 1,
+            "maxItems": 8
+          },
+          "npu_device": {
+            "type": "object",
+            "properties": {
+              "architecture": {
+                "const": "XDNA2"
+              },
+              "physical": {
+                "const": true
+              },
+              "is_target_hardware": {
+                "const": true
+              },
+              "validation": {
+                "const": "INFERENCE_VERIFIED"
+              },
+              "evidence_refs": {
+                "minItems": 1
+              }
+            }
+          },
+          "model_validation": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "const": "VALIDATED"
+              },
+              "correct_output": {
+                "const": true
+              },
+              "non_identity": {
+                "const": true
+              },
+              "input_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "cpu_reference_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "npu_output_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "comparison": {
+                "type": "object",
+                "properties": {
+                  "passed": {
+                    "const": true
+                  }
+                }
+              },
+              "evidence_refs": {
+                "minItems": 1
+              }
+            }
+          },
+          "operator_assignment": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "const": "VERIFIED"
+              },
+              "critical_graph_assignment": {
+                "const": "NPU_ONLY"
+              },
+              "critical_cpu_nodes": {
+                "const": 0
+              },
+              "critical_npu_nodes": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "critical_unassigned_nodes": {
+                "const": 0
+              },
+              "assignment_source": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "evidence_refs": {
+                "minItems": 1
+              },
+              "nodes": {
+                "minItems": 1,
+                "contains": {
+                  "properties": {
+                    "critical": {
+                      "const": true
+                    },
+                    "assignment": {
+                      "const": "NPU"
+                    }
+                  },
+                  "required": [
+                    "critical",
+                    "assignment"
+                  ]
+                },
+                "items": {
+                  "if": {
+                    "properties": {
+                      "critical": {
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "critical"
+                    ]
+                  },
+                  "then": {
+                    "properties": {
+                      "assignment": {
+                        "const": "NPU"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "warmup_count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sample_count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "samples_ms": {
+            "type": "array",
+            "minItems": 1
+          },
+          "npu_or_pipeline_ms_p50": {
+            "type": "number",
+            "minimum": 0
+          },
+          "npu_or_pipeline_ms_p95": {
+            "type": "number",
+            "minimum": 0
+          },
+          "npu_or_pipeline_ms_p99": {
+            "type": "number",
+            "minimum": 0
+          },
+          "successful_runs": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "failed_runs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "measurement_provenance": {
+            "type": "object",
+            "properties": {
+              "warmups_excluded": {
+                "const": true
+              },
+              "evidence_refs": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "evidence": {
+            "const": "REAL_NPU"
+          }
+        },
+        "required": [
+          "evidence"
+        ]
+      },
+      "then": {
+        "properties": {
+          "runtime_state": {
+            "const": "NPU_ACTIVE"
+          },
+          "evidence": {
+            "const": "REAL_NPU"
+          },
+          "backend_kind": {
+            "const": "NPU_HARDWARE"
+          },
+          "execution_environment": {
+            "const": "TARGET_PHYSICAL"
+          },
+          "backend_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "runtime_version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "driver_version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "model_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "model_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "input_shape": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "minItems": 1,
+            "maxItems": 8
+          },
+          "output_shape": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "minItems": 1,
+            "maxItems": 8
+          },
+          "npu_device": {
+            "type": "object",
+            "properties": {
+              "architecture": {
+                "const": "XDNA2"
+              },
+              "physical": {
+                "const": true
+              },
+              "is_target_hardware": {
+                "const": true
+              },
+              "validation": {
+                "const": "INFERENCE_VERIFIED"
+              },
+              "evidence_refs": {
+                "minItems": 1
+              }
+            }
+          },
+          "model_validation": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "const": "VALIDATED"
+              },
+              "correct_output": {
+                "const": true
+              },
+              "non_identity": {
+                "const": true
+              },
+              "input_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "cpu_reference_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "npu_output_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "comparison": {
+                "type": "object",
+                "properties": {
+                  "passed": {
+                    "const": true
+                  }
+                }
+              },
+              "evidence_refs": {
+                "minItems": 1
+              }
+            }
+          },
+          "operator_assignment": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "const": "VERIFIED"
+              },
+              "critical_graph_assignment": {
+                "const": "NPU_ONLY"
+              },
+              "critical_cpu_nodes": {
+                "const": 0
+              },
+              "critical_npu_nodes": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "critical_unassigned_nodes": {
+                "const": 0
+              },
+              "assignment_source": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "evidence_refs": {
+                "minItems": 1
+              },
+              "nodes": {
+                "minItems": 1,
+                "contains": {
+                  "properties": {
+                    "critical": {
+                      "const": true
+                    },
+                    "assignment": {
+                      "const": "NPU"
+                    }
+                  },
+                  "required": [
+                    "critical",
+                    "assignment"
+                  ]
+                },
+                "items": {
+                  "if": {
+                    "properties": {
+                      "critical": {
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "critical"
+                    ]
+                  },
+                  "then": {
+                    "properties": {
+                      "assignment": {
+                        "const": "NPU"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "warmup_count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sample_count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "samples_ms": {
+            "type": "array",
+            "minItems": 1
+          },
+          "npu_or_pipeline_ms_p50": {
+            "type": "number",
+            "minimum": 0
+          },
+          "npu_or_pipeline_ms_p95": {
+            "type": "number",
+            "minimum": 0
+          },
+          "npu_or_pipeline_ms_p99": {
+            "type": "number",
+            "minimum": 0
+          },
+          "successful_runs": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "failed_runs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "measurement_provenance": {
+            "type": "object",
+            "properties": {
+              "warmups_excluded": {
+                "const": true
+              },
+              "evidence_refs": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "runtime_state": {
+            "const": "NOT_RUN"
+          }
+        },
+        "required": [
+          "runtime_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "backend_name": {
+            "type": "null"
+          },
+          "npu_device": {
+            "type": "null"
+          },
+          "runtime_version": {
+            "type": "null"
+          },
+          "driver_version": {
+            "type": "null"
+          },
+          "model_id": {
+            "type": "null"
+          },
+          "model_sha256": {
+            "type": "null"
+          },
+          "model_validation": {
+            "type": "null"
+          },
+          "input_shape": {
+            "type": "null"
+          },
+          "output_shape": {
+            "type": "null"
+          },
+          "operator_assignment": {
+            "type": "null"
+          },
+          "warmup_count": {
+            "type": "null"
+          },
+          "sample_count": {
+            "type": "null"
+          },
+          "samples_ms": {
+            "type": "null"
+          },
+          "npu_or_pipeline_ms_p50": {
+            "type": "null"
+          },
+          "npu_or_pipeline_ms_p95": {
+            "type": "null"
+          },
+          "npu_or_pipeline_ms_p99": {
+            "type": "null"
+          },
+          "successful_runs": {
+            "type": "null"
+          },
+          "failed_runs": {
+            "type": "null"
+          },
+          "last_error": {
+            "type": "null"
+          },
+          "timestamp": {
+            "type": "null"
+          },
+          "measurement_provenance": {
+            "type": "null"
+          },
+          "additional_measurements": {
+            "type": "null"
+          },
+          "evidence": {
+            "const": "NONE"
+          },
+          "backend_kind": {
+            "const": "UNKNOWN"
+          },
+          "execution_environment": {
+            "const": "NOT_RUN"
+          },
+          "record_purpose": {
+            "enum": [
+              "NOT_RUN_TEMPLATE",
+              "SCHEMA_EXAMPLE"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_purpose": {
+            "const": "NOT_RUN_TEMPLATE"
+          }
+        },
+        "required": [
+          "record_purpose"
+        ]
+      },
+      "then": {
+        "properties": {
+          "runtime_state": {
+            "const": "NOT_RUN"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_purpose": {
+            "const": "SCHEMA_EXAMPLE"
+          }
+        },
+        "required": [
+          "record_purpose"
+        ]
+      },
+      "then": {
+        "required": [
+          "fixture_notice"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_purpose": {
+            "not": {
+              "const": "SCHEMA_EXAMPLE"
+            }
+          }
+        },
+        "required": [
+          "record_purpose"
+        ]
+      },
+      "then": {
+        "not": {
+          "required": [
+            "fixture_notice"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "execution_environment": {
+            "enum": [
+              "HOST_ONLY",
+              "MOCK",
+              "SIMULATION",
+              "SOFTWARE_VULKAN",
+              "NON_TARGET_PHYSICAL"
+            ]
+          }
+        },
+        "required": [
+          "execution_environment"
+        ]
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "not": {
+              "const": "REAL_NPU"
+            }
+          },
+          "runtime_state": {
+            "not": {
+              "const": "NPU_ACTIVE"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "backend_kind": {
+            "enum": [
+              "CPU",
+              "GPU",
+              "SOFTWARE_VULKAN",
+              "MOCK",
+              "SIMULATION",
+              "UNKNOWN"
+            ]
+          }
+        },
+        "required": [
+          "backend_kind"
+        ]
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "not": {
+              "const": "REAL_NPU"
+            }
+          },
+          "runtime_state": {
+            "not": {
+              "const": "NPU_ACTIVE"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "runtime_state": {
+            "const": "NPU_READY"
+          }
+        },
+        "required": [
+          "runtime_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "const": "NONE"
+          },
+          "backend_kind": {
+            "const": "NPU_HARDWARE"
+          },
+          "execution_environment": {
+            "const": "TARGET_PHYSICAL"
+          },
+          "runtime_version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "driver_version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "npu_device": {
+            "type": "object",
+            "properties": {
+              "physical": {
+                "const": true
+              },
+              "is_target_hardware": {
+                "const": true
+              },
+              "validation": {
+                "const": "DETECTED"
+              },
+              "architecture": {
+                "const": "XDNA2"
+              }
+            }
+          },
+          "sample_count": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "const": 0
+              }
+            ]
+          },
+          "successful_runs": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "const": 0
+              }
+            ]
+          },
+          "npu_or_pipeline_ms_p50": {
+            "type": "null"
+          },
+          "npu_or_pipeline_ms_p95": {
+            "type": "null"
+          },
+          "npu_or_pipeline_ms_p99": {
+            "type": "null"
+          },
+          "samples_ms": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "array",
+                "maxItems": 0
+              }
+            ]
+          },
+          "model_validation": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "not": {
+                      "const": "VALIDATED"
+                    }
+                  },
+                  "npu_output_sha256": {
+                    "type": "null"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "runtime_state": {
+            "enum": [
+              "ERROR",
+              "FALLBACK"
+            ]
+          }
+        },
+        "required": [
+          "runtime_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "last_error": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "runtime_state": {
+            "const": "FALLBACK"
+          }
+        },
+        "required": [
+          "runtime_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "enum": [
+              "REAL_CPU",
+              "REAL_GPU",
+              "SOFTWARE_VULKAN"
+            ]
+          },
+          "backend_kind": {
+            "enum": [
+              "CPU",
+              "GPU",
+              "SOFTWARE_VULKAN"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "runtime_state": {
+            "const": "STARTING"
+          }
+        },
+        "required": [
+          "runtime_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "const": "NONE"
+          },
+          "backend_kind": {
+            "const": "UNKNOWN"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "runtime_state": {
+            "const": "BYPASS"
+          }
+        },
+        "required": [
+          "runtime_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "const": "NONE"
+          },
+          "backend_kind": {
+            "const": "UNKNOWN"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "runtime_state": {
+            "const": "CPU_REFERENCE_ACTIVE"
+          }
+        },
+        "required": [
+          "runtime_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "const": "REAL_CPU"
+          },
+          "backend_kind": {
+            "const": "CPU"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "runtime_state": {
+            "const": "GPU_BASELINE_ACTIVE"
+          }
+        },
+        "required": [
+          "runtime_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "const": "REAL_GPU"
+          },
+          "backend_kind": {
+            "const": "GPU"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "runtime_state": {
+            "const": "SOFTWARE_VULKAN"
+          }
+        },
+        "required": [
+          "runtime_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "const": "SOFTWARE_VULKAN"
+          },
+          "backend_kind": {
+            "const": "SOFTWARE_VULKAN"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "runtime_state": {
+            "const": "MOCK_NPU_ACTIVE"
+          }
+        },
+        "required": [
+          "runtime_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "const": "SIMULATED"
+          },
+          "backend_kind": {
+            "const": "MOCK"
+          }
+        }
+      }
+    }
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/shadwalker9/Dock-SR/schemas/hardware-evidence.schema.json",
+  "title": "Dock SR future Gate-1 evidence v1 - separate from runtime status",
+  "description": "Structural report contract only, never proof that hardware executed. SCHEMA_EXAMPLE records describe synthetic hypothetical values and are not acceptable measurement evidence. NOT_RUN uses null observations. Existing runtime-status schema and NPU activation APIs are unchanged. Raw artifacts, operator-placement provenance and independent output checks remain mandatory.",
+  "$comment": "JSON Schema cannot establish physical execution, artifact authenticity, timing quantile arithmetic, or equality of sample_count to array length. Semantic sample/reference checks accompany the schema tests; a future actual probe must also verify them.",
+  "$defs": {
+    "artifact_ref": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "DEVICE_IDENTITY",
+            "CPU_REFERENCE",
+            "OUTPUT_COMPARISON",
+            "OPERATOR_ASSIGNMENT",
+            "RAW_SAMPLES",
+            "OTHER"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*(/[A-Za-z0-9][A-Za-z0-9_.-]*)*$",
+          "maxLength": 512
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "kind",
+        "path",
+        "sha256"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

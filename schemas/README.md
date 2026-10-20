@@ -1,7 +1,15 @@
 # Telemetry contracts
 
 These schemas use JSON Schema draft 2020-12 and `schema_version: "1.0.0"`.
-Their URN identifiers are local contract names; validation needs no network fetch.
+Their schema identifiers are local contract names; validation needs no network fetch.
+
+Gate-0 adds `model-provenance.schema.json` and `hardware-evidence.schema.json` as
+separate document contracts; existing runtime status is unchanged. Use
+`python scripts/validate_gate0.py provenance models/sesr-m7-256.provenance.json`
+or `python scripts/validate_gate0.py hardware RECORD.json` for schema and semantic
+checks. [Gate-0 documentation](../docs/gate0.md) explains unknown versus measured
+identity, synthetic fixtures, raw-sample checks and the limits of validation.
+Neither a valid future record nor a license identifier is execution/rights proof.
 
 - `detection.schema.json` describes `scripts/docksr_detect.py` inventory output.
   Missing paths, missing executables, permission errors, failed commands, and

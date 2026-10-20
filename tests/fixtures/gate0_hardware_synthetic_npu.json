@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0.0",
+  "document_type": "docksr_hardware_evidence",
+  "record_purpose": "SCHEMA_EXAMPLE",
+  "target": "Ryzen AI Z2 Extreme / XDNA2",
+  "runtime_state": "NPU_ACTIVE",
+  "evidence": "REAL_NPU",
+  "backend_name": "synthetic-vitisai-example",
+  "backend_kind": "NPU_HARDWARE",
+  "execution_environment": "TARGET_PHYSICAL",
+  "npu_device": {
+    "device_id": "SYNTHETIC-DEVICE-NOT-OBSERVED",
+    "architecture": "XDNA2",
+    "physical": true,
+    "is_target_hardware": true,
+    "validation": "INFERENCE_VERIFIED",
+    "evidence_refs": [
+      {
+        "kind": "DEVICE_IDENTITY",
+        "path": "synthetic/samples.json",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ]
+  },
+  "runtime_version": "synthetic-runtime-version",
+  "driver_version": "synthetic-driver-version",
+  "model_id": "synthetic/non-identity-model",
+  "model_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "model_validation": {
+    "status": "VALIDATED",
+    "correct_output": true,
+    "non_identity": true,
+    "input_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "cpu_reference_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "npu_output_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "comparison": {
+      "method": "allclose",
+      "atol": 0.01,
+      "rtol": 0.01,
+      "max_abs_error": 0.005,
+      "passed": true
+    },
+    "evidence_refs": [
+      {
+        "kind": "OUTPUT_COMPARISON",
+        "path": "synthetic/samples.json",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ]
+  },
+  "input_shape": [
+    1,
+    3,
+    2,
+    2
+  ],
+  "output_shape": [
+    1,
+    3,
+    4,
+    4
+  ],
+  "operator_assignment": {
+    "status": "VERIFIED",
+    "critical_graph_assignment": "NPU_ONLY",
+    "critical_cpu_nodes": 0,
+    "critical_npu_nodes": 1,
+    "critical_unassigned_nodes": 0,
+    "assignment_source": "SYNTHETIC partition example - never executed",
+    "nodes": [
+      {
+        "node_id": "synthetic_conv",
+        "operator": "Conv",
+        "assignment": "NPU",
+        "critical": true
+      }
+    ],
+    "evidence_refs": [
+      {
+        "kind": "OPERATOR_ASSIGNMENT",
+        "path": "synthetic/samples.json",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ]
+  },
+  "warmup_count": 1,
+  "sample_count": 3,
+  "samples_ms": [
+    1.0,
+    2.0,
+    3.0
+  ],
+  "npu_or_pipeline_ms_p50": 2.0,
+  "npu_or_pipeline_ms_p95": 3.0,
+  "npu_or_pipeline_ms_p99": 3.0,
+  "successful_runs": 3,
+  "failed_runs": 0,
+  "last_error": null,
+  "timestamp": "2000-01-01T00:00:00Z",
+  "measurement_provenance": {
+    "collector": "synthetic-schema-test",
+    "collector_version": "0",
+    "clock": "HOST_MONOTONIC",
+    "timing_scope": "NPU_SERVICE",
+    "warmups_excluded": true,
+    "evidence_refs": [
+      {
+        "kind": "RAW_SAMPLES",
+        "path": "synthetic/samples.json",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ]
+  },
+  "fixture_notice": "SYNTHETIC SCHEMA FIXTURE - not a hardware run or proof that any stated execution occurred."
+}

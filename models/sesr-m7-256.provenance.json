@@ -1,0 +1,173 @@
+{
+  "schema_version": "1.0.0",
+  "document_type": "docksr_model_provenance",
+  "model_id": "amd/sesr-m7-256x256-tiles-amdnpu",
+  "inspection_date": "2026-10-20",
+  "repository": {
+    "url": "https://huggingface.co/amd/sesr-m7-256x256-tiles-amdnpu",
+    "revision": "edbe46281e894e31da3f42aa353db1e04a50f00a",
+    "revision_status": "PINNED"
+  },
+  "artifact": {
+    "filename": "sesr_nhwc_int8_256x256.onnx",
+    "source_url": "https://huggingface.co/amd/sesr-m7-256x256-tiles-amdnpu/resolve/edbe46281e894e31da3f42aa353db1e04a50f00a/onnx-models/sesr_nhwc_int8_256x256.onnx",
+    "sha256": null,
+    "advertised_sha256": "63d2600fa41b21c2326d1740f75486f24e0b791c490ea73a898bf64fdd429ab1",
+    "size_bytes": null,
+    "verification_status": "DECLARED_ONLY"
+  },
+  "acquisition": {
+    "status": "BLOCKED",
+    "reason": "Pinned artifact redirects to us.aws.cdn.hf.co; the execution proxy rejects CONNECT with HTTP403. Metadata advertises 107131 bytes and the LFS hash above; no artifact bytes were obtained or hashed. Required host was added to an environment draft but is not applied/published."
+  },
+  "licenses": {
+    "model_weights": {
+      "status": "DECLARED",
+      "identifier": "Apache-2.0",
+      "evidence_refs": [
+        "hf-card-pinned",
+        "hf-license-pinned"
+      ],
+      "notes": "Pinned AMD model card declares Apache-2.0 and links the Apache LICENSE in the same revision. Artifact itself was unavailable; no asset-specific redistribution clearance is asserted."
+    },
+    "source_code": {
+      "status": "VERIFIED",
+      "identifier": "MIT",
+      "evidence_refs": [
+        "amd-example-pinned",
+        "amd-license-txt-pinned"
+      ],
+      "notes": "AMD RyzenAI-SW example source license verified at 43b2dabe4d1bf084d0421953b134707b8cb7275a. Underlying ARM SESR source has separate Apache-2.0 evidence; these do not license AMD runtime binaries or datasets."
+    },
+    "runtime": {
+      "status": "UNKNOWN",
+      "identifier": null,
+      "evidence_refs": [],
+      "notes": "AMD runtime binaries/EULA not retrieved or redistributed. CPU ONNX/ORT host tooling uses separately hash-pinned PyPI packages; it is not AMD Ryzen AI/Vitis AI."
+    },
+    "dataset": {
+      "status": "UNKNOWN",
+      "identifier": null,
+      "evidence_refs": [
+        "hf-card-pinned",
+        "div2k-card-pinned"
+      ],
+      "notes": "Training on DIV2K is disclosed; dataset and original image rights are separate and not cleared by the model license. No training images are included."
+    }
+  },
+  "training_data": {
+    "status": "DISCLOSED",
+    "datasets": [
+      {
+        "name": "DIV2K (as disclosed by pinned AMD card)",
+        "source_url": "https://data.vision.ee.ethz.ch/cvl/DIV2K/"
+      }
+    ],
+    "notes": "Disclosure is not dataset redistribution/training permission. No rights-cleared natural-image tiles were supplied; owned synthetic inputs are used for current tests."
+  },
+  "runtime_intent": {
+    "name": "AMD Ryzen AI Linux / ONNX Runtime Vitis AI Execution Provider",
+    "version": "1.8.0",
+    "version_status": "DECLARED",
+    "execution_status": "NOT_RUN",
+    "notes": "Intended future hardware stack from R-005; not installed, tested, artifact-pinned or redistributed here. Gate-0 host tests use CPU-only ONNX Runtime1.20.1 and ONNX1.17.0."
+  },
+  "redistribution": {
+    "status": "unresolved",
+    "scope": "model_artifact_only",
+    "evidence_refs": [
+      "hf-card-pinned",
+      "hf-license-pinned"
+    ],
+    "notes": "Keep weights outside Git. Resolve actual artifact, hash, associated notices and distribution scope before bundling; no final project license selected."
+  },
+  "evidence_references": [
+    {
+      "id": "hf-model-api",
+      "url": "https://huggingface.co/api/models/amd/sesr-m7-256x256-tiles-amdnpu",
+      "revision": null,
+      "retrieved_date": "2026-10-20",
+      "sha256": "f21bc755f71db88c439ac032c8fa8ca00a2f4cab9de8d50ddf1854e73aec17c3",
+      "status": "OBSERVED",
+      "notes": "Read-only pinned source inspection; no remote script executed. Hash identifies retrieved metadata/text, not the model artifact."
+    },
+    {
+      "id": "hf-tree-pinned",
+      "url": "https://huggingface.co/api/models/amd/sesr-m7-256x256-tiles-amdnpu/tree/edbe46281e894e31da3f42aa353db1e04a50f00a?recursive=true&expand=false",
+      "revision": null,
+      "retrieved_date": "2026-10-20",
+      "sha256": "a681302fd5d228aa2f5b6fb3764102a44af45eabba3db7847343536784e619c3",
+      "status": "OBSERVED",
+      "notes": "Read-only pinned source inspection; no remote script executed. Hash identifies retrieved metadata/text, not the model artifact."
+    },
+    {
+      "id": "hf-card-pinned",
+      "url": "https://huggingface.co/amd/sesr-m7-256x256-tiles-amdnpu/raw/edbe46281e894e31da3f42aa353db1e04a50f00a/README.md",
+      "revision": "edbe46281e894e31da3f42aa353db1e04a50f00a",
+      "retrieved_date": "2026-10-20",
+      "sha256": "dc8cc708d5e89977f653bab46b8d94daec92ddf7de6686f087e77b7016ad0300",
+      "status": "OBSERVED",
+      "notes": "Read-only pinned source inspection; no remote script executed. Hash identifies retrieved metadata/text, not the model artifact."
+    },
+    {
+      "id": "hf-license-pinned",
+      "url": "https://huggingface.co/amd/sesr-m7-256x256-tiles-amdnpu/raw/edbe46281e894e31da3f42aa353db1e04a50f00a/LICENSE",
+      "revision": "edbe46281e894e31da3f42aa353db1e04a50f00a",
+      "retrieved_date": "2026-10-20",
+      "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+      "status": "OBSERVED",
+      "notes": "Read-only pinned source inspection; no remote script executed. Hash identifies retrieved metadata/text, not the model artifact."
+    },
+    {
+      "id": "amd-example-pinned",
+      "url": "https://raw.githubusercontent.com/amd/RyzenAI-SW/43b2dabe4d1bf084d0421953b134707b8cb7275a/CNN-examples/super-resolution/README.md",
+      "revision": "43b2dabe4d1bf084d0421953b134707b8cb7275a",
+      "retrieved_date": "2026-10-20",
+      "sha256": "95c9ae379127ba47688175bd1783e6509b04fa2d8149d929118e787500d1e7cf",
+      "status": "OBSERVED",
+      "notes": "Read-only pinned source inspection; no remote script executed. Hash identifies retrieved metadata/text, not the model artifact."
+    },
+    {
+      "id": "amd-license-txt-pinned",
+      "url": "https://raw.githubusercontent.com/amd/RyzenAI-SW/43b2dabe4d1bf084d0421953b134707b8cb7275a/LICENSE.txt",
+      "revision": "43b2dabe4d1bf084d0421953b134707b8cb7275a",
+      "retrieved_date": "2026-10-20",
+      "sha256": "423e2f5994ad309b732e8cac7f7e16da162f49a5f5d9c5679afcc3ca38c810f1",
+      "status": "OBSERVED",
+      "notes": "Read-only pinned source inspection; no remote script executed. Hash identifies retrieved metadata/text, not the model artifact."
+    },
+    {
+      "id": "arm-card-pinned",
+      "url": "https://raw.githubusercontent.com/ARM-software/sesr/26dd727996809fe13efb0c0f137f259c1b2d0f6e/README.md",
+      "revision": "26dd727996809fe13efb0c0f137f259c1b2d0f6e",
+      "retrieved_date": "2026-10-20",
+      "sha256": "cf740507fd474e26d0f1c5cbaa3e892e58394d59f5b24e8cbf86c15437f16ca7",
+      "status": "OBSERVED",
+      "notes": "Read-only pinned source inspection; no remote script executed. Hash identifies retrieved metadata/text, not the model artifact."
+    },
+    {
+      "id": "arm-license-txt-pinned",
+      "url": "https://raw.githubusercontent.com/ARM-software/sesr/26dd727996809fe13efb0c0f137f259c1b2d0f6e/LICENSE.txt",
+      "revision": "26dd727996809fe13efb0c0f137f259c1b2d0f6e",
+      "retrieved_date": "2026-10-20",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "status": "OBSERVED",
+      "notes": "Read-only pinned source inspection; no remote script executed. Hash identifies retrieved metadata/text, not the model artifact."
+    },
+    {
+      "id": "div2k-card-pinned",
+      "url": "https://huggingface.co/datasets/eugenesiow/Div2k/raw/a6aa2cb45e33a4753d28a373bd1125a321a1c21d/README.md",
+      "revision": "a6aa2cb45e33a4753d28a373bd1125a321a1c21d",
+      "retrieved_date": "2026-10-20",
+      "sha256": "4634046c6ce0ab663515ff877c360d6441a6b5fa8cefd3f55352824699358030",
+      "status": "OBSERVED",
+      "notes": "Read-only pinned source inspection; no remote script executed. Hash identifies retrieved metadata/text, not the model artifact."
+    }
+  ],
+  "outstanding_questions": [
+    "Acquire the exact pinned107131-byte artifact through the permitted CDN and independently verify SHA256.",
+    "Inspect actual graph types/shapes/operators; filename NHWC/INT8 and card 2x/tile descriptions are declarations, not a graph signature.",
+    "Run CPU reference only if standard host ORT supports the actual graph and preprocessing is documented; never rewrite a graph to fake support.",
+    "Verify exact runtime/operator placement and all hardware/copy/sync/power results on the target; no such evidence exists here."
+  ]
+}

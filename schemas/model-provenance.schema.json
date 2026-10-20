@@ -1,0 +1,879 @@
+{
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "document_type": {
+      "const": "docksr_model_provenance"
+    },
+    "model_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "inspection_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "repository": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://",
+          "maxLength": 2048
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          ]
+        },
+        "revision_status": {
+          "enum": [
+            "UNKNOWN",
+            "PINNED"
+          ]
+        }
+      },
+      "required": [
+        "url",
+        "revision",
+        "revision_status"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "revision_status": {
+                "const": "UNKNOWN"
+              }
+            },
+            "required": [
+              "revision_status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "revision": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "revision_status": {
+                "const": "PINNED"
+              }
+            },
+            "required": [
+              "revision_status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "revision": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            }
+          }
+        }
+      ]
+    },
+    "artifact": {
+      "type": "object",
+      "properties": {
+        "filename": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,255}$"
+            }
+          ]
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://",
+              "maxLength": 2048
+            }
+          ]
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          ]
+        },
+        "advertised_sha256": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          ]
+        },
+        "size_bytes": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "integer",
+              "minimum": 1
+            }
+          ]
+        },
+        "verification_status": {
+          "enum": [
+            "UNKNOWN",
+            "DECLARED_ONLY",
+            "LOCALLY_HASHED"
+          ]
+        }
+      },
+      "required": [
+        "filename",
+        "source_url",
+        "sha256",
+        "advertised_sha256",
+        "size_bytes",
+        "verification_status"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "verification_status": {
+                "enum": [
+                  "UNKNOWN",
+                  "DECLARED_ONLY"
+                ]
+              }
+            },
+            "required": [
+              "verification_status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "sha256": {
+                "type": "null"
+              },
+              "size_bytes": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "verification_status": {
+                "const": "LOCALLY_HASHED"
+              }
+            },
+            "required": [
+              "verification_status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "filename": {
+                "type": "string"
+              },
+              "source_url": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "size_bytes": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "acquisition": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "NOT_ATTEMPTED",
+            "BLOCKED",
+            "ACQUIRED"
+          ]
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            }
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "reason"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "BLOCKED"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              }
+            }
+          }
+        }
+      ]
+    },
+    "licenses": {
+      "type": "object",
+      "properties": {
+        "model_weights": {
+          "$ref": "#/$defs/license_evidence"
+        },
+        "source_code": {
+          "$ref": "#/$defs/license_evidence"
+        },
+        "runtime": {
+          "$ref": "#/$defs/license_evidence"
+        },
+        "dataset": {
+          "$ref": "#/$defs/license_evidence"
+        }
+      },
+      "required": [
+        "model_weights",
+        "source_code",
+        "runtime",
+        "dataset"
+      ],
+      "additionalProperties": false
+    },
+    "training_data": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "UNKNOWN",
+            "DISCLOSED",
+            "PARTIALLY_DISCLOSED"
+          ]
+        },
+        "datasets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "source_url": {
+                "anyOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "string",
+                    "format": "uri",
+                    "pattern": "^https://",
+                    "maxLength": 2048
+                  }
+                ]
+              }
+            },
+            "required": [
+              "name",
+              "source_url"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 0,
+          "maxItems": 64
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 4096
+        }
+      },
+      "required": [
+        "status",
+        "datasets",
+        "notes"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "UNKNOWN"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "datasets": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "DISCLOSED",
+                  "PARTIALLY_DISCLOSED"
+                ]
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "datasets": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "runtime_intent": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          ]
+        },
+        "version_status": {
+          "enum": [
+            "UNKNOWN",
+            "DECLARED",
+            "PINNED"
+          ]
+        },
+        "execution_status": {
+          "const": "NOT_RUN"
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 4096
+        }
+      },
+      "required": [
+        "name",
+        "version",
+        "version_status",
+        "execution_status",
+        "notes"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "version_status": {
+                "const": "UNKNOWN"
+              }
+            },
+            "required": [
+              "version_status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "version": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "version_status": {
+                "enum": [
+                  "DECLARED",
+                  "PINNED"
+                ]
+              }
+            },
+            "required": [
+              "version_status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "version": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            }
+          }
+        }
+      ]
+    },
+    "redistribution": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "verified",
+            "restricted",
+            "unresolved",
+            "not_evaluated"
+          ]
+        },
+        "scope": {
+          "const": "model_artifact_only"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 96
+          },
+          "minItems": 0,
+          "maxItems": 64,
+          "uniqueItems": true
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 4096
+        }
+      },
+      "required": [
+        "status",
+        "scope",
+        "evidence_refs",
+        "notes"
+      ],
+      "additionalProperties": false
+    },
+    "evidence_references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.-]{1,96}$"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://",
+            "maxLength": 2048
+          },
+          "revision": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            ]
+          },
+          "retrieved_date": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "string",
+                "format": "date"
+              }
+            ]
+          },
+          "sha256": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            ]
+          },
+          "status": {
+            "enum": [
+              "OBSERVED",
+              "UNAVAILABLE",
+              "UNKNOWN"
+            ]
+          },
+          "notes": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 4096
+          }
+        },
+        "required": [
+          "id",
+          "url",
+          "revision",
+          "retrieved_date",
+          "sha256",
+          "status",
+          "notes"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 128
+    },
+    "outstanding_questions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4096
+      },
+      "minItems": 0,
+      "maxItems": 128
+    },
+    "fixture_notice": {
+      "const": "SYNTHETIC SCHEMA FIXTURE - not model acquisition, license clearance, or hardware evidence."
+    }
+  },
+  "required": [
+    "schema_version",
+    "document_type",
+    "model_id",
+    "inspection_date",
+    "repository",
+    "artifact",
+    "acquisition",
+    "licenses",
+    "training_data",
+    "runtime_intent",
+    "redistribution",
+    "evidence_references",
+    "outstanding_questions"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "acquisition": {
+            "properties": {
+              "status": {
+                "const": "ACQUIRED"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          }
+        },
+        "required": [
+          "acquisition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "artifact": {
+            "properties": {
+              "verification_status": {
+                "const": "LOCALLY_HASHED"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "artifact": {
+            "properties": {
+              "verification_status": {
+                "const": "LOCALLY_HASHED"
+              }
+            },
+            "required": [
+              "verification_status"
+            ]
+          }
+        },
+        "required": [
+          "artifact"
+        ]
+      },
+      "then": {
+        "properties": {
+          "acquisition": {
+            "properties": {
+              "status": {
+                "const": "ACQUIRED"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "redistribution": {
+            "properties": {
+              "status": {
+                "const": "verified"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          }
+        },
+        "required": [
+          "redistribution"
+        ]
+      },
+      "then": {
+        "properties": {
+          "acquisition": {
+            "properties": {
+              "status": {
+                "const": "ACQUIRED"
+              }
+            }
+          },
+          "repository": {
+            "properties": {
+              "revision_status": {
+                "const": "PINNED"
+              }
+            }
+          },
+          "licenses": {
+            "properties": {
+              "model_weights": {
+                "properties": {
+                  "status": {
+                    "const": "VERIFIED"
+                  }
+                }
+              }
+            }
+          },
+          "redistribution": {
+            "properties": {
+              "evidence_refs": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/shadwalker9/Dock-SR/schemas/model-provenance.schema.json",
+  "title": "Dock SR model provenance candidate v1",
+  "description": "Records what is known, declared, locally acquired and legally reviewed separately. Null UNKNOWN values are deliberate. Advertised/LFS hashes are never substituted for a locally measured model artifact hash. This metadata is not model inspection or NPU execution evidence.",
+  "$defs": {
+    "license_evidence": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "UNKNOWN",
+            "DECLARED",
+            "VERIFIED",
+            "CONFLICTING"
+          ]
+        },
+        "identifier": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 96
+          },
+          "minItems": 0,
+          "maxItems": 64,
+          "uniqueItems": true
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 4096
+        }
+      },
+      "required": [
+        "status",
+        "identifier",
+        "evidence_refs",
+        "notes"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "UNKNOWN"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "identifier": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "DECLARED",
+                  "VERIFIED"
+                ]
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "identifier": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "evidence_refs": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "CONFLICTING"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "evidence_refs": {
+                "minItems": 2
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
