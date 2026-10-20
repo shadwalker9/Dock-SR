@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0.0",
+  "evidence_class": "mock_state_machine",
+  "simulated": true,
+  "hardware_validated": false,
+  "scenario": "normal",
+  "scenario_executed": false,
+  "clock": "virtual_ticks",
+  "unit": "simulated_tick",
+  "profile_state": {
+    "enabled": false,
+    "requested_profile": "probe_720_1080",
+    "active_profile": null,
+    "profile_revision": 1,
+    "validation_status": "unvalidated",
+    "validation_scope": "simulation",
+    "hardware_validation_status": "unvalidated",
+    "identity": {
+      "device_id": "simulated-device",
+      "driver_version": "mock-driver-v1",
+      "runtime_version": "mock-runtime-v1",
+      "model_id": "mock_scheduler_v1",
+      "model_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "model_identity_kind": "simulation_placeholder",
+      "mode": "docked",
+      "quality": "balanced",
+      "scope": "simulation"
+    }
+  },
+  "scheduler": {
+    "capacity": 2,
+    "in_flight": 0,
+    "generation": 1,
+    "state": "running",
+    "events": [],
+    "counts": {
+      "submitted": 0,
+      "outputs": 0,
+      "outputs_consumed": 0,
+      "consumer_releases": 0,
+      "fallbacks": 0,
+      "discarded_completions": 0,
+      "stale_completions": 0,
+      "dropped_events": 0
+    }
+  }
+}

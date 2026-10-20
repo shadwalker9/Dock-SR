@@ -1,0 +1,41 @@
+name: Host and software Vulkan checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  host:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --require-hashes -r requirements-dev.lock
+      - run: cmake -S . -B build-host -G Ninja -DDOCKSR_ENABLE_VULKAN=OFF
+      - run: cmake --build build-host --parallel 2
+      - run: ctest --test-dir build-host --output-on-failure
+
+  vulkan-software:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: sudo apt-get update && sudo apt-get install -y libvulkan-dev glslang-tools mesa-vulkan-drivers
+      - run: python -m pip install --require-hashes -r requirements-dev.lock
+      - run: cmake -S . -B build -G Ninja -DDOCKSR_REQUIRE_VULKAN=ON
+      - run: cmake --build build --parallel 2
+      - name: Select the software ICD and run checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          icd=$(find /usr/share/vulkan/icd.d -maxdepth 1 -name '*lvp*json' -print -quit)
+          test -n "$icd"
+          export VK_ICD_FILENAMES="$icd"
+          ctest --test-dir build --output-on-failure

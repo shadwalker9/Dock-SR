@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0.0",
+  "platform": "Debian 13 Linux x86_64",
+  "provenance": "SHA-256 values obtained from Debian archive-keyring-verified trixie package indexes on 2026-10-19.",
+  "packages": [
+    {
+      "name": "glslang-tools",
+      "version": "15.1.0+1.4.309.0-1",
+      "url": "https://deb.debian.org/debian/pool/main/g/glslang/glslang-tools_15.1.0+1.4.309.0-1_amd64.deb",
+      "sha256": "c3025c4af63244296bc9d466746763c809d3f3f126408fc2c7b07070886a7759"
+    },
+    {
+      "name": "libvulkan-dev",
+      "version": "1.4.309.0-1",
+      "url": "https://deb.debian.org/debian/pool/main/v/vulkan-loader/libvulkan-dev_1.4.309.0-1_amd64.deb",
+      "sha256": "8d329d465e16168afff58b1bd0dd6db46aac2cc3f56054a481b25a04e90b345a"
+    },
+    {
+      "name": "mesa-vulkan-drivers",
+      "version": "25.0.7-2+deb13u1",
+      "url": "https://deb.debian.org/debian/pool/main/m/mesa/mesa-vulkan-drivers_25.0.7-2+deb13u1_amd64.deb",
+      "sha256": "caf2f7d296b7522efe74e40a74bce762a3ce84c33b53b5e54e1248ac2e0a13a5"
+    },
+    {
+      "name": "spirv-tools",
+      "version": "2025.1~rc1-1",
+      "url": "https://deb.debian.org/debian/pool/main/s/spirv-tools/spirv-tools_2025.1~rc1-1_amd64.deb",
+      "sha256": "2cc272ef1340cf0b47de6c5fcccaf91574d7a8f4061abb718d6c639463e85aab"
+    },
+    {
+      "name": "vulkan-tools",
+      "version": "1.4.304.0+dfsg1-1",
+      "url": "https://deb.debian.org/debian/pool/main/v/vulkan-tools/vulkan-tools_1.4.304.0+dfsg1-1_amd64.deb",
+      "sha256": "742d1cd78c333a94b8214e21ba455d47884dc32f110016ffe6998cf88f2a2f94"
+    },
+    {
+      "name": "libvulkan1",
+      "version": "1.4.309.0-1",
+      "url": "https://deb.debian.org/debian/pool/main/v/vulkan-loader/libvulkan1_1.4.309.0-1_amd64.deb",
+      "sha256": "f47da79cd140264fe21cceb08bc87a71bc7fec05819e4a421f3f518d21101a37"
+    }
+  ]
+}

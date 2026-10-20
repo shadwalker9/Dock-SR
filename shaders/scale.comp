@@ -1,0 +1,55 @@
+#version 450
+
+layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+layout(set = 0, binding = 0, std430) readonly buffer InputPixels { uint pixels[]; } source;
+layout(set = 0, binding = 1, std430) writeonly buffer OutputPixels { uint pixels[]; } destination;
+layout(push_constant) uniform Configuration {
+    uint input_width;
+    uint input_height;
+    uint output_width;
+    uint output_height;
+    uint filter_kind;
+} config;
+
+vec4 unpack_rgba(uint value) {
+    return vec4(float(value & 255u), float((value >> 8u) & 255u),
+                float((value >> 16u) & 255u), float((value >> 24u) & 255u));
+}
+
+uint pack_rgba(vec4 value) {
+    uvec4 rounded = uvec4(floor(clamp(value, vec4(0.0), vec4(255.0)) + vec4(0.5)));
+    return rounded.r | (rounded.g << 8u) | (rounded.b << 16u) | (rounded.a << 24u);
+}
+
+uint load_pixel(ivec2 position) {
+    ivec2 bounded = clamp(position, ivec2(0), ivec2(config.input_width - 1u, config.input_height - 1u));
+    return source.pixels[uint(bounded.y) * config.input_width + uint(bounded.x)];
+}
+
+void main() {
+    uvec2 position = gl_GlobalInvocationID.xy;
+    if (position.x >= config.output_width || position.y >= config.output_height) {
+        return;
+    }
+    uint value;
+    if (config.filter_kind == 0u) {
+        // Integer center sampling avoids rounding a coordinate across a pixel boundary.
+        uvec2 point = ((2u * position + uvec2(1u)) *
+                      uvec2(config.input_width, config.input_height)) /
+                     (2u * uvec2(config.output_width, config.output_height));
+        point = min(point, uvec2(config.input_width - 1u, config.input_height - 1u));
+        value = source.pixels[point.y * config.input_width + point.x];
+    } else {
+        vec2 coordinate = (vec2(position) + vec2(0.5)) *
+                          vec2(config.input_width, config.input_height) /
+                          vec2(config.output_width, config.output_height) - vec2(0.5);
+        ivec2 base = ivec2(floor(coordinate));
+        vec2 fraction = coordinate - vec2(base);
+        vec4 upper = mix(unpack_rgba(load_pixel(base)),
+                         unpack_rgba(load_pixel(base + ivec2(1, 0))), fraction.x);
+        vec4 lower = mix(unpack_rgba(load_pixel(base + ivec2(0, 1))),
+                         unpack_rgba(load_pixel(base + ivec2(1, 1))), fraction.x);
+        value = pack_rgba(mix(upper, lower, fraction.y));
+    }
+    destination.pixels[position.y * config.output_width + position.x] = value;
+}

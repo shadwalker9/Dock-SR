@@ -1,0 +1,584 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:docksr:schema:vulkan-benchmark:1.0.0",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "benchmark": {
+      "const": "docksr-vulkan-scaler"
+    },
+    "evidence_class": {
+      "enum": [
+        "vulkan_software",
+        "vulkan_hardware",
+        "vulkan_unknown"
+      ]
+    },
+    "device": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "cpu",
+            "discrete_gpu",
+            "integrated_gpu",
+            "virtual_gpu",
+            "other"
+          ]
+        },
+        "vendor_id": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "device_id": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "api_version": {
+          "type": "string"
+        },
+        "driver_version": {
+          "type": [
+            "string",
+            "integer"
+          ]
+        },
+        "timestamp_valid_bits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 64
+        },
+        "timestamp_period_ns": {
+          "type": "number",
+          "minimum": 0
+        },
+        "driver_name": {
+          "type": "string"
+        },
+        "driver_info": {
+          "type": "string"
+        },
+        "queue_family": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "timestamps_enabled": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "type",
+        "vendor_id",
+        "device_id",
+        "api_version",
+        "driver_version",
+        "timestamp_valid_bits",
+        "timestamp_period_ns",
+        "driver_name",
+        "driver_info",
+        "queue_family",
+        "timestamps_enabled"
+      ],
+      "additionalProperties": false
+    },
+    "configuration": {
+      "type": "object",
+      "properties": {
+        "input_width": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "input_height": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "output_width": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "output_height": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "filter": {
+          "enum": [
+            "nearest",
+            "bilinear"
+          ]
+        },
+        "warmup_iterations": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "measured_iterations": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "changing_frames": {
+          "type": "boolean"
+        },
+        "pattern": {
+          "const": "gradient-edge-ui-pixel-art-v1"
+        },
+        "final_input_frame_index": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "input_width",
+        "input_height",
+        "output_width",
+        "output_height",
+        "filter",
+        "warmup_iterations",
+        "measured_iterations",
+        "changing_frames",
+        "pattern",
+        "final_input_frame_index"
+      ],
+      "additionalProperties": false
+    },
+    "timings": {
+      "type": "object",
+      "properties": {
+        "host_dispatch_to_completion_ms": {
+          "type": "object",
+          "properties": {
+            "p50": {
+              "type": "number",
+              "minimum": 0
+            },
+            "p95": {
+              "type": "number",
+              "minimum": 0
+            },
+            "p99": {
+              "type": "number",
+              "minimum": 0
+            },
+            "min": {
+              "type": "number",
+              "minimum": 0
+            },
+            "max": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "p50",
+            "p95",
+            "p99",
+            "min",
+            "max"
+          ],
+          "additionalProperties": false,
+          "description": "Milliseconds. Producer must compute these from recorded measured samples; schema alone cannot prove values or quantile ordering."
+        },
+        "gpu_dispatch_ms": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "p50": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "p95": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "p99": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "min": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "max": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "p50",
+                "p95",
+                "p99",
+                "min",
+                "max"
+              ],
+              "additionalProperties": false,
+              "description": "Milliseconds. Producer must compute these from recorded measured samples; schema alone cannot prove values or quantile ordering."
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "host_scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "timestamp_status": {
+          "type": "string",
+          "minLength": 1
+        },
+        "quantile_method": {
+          "const": "nearest-rank; measured iterations only"
+        },
+        "gpu_scope": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "host_dispatch_to_completion_ms",
+        "gpu_dispatch_ms",
+        "host_scope",
+        "timestamp_status",
+        "quantile_method",
+        "gpu_scope"
+      ],
+      "additionalProperties": false
+    },
+    "correctness": {
+      "type": "object",
+      "properties": {
+        "passed": {
+          "type": "boolean"
+        },
+        "max_absolute_error": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "allowed_absolute_error": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "channels_compared": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "passed",
+        "max_absolute_error",
+        "allowed_absolute_error",
+        "channels_compared",
+        "scope"
+      ],
+      "additionalProperties": false
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "power_w": {
+          "type": "null",
+          "description": "Not measured by this isolated Vulkan compute smoke; no game, NPU, or power observation exists."
+        },
+        "game_internal_render_ms": {
+          "type": "null",
+          "description": "Not measured by this isolated Vulkan compute smoke; no game, NPU, or power observation exists."
+        },
+        "npu_ms": {
+          "type": "null",
+          "description": "Not measured by this isolated Vulkan compute smoke; no game, NPU, or power observation exists."
+        },
+        "game_fps": {
+          "type": "null",
+          "description": "Not measured by this isolated Vulkan compute smoke; no game, NPU, or power observation exists."
+        }
+      },
+      "required": [
+        "power_w",
+        "game_internal_render_ms",
+        "npu_ms",
+        "game_fps"
+      ],
+      "additionalProperties": false
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "artifacts": {
+      "type": "object",
+      "properties": {
+        "input": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "hash": {
+              "type": "object",
+              "properties": {
+                "algorithm": {
+                  "const": "fnv1a64"
+                },
+                "value": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{16}$"
+                }
+              },
+              "required": [
+                "algorithm",
+                "value"
+              ],
+              "additionalProperties": false,
+              "description": "Artifact identity/checksum only, not a cryptographic authenticity proof."
+            }
+          },
+          "required": [
+            "path",
+            "hash"
+          ],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "hash": {
+              "type": "object",
+              "properties": {
+                "algorithm": {
+                  "const": "fnv1a64"
+                },
+                "value": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{16}$"
+                }
+              },
+              "required": [
+                "algorithm",
+                "value"
+              ],
+              "additionalProperties": false,
+              "description": "Artifact identity/checksum only, not a cryptographic authenticity proof."
+            }
+          },
+          "required": [
+            "path",
+            "hash"
+          ],
+          "additionalProperties": false
+        },
+        "samples": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "format": {
+              "const": "csv"
+            },
+            "columns": {
+              "const": [
+                "sample_index",
+                "host_dispatch_to_completion_ms",
+                "gpu_dispatch_ms",
+                "input_frame_index"
+              ]
+            }
+          },
+          "required": [
+            "path",
+            "format",
+            "columns"
+          ],
+          "additionalProperties": false,
+          "description": "Raw measured iterations only, no warmups. Empty GPU values mean unavailable timestamp support, not zero latency."
+        },
+        "shader": {
+          "type": "object",
+          "properties": {
+            "hash": {
+              "type": "object",
+              "properties": {
+                "algorithm": {
+                  "const": "fnv1a64"
+                },
+                "value": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{16}$"
+                }
+              },
+              "required": [
+                "algorithm",
+                "value"
+              ],
+              "additionalProperties": false,
+              "description": "Artifact identity/checksum only, not a cryptographic authenticity proof."
+            }
+          },
+          "required": [
+            "hash"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "input",
+        "output",
+        "samples",
+        "shader"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema_version",
+    "benchmark",
+    "evidence_class",
+    "device",
+    "configuration",
+    "timings",
+    "correctness",
+    "metrics",
+    "limitations",
+    "artifacts"
+  ],
+  "additionalProperties": false,
+  "title": "Dock SR isolated Vulkan scaler benchmark",
+  "description": "Synthetic compute/correctness evidence with linked raw samples. Even vulkan_hardware denotes only a physical Vulkan dispatch, never validated NPU, game performance, power, or GPU/NPU interop.",
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "device": {
+            "properties": {
+              "type": {
+                "const": "cpu"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "evidence_class": {
+            "const": "vulkan_software"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "device": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "integrated_gpu",
+                  "discrete_gpu"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "evidence_class": {
+            "const": "vulkan_hardware"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "device": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "virtual_gpu",
+                  "other"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "evidence_class": {
+            "const": "vulkan_unknown"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "device": {
+            "properties": {
+              "timestamp_valid_bits": {
+                "const": 0
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "timings": {
+            "properties": {
+              "gpu_dispatch_ms": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "device": {
+            "properties": {
+              "timestamps_enabled": {
+                "const": false
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "timings": {
+            "properties": {
+              "gpu_dispatch_ms": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

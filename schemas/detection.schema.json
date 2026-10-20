@@ -1,0 +1,683 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:docksr:schema:detection:1.0.0",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "report_type": {
+      "const": "docksr_detection"
+    },
+    "generated_at_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "read_only": {
+      "const": true
+    },
+    "host": {
+      "type": "object",
+      "properties": {
+        "kernel_release": {
+          "$ref": "#/$defs/observation"
+        },
+        "kernel_version": {
+          "$ref": "#/$defs/observation"
+        },
+        "os_release": {
+          "$ref": "#/$defs/observation"
+        }
+      },
+      "required": [
+        "kernel_release",
+        "kernel_version",
+        "os_release"
+      ],
+      "additionalProperties": false
+    },
+    "device_nodes": {
+      "type": "object",
+      "properties": {
+        "dri": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "status": {
+              "enum": [
+                "present",
+                "absent",
+                "permission_denied",
+                "error"
+              ]
+            },
+            "nodes": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/node"
+              }
+            },
+            "errno": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "path",
+            "status",
+            "nodes"
+          ],
+          "additionalProperties": false
+        },
+        "accel": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "status": {
+              "enum": [
+                "present",
+                "absent",
+                "permission_denied",
+                "error"
+              ]
+            },
+            "nodes": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/node"
+              }
+            },
+            "errno": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "path",
+            "status",
+            "nodes"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "dri",
+        "accel"
+      ],
+      "additionalProperties": false
+    },
+    "sysfs": {
+      "type": "object",
+      "properties": {
+        "accel": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "status": {
+              "enum": [
+                "present",
+                "absent",
+                "permission_denied",
+                "error"
+              ]
+            },
+            "devices": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  },
+                  "driver": {
+                    "$ref": "#/$defs/observation"
+                  },
+                  "fields": {
+                    "type": "object",
+                    "properties": {
+                      "vendor": {
+                        "$ref": "#/$defs/observation"
+                      },
+                      "device": {
+                        "$ref": "#/$defs/observation"
+                      },
+                      "class": {
+                        "$ref": "#/$defs/observation"
+                      },
+                      "firmware_version": {
+                        "$ref": "#/$defs/observation"
+                      },
+                      "fw_version": {
+                        "$ref": "#/$defs/observation"
+                      }
+                    },
+                    "required": [
+                      "vendor",
+                      "device",
+                      "class",
+                      "firmware_version",
+                      "fw_version"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "name",
+                  "path",
+                  "driver",
+                  "fields"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "errno": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "path",
+            "status",
+            "devices"
+          ],
+          "additionalProperties": false
+        },
+        "pci": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "status": {
+              "enum": [
+                "ok",
+                "absent",
+                "permission_denied",
+                "error"
+              ]
+            },
+            "amd_devices": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "address": {
+                    "type": "string"
+                  },
+                  "vendor": {
+                    "$ref": "#/$defs/observation"
+                  },
+                  "device": {
+                    "$ref": "#/$defs/observation"
+                  },
+                  "class": {
+                    "$ref": "#/$defs/observation"
+                  },
+                  "driver": {
+                    "$ref": "#/$defs/observation"
+                  },
+                  "bound_to_amdxdna": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "address",
+                  "vendor",
+                  "device",
+                  "class",
+                  "driver",
+                  "bound_to_amdxdna"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "unreadable_entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "address": {
+                    "type": "string"
+                  },
+                  "vendor": {
+                    "$ref": "#/$defs/observation"
+                  }
+                },
+                "required": [
+                  "address",
+                  "vendor"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "errno": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "path",
+            "status",
+            "amd_devices"
+          ],
+          "additionalProperties": false
+        },
+        "amdxdna": {
+          "type": "object",
+          "properties": {
+            "module": {
+              "$ref": "#/$defs/inspection"
+            },
+            "version": {
+              "$ref": "#/$defs/observation"
+            },
+            "srcversion": {
+              "$ref": "#/$defs/observation"
+            }
+          },
+          "required": [
+            "module",
+            "version",
+            "srcversion"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "accel",
+        "pci",
+        "amdxdna"
+      ],
+      "additionalProperties": false
+    },
+    "tools": {
+      "type": "object",
+      "properties": {
+        "xrt_smi_version": {
+          "$ref": "#/$defs/command"
+        },
+        "vulkan_summary": {
+          "$ref": "#/$defs/command"
+        },
+        "lspci_version": {
+          "$ref": "#/$defs/command"
+        }
+      },
+      "required": [
+        "xrt_smi_version",
+        "vulkan_summary",
+        "lspci_version"
+      ],
+      "additionalProperties": false
+    },
+    "capabilities": {
+      "type": "object",
+      "properties": {
+        "vulkan_external_buffer": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "unrun"
+            },
+            "supported": {
+              "type": "null"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "usage": {
+              "const": "storage_buffer|transfer_src|transfer_dst"
+            },
+            "handle_type": {
+              "const": "dma_buf"
+            }
+          },
+          "required": [
+            "status",
+            "supported",
+            "reason",
+            "usage",
+            "handle_type"
+          ],
+          "additionalProperties": false,
+          "description": "No exact VkBuffer external-memory query is performed by this detector."
+        },
+        "cross_device_synchronization": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "unrun"
+            },
+            "supported": {
+              "type": "null"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "supported",
+            "reason"
+          ],
+          "additionalProperties": false,
+          "description": "Unknown because no runtime experiment was run. A missing tool, absent node, or extension name cannot establish unsupported hardware."
+        },
+        "npu_execution": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "unrun"
+            },
+            "supported": {
+              "type": "null"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "supported",
+            "reason"
+          ],
+          "additionalProperties": false,
+          "description": "Unknown because no runtime experiment was run. A missing tool, absent node, or extension name cannot establish unsupported hardware."
+        }
+      },
+      "required": [
+        "vulkan_external_buffer",
+        "cross_device_synchronization",
+        "npu_execution"
+      ],
+      "additionalProperties": false
+    },
+    "npu_ready": {
+      "const": false
+    },
+    "hardware_validated": {
+      "const": false
+    },
+    "readiness_reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "schema_version",
+    "report_type",
+    "generated_at_utc",
+    "read_only",
+    "host",
+    "device_nodes",
+    "sysfs",
+    "tools",
+    "capabilities",
+    "npu_ready",
+    "hardware_validated",
+    "readiness_reason",
+    "limitations"
+  ],
+  "additionalProperties": false,
+  "title": "Dock SR read-only inventory report",
+  "description": "Inventory of visible paths and bounded public commands; not a hardware readiness attestation.",
+  "$defs": {
+    "observation": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "ok",
+            "absent",
+            "permission_denied",
+            "error"
+          ]
+        },
+        "value": {
+          "type": "string"
+        },
+        "truncated": {
+          "type": "boolean"
+        },
+        "errno": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "ok"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "value"
+            ]
+          }
+        }
+      ]
+    },
+    "inspection": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "present",
+            "absent",
+            "permission_denied",
+            "error"
+          ]
+        },
+        "node_type": {
+          "enum": [
+            "character",
+            "directory",
+            "other"
+          ]
+        },
+        "mode": {
+          "type": "string",
+          "pattern": "^[0-7]{4}$"
+        },
+        "opened": {
+          "const": false
+        },
+        "errno": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "node": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "present",
+            "absent",
+            "permission_denied",
+            "error"
+          ]
+        },
+        "node_type": {
+          "enum": [
+            "character",
+            "directory",
+            "other"
+          ]
+        },
+        "mode": {
+          "type": "string",
+          "pattern": "^[0-7]{4}$"
+        },
+        "opened": {
+          "const": false
+        },
+        "errno": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "path",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "command": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "ok",
+            "missing_tool",
+            "permission_denied",
+            "timeout",
+            "error",
+            "command_failed"
+          ]
+        },
+        "argv": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "returncode": {
+          "type": "integer"
+        },
+        "stdout": {
+          "type": "string",
+          "maxLength": 65536
+        },
+        "stderr": {
+          "type": "string",
+          "maxLength": 65536
+        },
+        "truncated": {
+          "type": "boolean"
+        },
+        "errno": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "timeout_seconds": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "status",
+        "argv"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "ok",
+                  "command_failed"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "returncode",
+              "stdout",
+              "stderr",
+              "truncated"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "ok"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "returncode": {
+                "const": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "command_failed"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "returncode": {
+                "not": {
+                  "const": 0
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

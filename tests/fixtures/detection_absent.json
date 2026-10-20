@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0.0",
+  "report_type": "docksr_detection",
+  "generated_at_utc": "2026-01-01T00:00:00Z",
+  "read_only": true,
+  "host": {
+    "kernel_release": {
+      "status": "absent",
+      "errno": 2
+    },
+    "kernel_version": {
+      "status": "absent",
+      "errno": 2
+    },
+    "os_release": {
+      "status": "absent",
+      "errno": 2
+    }
+  },
+  "device_nodes": {
+    "dri": {
+      "path": "/dev/dri",
+      "status": "absent",
+      "errno": 2,
+      "nodes": []
+    },
+    "accel": {
+      "path": "/dev/accel",
+      "status": "absent",
+      "errno": 2,
+      "nodes": []
+    }
+  },
+  "sysfs": {
+    "accel": {
+      "path": "/sys/class/accel",
+      "status": "absent",
+      "errno": 2,
+      "devices": []
+    },
+    "pci": {
+      "path": "/sys/bus/pci/devices",
+      "status": "absent",
+      "errno": 2,
+      "amd_devices": []
+    },
+    "amdxdna": {
+      "module": {
+        "status": "absent",
+        "errno": 2
+      },
+      "version": {
+        "status": "absent",
+        "errno": 2
+      },
+      "srcversion": {
+        "status": "absent",
+        "errno": 2
+      }
+    }
+  },
+  "tools": {
+    "xrt_smi_version": {
+      "status": "missing_tool",
+      "argv": [
+        "xrt-smi",
+        "--version"
+      ]
+    },
+    "vulkan_summary": {
+      "status": "missing_tool",
+      "argv": [
+        "vulkaninfo",
+        "--summary"
+      ]
+    },
+    "lspci_version": {
+      "status": "missing_tool",
+      "argv": [
+        "lspci",
+        "--version"
+      ]
+    }
+  },
+  "capabilities": {
+    "vulkan_external_buffer": {
+      "status": "unrun",
+      "supported": null,
+      "usage": "storage_buffer|transfer_src|transfer_dst",
+      "handle_type": "dma_buf",
+      "reason": "No native exact-usage VkBuffer external-memory query was executed. vulkaninfo --summary cannot establish buffer import/export compatibility."
+    },
+    "cross_device_synchronization": {
+      "status": "unrun",
+      "supported": null,
+      "reason": "No Vulkan/XRT cross-device synchronization experiment was executed."
+    },
+    "npu_execution": {
+      "status": "unrun",
+      "supported": null,
+      "reason": "No model was compiled or executed; presence and version data cannot validate NPU execution."
+    }
+  },
+  "npu_ready": false,
+  "hardware_validated": false,
+  "readiness_reason": "Inventory only. NPU execution, exact-buffer sharing, correctness, synchronization, and performance have not been validated.",
+  "limitations": [
+    "Synthetic schema-test fixture; no target hardware or runtime measurement.",
+    "Absent paths describe visibility in this process/container, not necessarily the physical host.",
+    "The filesystem inventory only stats device nodes. vulkaninfo may initialize drivers and open devices; this does not validate inference or buffer sharing.",
+    "Missing optional sysfs version/firmware attributes mean unavailable metadata, not an unsupported device.",
+    "vulkaninfo extension names and a successful summary are not exact external-memory support queries.",
+    "No environment variable values or credential files are read."
+  ]
+}

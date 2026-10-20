@@ -1,0 +1,519 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:docksr:schema:mock-state:1.0.0",
+  "title": "Dock SR deterministic host simulation telemetry",
+  "description": "Virtual ownership/state transitions only. Simulation validation is never hardware validation. No physical duration, NPU inference, power, or game performance fields are allowed.",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": "1.0.0"
+        },
+        "evidence_class": {
+          "const": "mock_state_machine"
+        },
+        "simulated": {
+          "const": true
+        },
+        "hardware_validated": {
+          "const": false
+        },
+        "scenario": {
+          "enum": [
+            "normal",
+            "late",
+            "crash",
+            "resize",
+            "suspend",
+            "exhaustion",
+            "stale",
+            "late-consumer"
+          ]
+        },
+        "scenario_executed": {
+          "type": "boolean"
+        },
+        "clock": {
+          "const": "virtual_ticks"
+        },
+        "unit": {
+          "const": "simulated_tick"
+        },
+        "profile_state": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "requested_profile": {
+              "type": "string",
+              "minLength": 1
+            },
+            "active_profile": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "profile_revision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "validation_status": {
+              "enum": [
+                "unknown",
+                "unvalidated",
+                "compiling",
+                "validated",
+                "incompatible",
+                "revoked",
+                "fallback"
+              ]
+            },
+            "validation_scope": {
+              "const": "simulation"
+            },
+            "hardware_validation_status": {
+              "const": "unvalidated"
+            },
+            "identity": {
+              "type": "object",
+              "properties": {
+                "device_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "driver_version": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "runtime_version": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "model_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "model_sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "model_identity_kind": {
+                  "const": "simulation_placeholder"
+                },
+                "mode": {
+                  "enum": [
+                    "docked",
+                    "portable"
+                  ]
+                },
+                "quality": {
+                  "enum": [
+                    "balanced",
+                    "performance",
+                    "quality",
+                    "proof"
+                  ]
+                },
+                "scope": {
+                  "const": "simulation"
+                }
+              },
+              "required": [
+                "device_id",
+                "driver_version",
+                "runtime_version",
+                "model_id",
+                "model_sha256",
+                "model_identity_kind",
+                "mode",
+                "quality",
+                "scope"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "enabled",
+            "requested_profile",
+            "active_profile",
+            "profile_revision",
+            "validation_status",
+            "validation_scope",
+            "hardware_validation_status",
+            "identity"
+          ],
+          "additionalProperties": false
+        },
+        "scheduler": {
+          "type": "object",
+          "properties": {
+            "capacity": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 64
+            },
+            "in_flight": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 64
+            },
+            "generation": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "state": {
+              "enum": [
+                "running",
+                "suspended",
+                "crashed"
+              ]
+            },
+            "events": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "decision": {
+                    "enum": [
+                      "submitted",
+                      "output_ready",
+                      "fallback_deadline",
+                      "fallback_exhausted",
+                      "fallback_unavailable",
+                      "fallback_duplicate_frame",
+                      "fallback_resize",
+                      "fallback_suspend",
+                      "fallback_crash",
+                      "completion_discarded",
+                      "stale_completion",
+                      "resized",
+                      "suspended",
+                      "resumed",
+                      "backend_crashed",
+                      "quiescence_acknowledged",
+                      "restarted",
+                      "output_consumed",
+                      "output_released",
+                      "fallback_stale_output",
+                      "invalid_consumer_acquire",
+                      "invalid_consumer_release"
+                    ]
+                  },
+                  "frame_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 0
+                  },
+                  "slot": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 63
+                  },
+                  "generation": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 0
+                  },
+                  "serial": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 0
+                  },
+                  "at_tick": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "decision",
+                  "frame_id",
+                  "slot",
+                  "generation",
+                  "serial",
+                  "at_tick"
+                ],
+                "additionalProperties": false,
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "slot": {
+                          "type": "null"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "generation": {
+                          "type": "null"
+                        },
+                        "serial": {
+                          "type": "null"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "maxItems": 256
+            },
+            "counts": {
+              "type": "object",
+              "properties": {
+                "submitted": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "outputs": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "outputs_consumed": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "consumer_releases": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "fallbacks": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "discarded_completions": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "stale_completions": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "dropped_events": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "submitted",
+                "outputs",
+                "outputs_consumed",
+                "consumer_releases",
+                "fallbacks",
+                "discarded_completions",
+                "stale_completions",
+                "dropped_events"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "capacity",
+            "in_flight",
+            "generation",
+            "state",
+            "events",
+            "counts"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schema_version",
+        "evidence_class",
+        "simulated",
+        "hardware_validated",
+        "scenario",
+        "scenario_executed",
+        "clock",
+        "unit",
+        "profile_state",
+        "scheduler"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "profile_state": {
+                "properties": {
+                  "enabled": {
+                    "const": true
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "scenario_executed": {
+                "const": true
+              },
+              "profile_state": {
+                "properties": {
+                  "active_profile": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "validation_status": {
+                    "const": "validated"
+                  }
+                }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "scenario_executed": {
+                "const": false
+              },
+              "profile_state": {
+                "properties": {
+                  "active_profile": {
+                    "type": "null"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": "1.0.0"
+        },
+        "evidence_class": {
+          "const": "mock_state_machine"
+        },
+        "simulated": {
+          "const": true
+        },
+        "hardware_validated": {
+          "const": false
+        },
+        "profiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "input": {
+                "type": "object",
+                "properties": {
+                  "width": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "height": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "required": [
+                  "width",
+                  "height"
+                ],
+                "additionalProperties": false
+              },
+              "output": {
+                "type": "object",
+                "properties": {
+                  "width": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "height": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "required": [
+                  "width",
+                  "height"
+                ],
+                "additionalProperties": false
+              },
+              "mode": {
+                "enum": [
+                  "docked",
+                  "portable"
+                ]
+              },
+              "hardware_validation_status": {
+                "const": "unvalidated"
+              }
+            },
+            "required": [
+              "id",
+              "revision",
+              "input",
+              "output",
+              "mode",
+              "hardware_validation_status"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "schema_version",
+        "evidence_class",
+        "simulated",
+        "hardware_validated",
+        "profiles"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": "1.0.0"
+        },
+        "evidence_class": {
+          "const": "mock_state_machine"
+        },
+        "simulated": {
+          "const": true
+        },
+        "hardware_validated": {
+          "const": false
+        },
+        "error": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "schema_version",
+        "evidence_class",
+        "simulated",
+        "hardware_validated",
+        "error"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

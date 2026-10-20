@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0.0",
+  "document_type": "docksr_status",
+  "runtime_state": "CPU_REFERENCE_ACTIVE",
+  "evidence": "REAL_CPU",
+  "backend_name": "synthetic_cpu_reference",
+  "dimensions": {
+    "requested": {
+      "input": {
+        "width": 1280,
+        "height": 720
+      },
+      "output": {
+        "width": 1920,
+        "height": 1080
+      }
+    },
+    "actual": {
+      "input": {
+        "width": 1280,
+        "height": 720
+      },
+      "output": {
+        "width": 1920,
+        "height": 1080
+      }
+    }
+  },
+  "frames_processed": 1,
+  "last_error": null,
+  "npu": {
+    "device_status": "NOT_TESTED",
+    "model_status": "UNVALIDATED"
+  },
+  "timings_ms": {
+    "cpu": 1.25,
+    "gpu": null,
+    "npu": null
+  },
+  "updated_at_monotonic_ns": 1000
+}

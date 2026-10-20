@@ -1,0 +1,688 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:docksr:schema:runtime-status:1.0.0",
+  "title": "Dock SR runtime status snapshot",
+  "description": "Current typed StatusSnapshot contract. CPU reference output, physical GPU evidence, software Vulkan and simulation stay distinct. Real NPU readiness/execution and NPU timings are reserved and rejected in this build. A schema validates reported structure, not backend execution or monotonic freshness.",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "document_type": {
+      "const": "docksr_status"
+    },
+    "runtime_state": {
+      "enum": [
+        "STARTING",
+        "CPU_REFERENCE_ACTIVE",
+        "GPU_BASELINE_ACTIVE",
+        "SOFTWARE_VULKAN",
+        "MOCK_NPU_ACTIVE",
+        "FALLBACK",
+        "ERROR",
+        "BYPASS"
+      ]
+    },
+    "evidence": {
+      "enum": [
+        "NONE",
+        "REAL_CPU",
+        "REAL_GPU",
+        "SOFTWARE_VULKAN",
+        "SIMULATED"
+      ]
+    },
+    "backend_name": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]{1,128}$"
+    },
+    "dimensions": {
+      "type": "object",
+      "properties": {
+        "requested": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "input": {
+                  "type": "object",
+                  "properties": {
+                    "width": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 16384
+                    },
+                    "height": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 16384
+                    }
+                  },
+                  "required": [
+                    "width",
+                    "height"
+                  ],
+                  "additionalProperties": false
+                },
+                "output": {
+                  "type": "object",
+                  "properties": {
+                    "width": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 16384
+                    },
+                    "height": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 16384
+                    }
+                  },
+                  "required": [
+                    "width",
+                    "height"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "input",
+                "output"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "actual": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "input": {
+                  "type": "object",
+                  "properties": {
+                    "width": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 16384
+                    },
+                    "height": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 16384
+                    }
+                  },
+                  "required": [
+                    "width",
+                    "height"
+                  ],
+                  "additionalProperties": false
+                },
+                "output": {
+                  "type": "object",
+                  "properties": {
+                    "width": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 16384
+                    },
+                    "height": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 16384
+                    }
+                  },
+                  "required": [
+                    "width",
+                    "height"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "input",
+                "output"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "requested",
+        "actual"
+      ],
+      "additionalProperties": false
+    },
+    "frames_processed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "last_error": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.-]{1,64}$"
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "npu": {
+      "type": "object",
+      "properties": {
+        "device_status": {
+          "enum": [
+            "NOT_TESTED",
+            "NOT_DETECTED",
+            "DETECTED",
+            "ERROR"
+          ],
+          "default": "NOT_TESTED",
+          "description": "Detection alone never establishes inference support."
+        },
+        "model_status": {
+          "enum": [
+            "UNVALIDATED",
+            "MISSING",
+            "INVALID"
+          ],
+          "default": "UNVALIDATED"
+        }
+      },
+      "required": [
+        "device_status",
+        "model_status"
+      ],
+      "additionalProperties": false
+    },
+    "timings_ms": {
+      "type": "object",
+      "properties": {
+        "cpu": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1.7976931348623157e+308,
+          "description": "Measured milliseconds only; null means unmeasured, never zero cost."
+        },
+        "gpu": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1.7976931348623157e+308,
+          "description": "Measured milliseconds only; null means unmeasured, never zero cost."
+        },
+        "npu": {
+          "type": "null",
+          "description": "No verified NPU backend or timing is available in this build."
+        }
+      },
+      "required": [
+        "cpu",
+        "gpu",
+        "npu"
+      ],
+      "additionalProperties": false
+    },
+    "updated_at_monotonic_ns": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615,
+      "description": "Same-host steady-clock nanoseconds; not a UTC timestamp. Consumers must check age/future timestamps using the same monotonic clock."
+    }
+  },
+  "required": [
+    "schema_version",
+    "document_type",
+    "runtime_state",
+    "evidence",
+    "backend_name",
+    "dimensions",
+    "frames_processed",
+    "last_error",
+    "npu",
+    "timings_ms",
+    "updated_at_monotonic_ns"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "runtime_state": {
+            "const": "STARTING"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "const": "NONE"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "runtime_state": {
+            "const": "CPU_REFERENCE_ACTIVE"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "const": "REAL_CPU"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "runtime_state": {
+            "const": "GPU_BASELINE_ACTIVE"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "const": "REAL_GPU"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "runtime_state": {
+            "const": "SOFTWARE_VULKAN"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "const": "SOFTWARE_VULKAN"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "runtime_state": {
+            "const": "MOCK_NPU_ACTIVE"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "const": "SIMULATED"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "runtime_state": {
+            "enum": [
+              "CPU_REFERENCE_ACTIVE",
+              "GPU_BASELINE_ACTIVE",
+              "SOFTWARE_VULKAN",
+              "MOCK_NPU_ACTIVE"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "dimensions": {
+            "properties": {
+              "requested": {
+                "type": "object",
+                "properties": {
+                  "input": {
+                    "type": "object",
+                    "properties": {
+                      "width": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 16384
+                      },
+                      "height": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 16384
+                      }
+                    },
+                    "required": [
+                      "width",
+                      "height"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "output": {
+                    "type": "object",
+                    "properties": {
+                      "width": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 16384
+                      },
+                      "height": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 16384
+                      }
+                    },
+                    "required": [
+                      "width",
+                      "height"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "input",
+                  "output"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "runtime_state": {
+            "enum": [
+              "ERROR",
+              "FALLBACK"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "last_error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.-]{1,64}$"
+              },
+              "message": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "dimensions": {
+            "properties": {
+              "actual": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "dimensions": {
+            "properties": {
+              "requested": {
+                "type": "object",
+                "properties": {
+                  "input": {
+                    "type": "object",
+                    "properties": {
+                      "width": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 16384
+                      },
+                      "height": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 16384
+                      }
+                    },
+                    "required": [
+                      "width",
+                      "height"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "output": {
+                    "type": "object",
+                    "properties": {
+                      "width": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 16384
+                      },
+                      "height": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 16384
+                      }
+                    },
+                    "required": [
+                      "width",
+                      "height"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "input",
+                  "output"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "frames_processed": {
+            "const": 0
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "dimensions": {
+            "properties": {
+              "actual": {
+                "type": "null"
+              }
+            }
+          },
+          "timings_ms": {
+            "properties": {
+              "cpu": {
+                "type": "null"
+              },
+              "gpu": {
+                "type": "null"
+              },
+              "npu": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "frames_processed": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "dimensions": {
+            "properties": {
+              "actual": {
+                "type": "object",
+                "properties": {
+                  "input": {
+                    "type": "object",
+                    "properties": {
+                      "width": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 16384
+                      },
+                      "height": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 16384
+                      }
+                    },
+                    "required": [
+                      "width",
+                      "height"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "output": {
+                    "type": "object",
+                    "properties": {
+                      "width": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 16384
+                      },
+                      "height": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 16384
+                      }
+                    },
+                    "required": [
+                      "width",
+                      "height"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "input",
+                  "output"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "evidence": {
+            "not": {
+              "const": "NONE"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "evidence": {
+            "const": "REAL_CPU"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "timings_ms": {
+            "properties": {
+              "gpu": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "evidence": {
+            "const": "SIMULATED"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "timings_ms": {
+            "properties": {
+              "cpu": {
+                "type": "null"
+              },
+              "gpu": {
+                "type": "null"
+              },
+              "npu": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
