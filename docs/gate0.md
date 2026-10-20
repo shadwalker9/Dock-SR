@@ -79,6 +79,35 @@ Selected fields from an executed owned-fixture CPU report:
 
 With the optional packages absent, the CPU CLI instead returns exit code 1 and selected fields `{"status":"NOT_RUN","evidence":"NONE","error":{"code":"OPTIONAL_DEPENDENCY_MISSING"},"npu_executed":false}`. These excerpts omit other report fields; the complete retained JSON is authoritative.
 
+## Host-tooling license observations (2026-10-20)
+
+The DSR009 audit read the installed optional host distributions rather than
+assuming every component shared one license. **VERIFIED_LOCAL** describes those
+local metadata/notice observations: 16 locked versions matched, 22 notice-file
+hashes matched their installed RECORD entries, and seven cached pinned upstream
+source texts matched their recorded hashes. This is not legal clearance or an
+assertion that every aggregate third-party notice applies to every binary.
+
+| Installed host component | Observed terms / unresolved scope |
+|---|---|
+| ONNX 1.17.0 | Apache-2.0 main LICENSE; distinct from ONNX Runtime. |
+| ONNX Runtime 1.20.1 | MIT plus `onnxruntime/ThirdPartyNotices.txt`; additional component terms require separate distribution review. |
+| NumPy 1.26.4 | BSD-3-Clause main notice; binary-wheel notices also describe OpenBLAS/LAPACK, GCC runtime exception and LGPL libquadmath terms. |
+| protobuf 4.25.5 | BSD-3-Clause main notice. |
+| flatbuffers 24.3.25 | **PUBLISHER_REPORTED** Apache-2.0 metadata declaration; installed RECORD contains no license/notice file. Preserve the exact upstream-version notice before redistribution. |
+| packaging 24.2 | Explicit Apache-2.0 **OR** BSD-2-Clause choice. |
+| sympy 1.13.3 | BSD-3-Clause main notice plus listed BSD/MIT component notices. |
+| mpmath 1.3.0 | BSD-3-Clause main notice. |
+| typing_extensions 4.16.0 | PSF-2.0 metadata; notice also includes historical Python licenses and documentation 0BSD terms. |
+| attrs 26.1.0; jsonschema 4.23.0; jsonschema-specifications 2025.9.1; referencing 0.37.0; rpds-py 2026.9.1; coloredlogs 15.0.1; humanfriendly 10.0 | MIT main notices, reviewed per distribution. |
+
+The local evidence with relative notice paths, hashes and versions is retained
+under ignored `results/session-009/host-license-evidence.json`. These packages
+remain outside the ordinary application and smoke bundle. Host-tool terms do
+not clear AMD NPU runtime binaries/EULA, actual model assets, DIV2K images,
+patents or the final DockSR project license. Those scopes remain separate and
+unresolved where the candidate manifest says UNKNOWN/unresolved.
+
 ## Future hardware evidence and compatibility
 
 `hardware-evidence.schema.json` is a new document contract; `runtime-status.schema.json` and existing clients are unchanged and still refuse real NPU activation. The future contract represents NOT_RUN/null templates, detection-only `NPU_READY`, explicit failures/fallbacks and potential hardware measurements. `NPU_ACTIVE`/`REAL_NPU` require target physical XDNA2 identity, verified non-identity correctness, critical graph assignment to NPU, reference/artifact hashes, measured samples and provenance. Host/mock/software/CPU fallback claims cannot satisfy that branch.

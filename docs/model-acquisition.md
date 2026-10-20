@@ -1,6 +1,6 @@
 # SESR-M7 candidate acquisition evidence
 
-Inspected 2026-10-20 UTC (2026-10-19 America/Chicago). The canonical record is [the candidate provenance manifest](../models/sesr-m7-256.provenance.json); [Gate-0 commands](gate0.md) describe validation and host execution.
+Updated 2026-10-20 America/Chicago. The canonical record is [the candidate provenance manifest](../models/sesr-m7-256.provenance.json); [Gate-0 commands](gate0.md) describe validation and host execution. Current outcome: **MODEL_ACQUISITION_BLOCKED**.
 
 The Hugging Face API, pinned model card/LICENSE and read-only Git query succeeded. Repository revision is `edbe46281e894e31da3f42aa353db1e04a50f00a`. Its selected artifact path is `onnx-models/sesr_nhwc_int8_256x256.onnx`, with publisher-advertised length **107131 bytes** and LFS SHA-256 **63d2600fa41b21c2326d1740f75486f24e0b791c490ea73a898bf64fdd429ab1**. Those are declarations, not locally measured artifact identity. A filename mentioning NHWC/INT8 is not an inspected graph signature.
 
@@ -12,37 +12,77 @@ At 2026-10-20 04:39 UTC, the environment configuration read showed a different b
 
 A single normal HTTPS retrieval of the exact pinned artifact, with redirects, TLS verification, a 60-second deadline and 1 MiB cap, returned curl exit 22 / HTTP 403 without artifact bytes. Separate read-only HEAD checks returned HTTP 200 for the pinned model card and `Tunnel connection failed: 403 Forbidden` for the CDN host. The artifact remains blocked despite the saved allowlist entry. No proxy bypass, mirror, different revision or model rewrite was attempted. Graph inspection and CPU reference remain NOT RUN. Sanitized attempt/connectivity records are retained outside Git under `/workspace/DockSR-model-cache/acquisition/session-008/`.
 
-The next access investigation should establish whether the current execution proxy has received the saved CDN rule, using supported environment controls or administrator help. Repeatedly saving the same hostname is not evidence that activation occurred. Retry artifact acquisition after an actual runtime access change, then require the identity checks below before inspection.
+### DSR009 bounded investigation — MODEL_ACQUISITION_BLOCKED
 
-## Controlled manual acquisition after access is available
+On 2026-10-20, the exact pinned HTTPS GET returned HF HTTP 302 to `us.aws.cdn.hf.co`, then failed at proxy CONNECT with 403 before artifact bytes. The current saved configuration still includes this CDN host; saved rules do not establish active execution-policy propagation. No callable runtime-activation control is available. This identifies the observed failure stage; CDN-origin DNS/TLS/authentication were not reached or tested.
 
-Use a new private directory outside every checkout. This downloads a pinned data artifact, never a remote script or runtime installer. HTTPS and SHA-256 verification must remain enabled.
+Official no-smudge Git clone and exact-revision fetch succeeded. `git show` returned only the Git LFS pointer with the advertised identity, not model bytes. Native Git LFS 3.6.1 fetch was stopped after 60 seconds without an artifact. The canonical official batch API (`https://huggingface.co/amd/sesr-m7-256x256-tiles-amdnpu.git/info/lfs/objects/batch`) returned HTTP 200 and directs the requested object to the same CDN. A guessed batch path without `.git` initially returned 404; the canonical endpoint was then obtained from `git lfs env`. That path error does not mean the model is missing.
+
+No exact-size candidate was found in the existing `/workspace/DockSR-model-cache` or `/workspace/.cache`; ordinary Hugging Face cache directories were absent. Other approved artifact connectors are not callable here. No model copy was supplied by the owner. Sanitized evidence is retained under ignored `results/session-009/` and `/workspace/DockSR-model-cache/acquisition/session-009/`, without signed URLs, credentials or model bytes.
+
+Stop network retries until a meaningful access change. Either use supported environment/platform help to establish active CDN policy, or supply the exact artifact through the manual procedure below. No proxy bypass, mirror, different revision or download framework was used. Graph inspection and real-model CPU reference remain NOT_RUN.
+
+## Manual fallback for the owner
+
+1. Open this exact pinned URL in an ordinary browser on a network where you are authorized to download it. Save the actual `.onnx` file as `sesr_nhwc_int8_256x256.onnx`, rather than a webpage or Git LFS pointer:
+
+   https://huggingface.co/amd/sesr-m7-256x256-tiles-amdnpu/resolve/edbe46281e894e31da3f42aa353db1e04a50f00a/onnx-models/sesr_nhwc_int8_256x256.onnx
+
+2. Verify **107131 bytes** and SHA-256 **63d2600fa41b21c2326d1740f75486f24e0b791c490ea73a898bf64fdd429ab1** before upload. From the download directory, use either command block below. A mismatch must stop the import; keep the original expected identity.
+
+Linux with Python 3 (standard library only):
 
 ```sh
-mkdir -m 700 /workspace/DockSR-model-cache/manual-sesr-001
-curl --proto '=https' --proto-redir '=https' --fail --location \
-  --max-time 60 --max-filesize 1048576 \
-  --output /workspace/DockSR-model-cache/manual-sesr-001/model.download \
-  'https://huggingface.co/amd/sesr-m7-256x256-tiles-amdnpu/resolve/edbe46281e894e31da3f42aa353db1e04a50f00a/onnx-models/sesr_nhwc_int8_256x256.onnx'
 python3 - <<'PY'
 import hashlib
 from pathlib import Path
-source = Path('/workspace/DockSR-model-cache/manual-sesr-001/model.download')
-destination = source.with_name('sesr_nhwc_int8_256x256.onnx')
-if source.stat().st_size != 107131:
-    raise SystemExit('Artifact size mismatch; do not use this file')
-actual = hashlib.sha256(source.read_bytes()).hexdigest()
+file = Path('sesr_nhwc_int8_256x256.onnx')
+if file.stat().st_size != 107131:
+    raise SystemExit('Wrong size. Do not upload this file.')
+actual = hashlib.sha256(file.read_bytes()).hexdigest()
 if actual != '63d2600fa41b21c2326d1740f75486f24e0b791c490ea73a898bf64fdd429ab1':
-    raise SystemExit('Artifact SHA-256 mismatch; do not use this file')
-with destination.open('xb') as output:
-    destination.chmod(0o600)
-    output.write(source.read_bytes())
-source.unlink()
-print('Locally verified:', destination, '107131 bytes', actual)
+    raise SystemExit('Wrong SHA-256. Do not upload this file.')
+print('Size and SHA-256 match the pinned artifact.')
 PY
 ```
 
-The verification step requires both actual size and locally calculated hash to match the advertised values and refuses to overwrite an existing verified file. These commands are instructions for a future acquisition, not evidence that it ran here. Do not use a partial `.download` file after a network or checksum error. Do not relabel an expected hash as a measured hash. Record the successful acquisition in a new reviewed manifest revision before considering redistribution. Inspection/reference commands must point at the verified local file; do not edit ONNX operators, signatures or IR versions to conceal unsupported CPU execution.
+Windows PowerShell:
+
+```powershell
+& {
+    $ErrorActionPreference = 'Stop'
+    $file = Get-Item -LiteralPath '.\sesr_nhwc_int8_256x256.onnx'
+    $expected = '63d2600fa41b21c2326d1740f75486f24e0b791c490ea73a898bf64fdd429ab1'
+    $actual = (Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+    if ($file.Length -ne 107131 -or $actual -ne $expected) {
+        throw 'Wrong size or SHA-256. Do not upload this file.'
+    }
+    'Size and SHA-256 match the pinned artifact.'
+}
+```
+
+3. Attach only that verified model file to this chat. No credentials, tokens, datasets, drivers or runtime installer are needed. The agent will independently verify the uploaded bytes again. If normal authorized download also fails on your computer, contact the environment/platform administrator with the CDN CONNECT failure details; do not use an arbitrary mirror.
+
+## Agent procedure after an owner upload
+
+Download the attachment with the supported file tool, then pass its actual local path to the importer. Use a new destination outside every Git checkout, with the existing private model-cache parent. Example from the repository root:
+
+```sh
+python3 scripts/import_sesr.py /path/from/upload/sesr_nhwc_int8_256x256.onnx \
+  --destination /workspace/DockSR-model-cache/manual-sesr-009
+```
+
+Run the importer in the Linux/POSIX agent workspace; the owner-side PowerShell block only verifies the download before upload. The importer has no network or ONNX dependency, fixes the candidate identity, refuses a mismatch/unsafe destination/overwrite and leaves tracked provenance unchanged. A successful private receipt establishes local byte identity only, not graph correctness, legal clearance or model/NPU compatibility. Review the receipt and update the canonical provenance manifest with actual observations separately.
+
+Then use the existing inspector, preserving all original bytes:
+
+```sh
+/workspace/.venvs/docksr-gate0/bin/python scripts/onnx_inspect.py \
+  /workspace/DockSR-model-cache/manual-sesr-009/sesr_nhwc_int8_256x256.onnx \
+  --output /workspace/DockSR-model-cache/manual-sesr-009/inspection.json
+```
+
+Read actual signatures, domains, quantization and preprocessing evidence before generating constant/gradient/edge/checkerboard inputs. Only after input encoding is understood, run `scripts/onnx_reference.py MODEL --input VERIFIED_INPUT.npy --output-dir NEW_REFERENCE_DIRECTORY` with the separate Gate-0 Python environment. Layout and ranges must come from evidence; no NHWC/NCHW, scaling or image-quality meaning is inferred from a filename. Unsupported operators or preprocessing ambiguity remain explicit blockers, without rewriting the graph. Tool regression commands are in [gate0.md](gate0.md). The manual acquisition/import/real-model commands are a future procedure, not a claim that this unavailable artifact ran here.
 
 ## License separation
 

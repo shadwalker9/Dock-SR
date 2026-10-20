@@ -18,7 +18,7 @@
   },
   "acquisition": {
     "status": "BLOCKED",
-    "reason": "Pinned artifact redirects to us.aws.cdn.hf.co; the execution proxy still rejects CONNECT with HTTP403 during the DSR008 retry at 2026-10-20 04:39 UTC. Current configuration read shows a newer base version, no pending draft and this host in its custom allowlist; actual runtime rule activation is unverified. Metadata advertises 107131 bytes and the LFS hash above; no artifact bytes were obtained or hashed."
+    "reason": "DSR009 (2026-10-20): pinned HTTPS GET returns HF302 to us.aws.cdn.hf.co then proxy CONNECT403. Official Git exact-revision fetch and canonical LFS batch metadata succeed, but batch directs the same object to that CDN; native LFS fetch stopped at60seconds without bytes. Trusted caches contain no candidate. Saved custom allowlist includes CDN; actual runtime activation is unverified and no activation control is callable. Actual artifact size/hash remain unknown; owner manual import is the supported fallback."
   },
   "licenses": {
     "model_weights": {

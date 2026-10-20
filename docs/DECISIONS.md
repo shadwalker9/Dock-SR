@@ -1,8 +1,8 @@
 # Current owner decisions
 
-Updated 2026-10-19. This is the implementation decision record; it does not replace private session reports.
+Updated 2026-10-20. This is the implementation decision record; it does not replace private session reports.
 
-Current directive: **v1.6 model validation, conditional R005-G0B-1 simulation and project mission**. Earlier entries preserve the decisions and next-task suggestions at their original stage; the appended v1.6 entry governs current scope.
+Current directive: **v1.7 R005-G0A-CLOSE, exact SESR acquisition and reference validation**. Earlier entries preserve decisions at their original stage; the appended v1.7 entry governs current scope.
 
 ## Reading order and authority
 
@@ -59,3 +59,31 @@ The owner authorized the v1.6 handoff: update the mission/AI-assistance/licensin
 - Payload arithmetic describes logical bytes and copy read/write volume, not measured physical bus traffic, latency or power.
 - DockSR's mission is longer useful device life through efficient accessible reconstruction. Human direction and substantial ChatGPT/Codex assistance are disclosed. Community reuse/forking with attribution is an intention, not a license grant. Formal source/research terms, third-party rights, public visibility and release readiness remain separate owner decisions.
 - Reviewed normal source backup pushes remain authorized; preserve visibility and private report/model/cache boundaries. No final license, release, deployment or system changes are inferred.
+
+## v1.7 — exact artifact and NPU acceptance (2026-10-20 America/Chicago)
+
+The owner authorized bounded legitimate acquisition attempts, exact byte
+verification, the existing inspector/CPU reference, license/provenance review
+and a safe manual-import fallback. No new scheduling/reconstruction architecture,
+NPU backend, interop, training, Gamescope or Decky implementation is included.
+
+- Direct pinned HTTPS retrieval reaches a HF 302, then CDN proxy CONNECT403.
+  Official Git clone/exact-revision fetch and LFS batch metadata succeed; the
+  batch still directs the exact object to the same CDN. A 60-second native LFS
+  fetch acquired no object, and existing trusted caches contain no candidate.
+  Stop retries until an access change or owner-provided exact artifact.
+- A local import establishes byte identity only. Keep its artifact/receipt
+  outside Git, reject mismatches/unsafe destinations/overwrites, and leave
+  graph inspection, preprocessing, reference inference and rights clearance as
+  separate observations. The canonical manifest remains unknown until actual
+  pinned bytes are observed.
+- Installed host dependencies have separate notices. ONNX is Apache-2.0;
+  ONNX Runtime is MIT with third-party notices; binary NumPy has bundled
+  component terms. This does not select a project license or clear AMD runtime,
+  model, dataset or patent scopes. See [Gate-0 observations](gate0.md).
+- The owner explicitly confirmed that **verified NPU acceleration is required
+  for the first usable version targeted by December 31, 2026**. GPU-only remains
+  a fallback direction. Physical target availability, real model/operator
+  execution, integration and matched-quality whole-system cost remain critical
+  acceptance gates; the date is a goal, not a measured readiness or delivery
+  guarantee. This session does not relax the cost-saving MVP criterion.
