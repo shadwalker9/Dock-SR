@@ -1,0 +1,3 @@
+# Unified patch context includes required space prefixes before tabs/blank lines.
+# Validate the applied source with git diff --check in its separate checkout.
+experiments/gamescope/patches/*.patch -whitespace

@@ -1,0 +1,1376 @@
+{
+  "distribution": "Debian trixie amd64",
+  "repository": "https://deb.debian.org/debian/",
+  "inrelease_sha256": "0584fba32e13e0ab8285fb16c27adea1ec03a73669c18702821094fd6ca86675",
+  "packages_index_sha256": "7778d3e3f303b7ddb8ce0fe7c8d57473a076c6bf2e8f241f75421d2396352498",
+  "seeds": [
+    "catch2",
+    "hwdata",
+    "libasound2t64",
+    "libblkid1",
+    "libcap2",
+    "libdbus-1-3",
+    "libdecor-0-0",
+    "libdecor-0-dev",
+    "libdisplay-info-dev",
+    "libdrm-dev",
+    "libegl-dev",
+    "libegl1",
+    "libevdev2",
+    "libffi8",
+    "libgbm-dev",
+    "libgbm1",
+    "libgl1",
+    "libgles-dev",
+    "libglib2.0-0t64",
+    "libglx0",
+    "libgudev-1.0-0",
+    "libice6",
+    "libinput-dev",
+    "libinput10",
+    "libluajit-5.1-dev",
+    "libmount1",
+    "libmtdev1t64",
+    "libpciaccess0",
+    "libpixman-1-0",
+    "libpixman-1-dev",
+    "libpulse-mainloop-glib0",
+    "libpulse0",
+    "libsamplerate0",
+    "libsdl2-2.0-0",
+    "libsdl2-dev",
+    "libseat-dev",
+    "libselinux1",
+    "libsepol2",
+    "libsm6",
+    "libsystemd0",
+    "libudev-dev",
+    "libudev1",
+    "libuuid1",
+    "libvulkan-dev",
+    "libvulkan1",
+    "libwacom9",
+    "libwayland-bin",
+    "libwayland-dev",
+    "libx11-dev",
+    "libxau6",
+    "libxcb-composite0-dev",
+    "libxcb-dri3-0",
+    "libxcb-dri3-dev",
+    "libxcb-errors-dev",
+    "libxcb-ewmh-dev",
+    "libxcb-icccm4",
+    "libxcb-icccm4-dev",
+    "libxcb-present-dev",
+    "libxcb-present0",
+    "libxcb-randr0",
+    "libxcb-render-util0",
+    "libxcb-render-util0-dev",
+    "libxcb-render0",
+    "libxcb-res0",
+    "libxcb-res0-dev",
+    "libxcb-shape0",
+    "libxcb-sync-dev",
+    "libxcb-sync1",
+    "libxcb-util-dev",
+    "libxcb-util1",
+    "libxcb-xfixes0",
+    "libxcb-xfixes0-dev",
+    "libxcb-xinput-dev",
+    "libxcb-xinput0",
+    "libxcb1",
+    "libxcomposite-dev",
+    "libxcomposite1",
+    "libxcursor-dev",
+    "libxcursor1",
+    "libxdamage-dev",
+    "libxdamage1",
+    "libxdmcp6",
+    "libxext-dev",
+    "libxext6",
+    "libxfixes-dev",
+    "libxfixes3",
+    "libxi-dev",
+    "libxi6",
+    "libxinerama1",
+    "libxkbcommon-dev",
+    "libxmu-dev",
+    "libxmu6",
+    "libxrandr2",
+    "libxrender-dev",
+    "libxrender1",
+    "libxres-dev",
+    "libxres1",
+    "libxss1",
+    "libxt6t64",
+    "libxtst-dev",
+    "libxtst6",
+    "libxv1",
+    "libxxf86vm-dev",
+    "libxxf86vm1",
+    "wayland-protocols",
+    "xwayland"
+  ],
+  "packages": [
+    {
+      "name": "catch2",
+      "version": "3.7.1-0.5",
+      "url": "https://deb.debian.org/debian/pool/main/c/catch2/catch2_3.7.1-0.5_all.deb",
+      "sha256": "062fa759d38f2bcc312ac2ef07ee9503e0c9d6b7709dd89796474ef4504e6c86",
+      "size": 5144
+    },
+    {
+      "name": "gir1.2-glib-2.0",
+      "version": "2.84.4-3~deb13u5",
+      "url": "https://deb.debian.org/debian/pool/main/g/glib2.0/gir1.2-glib-2.0_2.84.4-3~deb13u5_amd64.deb",
+      "sha256": "90f674a980f28f0062cf7bf74a77a8dce728aa57d0915eb12c9cf6ea85ed774e",
+      "size": 200680
+    },
+    {
+      "name": "gir1.2-glib-2.0-dev",
+      "version": "2.84.4-3~deb13u5",
+      "url": "https://deb.debian.org/debian/pool/main/g/glib2.0/gir1.2-glib-2.0-dev_2.84.4-3~deb13u5_amd64.deb",
+      "sha256": "3b49adb163111011070d713324c595d854d7b8b367b310ea92d80a5ab71cd663",
+      "size": 918204
+    },
+    {
+      "name": "gir1.2-gudev-1.0",
+      "version": "238-6",
+      "url": "https://deb.debian.org/debian/pool/main/libg/libgudev/gir1.2-gudev-1.0_238-6_amd64.deb",
+      "sha256": "3deeaae0728e06b5746cab0b8f621986d6355ec09ca1130719c7be1900b1171b",
+      "size": 5156
+    },
+    {
+      "name": "gir1.2-ibus-1.0",
+      "version": "1.5.32-2",
+      "url": "https://deb.debian.org/debian/pool/main/i/ibus/gir1.2-ibus-1.0_1.5.32-2_amd64.deb",
+      "sha256": "880e87fe5b399d8a7c770dd6ee79dfb97399dda2837fcbd0af237f6ac2967d40",
+      "size": 371732
+    },
+    {
+      "name": "girepository-tools",
+      "version": "2.84.4-3~deb13u5",
+      "url": "https://deb.debian.org/debian/pool/main/g/glib2.0/girepository-tools_2.84.4-3~deb13u5_amd64.deb",
+      "sha256": "2498e412b01d5d77049829d525b7ff559fd4be269a59cc4a50479337a50d8619",
+      "size": 152356
+    },
+    {
+      "name": "hwdata",
+      "version": "0.394-1",
+      "url": "https://deb.debian.org/debian/pool/main/h/hwdata/hwdata_0.394-1_all.deb",
+      "sha256": "5051b76cdbb3f5984fd5525f0fbf09860627b8770030f4e3132694b088f84aca",
+      "size": 4336
+    },
+    {
+      "name": "libasound2-dev",
+      "version": "1.2.14-1+deb13u1",
+      "url": "https://deb.debian.org/debian/pool/main/a/alsa-lib/libasound2-dev_1.2.14-1+deb13u1_amd64.deb",
+      "sha256": "dfa8e8a133ef8704093d03464d86a3e86d26232baf1e3827aa030cb68c437e1c",
+      "size": 120152
+    },
+    {
+      "name": "libasound2t64",
+      "version": "1.2.14-1+deb13u1",
+      "url": "https://deb.debian.org/debian/pool/main/a/alsa-lib/libasound2t64_1.2.14-1+deb13u1_amd64.deb",
+      "sha256": "5495496142d57e5ad6d581ac5456ec3c87f872c109a2bfb815d154b673eebc67",
+      "size": 380896
+    },
+    {
+      "name": "libblkid-dev",
+      "version": "2.41.5-0+deb13u1",
+      "url": "https://deb.debian.org/debian/pool/main/u/util-linux/libblkid-dev_2.41.5-0+deb13u1_amd64.deb",
+      "sha256": "775bc91f7a265d21cdfc6b710813017b2366e5c5bb665cd2e6979af5dd8a03a8",
+      "size": 208756
+    },
+    {
+      "name": "libblkid1",
+      "version": "2.41.5-0+deb13u1",
+      "url": "https://deb.debian.org/debian/pool/main/u/util-linux/libblkid1_2.41.5-0+deb13u1_amd64.deb",
+      "sha256": "81535f3c2c0efc732965907c8749103a0a26377c761622c9ce39b4c92dcde52f",
+      "size": 171612
+    },
+    {
+      "name": "libcap-dev",
+      "version": "1:2.75-10+deb13u1+b3",
+      "url": "https://deb.debian.org/debian/pool/main/libc/libcap2/libcap-dev_2.75-10+deb13u1+b3_amd64.deb",
+      "sha256": "795983cf2cbc2e12e9440383d701229966c35bc40712ccbfd03e5c93d9af619d",
+      "size": 545636
+    },
+    {
+      "name": "libcap2",
+      "version": "1:2.75-10+deb13u1+b3",
+      "url": "https://deb.debian.org/debian/pool/main/libc/libcap2/libcap2_2.75-10+deb13u1+b3_amd64.deb",
+      "sha256": "89fc4d34fc7a28ad6f0fcd0c561ab253b9dedf6f77f5a000b47c276c8295bf67",
+      "size": 28988
+    },
+    {
+      "name": "libcatch2-dev",
+      "version": "3.7.1-0.5",
+      "url": "https://deb.debian.org/debian/pool/main/c/catch2/libcatch2-dev_3.7.1-0.5_amd64.deb",
+      "sha256": "6bc4d7c41f1d5f080bf48ea0025fdbd4bb5a1511a9441a9c244853f842713fa9",
+      "size": 613100
+    },
+    {
+      "name": "libdbus-1-3",
+      "version": "1.16.2-2",
+      "url": "https://deb.debian.org/debian/pool/main/d/dbus/libdbus-1-3_1.16.2-2_amd64.deb",
+      "sha256": "bbcb711daff7e104b5f80f9b05475b6142674bfe65518a36a56e96a91068a3f5",
+      "size": 177904
+    },
+    {
+      "name": "libdbus-1-dev",
+      "version": "1.16.2-2",
+      "url": "https://deb.debian.org/debian/pool/main/d/dbus/libdbus-1-dev_1.16.2-2_amd64.deb",
+      "sha256": "83767cf52f88de6d6f370cee30e717828c6fd22cb55d1fb84b38a3e911742887",
+      "size": 214548
+    },
+    {
+      "name": "libdecor-0-0",
+      "version": "0.2.2-2",
+      "url": "https://deb.debian.org/debian/pool/main/libd/libdecor-0/libdecor-0-0_0.2.2-2_amd64.deb",
+      "sha256": "e4f228a9d4a38af23fab00f8e20219790b567e2e1f7804b3a215a26294350f82",
+      "size": 15540
+    },
+    {
+      "name": "libdecor-0-dev",
+      "version": "0.2.2-2",
+      "url": "https://deb.debian.org/debian/pool/main/libd/libdecor-0/libdecor-0-dev_0.2.2-2_amd64.deb",
+      "sha256": "f02b9409ff31d546beb5bf2f2eddbc432ed051696a632c82dc9e4ba76c9e60c4",
+      "size": 7580
+    },
+    {
+      "name": "libdisplay-info-dev",
+      "version": "0.2.0-2",
+      "url": "https://deb.debian.org/debian/pool/main/libd/libdisplay-info/libdisplay-info-dev_0.2.0-2_amd64.deb",
+      "sha256": "5fd9fae90381a1fcaa7b96ea0403f3eeca432bc942cf9219cc617b139ca0b5f0",
+      "size": 26072
+    },
+    {
+      "name": "libdrm-dev",
+      "version": "2.4.124-2",
+      "url": "https://deb.debian.org/debian/pool/main/libd/libdrm/libdrm-dev_2.4.124-2_amd64.deb",
+      "sha256": "83b84b1207c4dda3d64ebad7725a7ad237c69c870668db3b01eabad1052f0dcb",
+      "size": 296368
+    },
+    {
+      "name": "libdrm-nouveau2",
+      "version": "2.4.124-2",
+      "url": "https://deb.debian.org/debian/pool/main/libd/libdrm/libdrm-nouveau2_2.4.124-2_amd64.deb",
+      "sha256": "634dcb46487fb2ca267850261291463845ada90b81d16a926ca40d333ce57180",
+      "size": 19892
+    },
+    {
+      "name": "libdrm-radeon1",
+      "version": "2.4.124-2",
+      "url": "https://deb.debian.org/debian/pool/main/libd/libdrm/libdrm-radeon1_2.4.124-2_amd64.deb",
+      "sha256": "7a82b1c88b45235e314a15b71781b47ed472dafbbf697481ec8427079840fc32",
+      "size": 22564
+    },
+    {
+      "name": "libegl-dev",
+      "version": "1.7.0-1+b2",
+      "url": "https://deb.debian.org/debian/pool/main/libg/libglvnd/libegl-dev_1.7.0-1+b2_amd64.deb",
+      "sha256": "97fcfff08a5de0a510066d55260a30fbd3ccbd87da6c2f317e6efe17566b9f5a",
+      "size": 19520
+    },
+    {
+      "name": "libegl1",
+      "version": "1.7.0-1+b2",
+      "url": "https://deb.debian.org/debian/pool/main/libg/libglvnd/libegl1_1.7.0-1+b2_amd64.deb",
+      "sha256": "62e7bc8ccd47a60e55aad17f83d8d474310d782eb8589bbce2ab714c31712406",
+      "size": 34588
+    },
+    {
+      "name": "libevdev-dev",
+      "version": "1.13.4+dfsg-1",
+      "url": "https://deb.debian.org/debian/pool/main/libe/libevdev/libevdev-dev_1.13.4+dfsg-1_amd64.deb",
+      "sha256": "daf65e62433c1154ffab87a8cfdf106efcb20095142134f972923277fe600797",
+      "size": 50564
+    },
+    {
+      "name": "libevdev2",
+      "version": "1.13.4+dfsg-1",
+      "url": "https://deb.debian.org/debian/pool/main/libe/libevdev/libevdev2_1.13.4+dfsg-1_amd64.deb",
+      "sha256": "02e85fb9461b85b23f775d5fcf5a31c55d37bec40b63fd98ca5d3a2763714ae7",
+      "size": 32372
+    },
+    {
+      "name": "libffi-dev",
+      "version": "3.4.8-2",
+      "url": "https://deb.debian.org/debian/pool/main/libf/libffi/libffi-dev_3.4.8-2_amd64.deb",
+      "sha256": "76b2b80193a656733e1408ebec5371334be5fd48eb5f50ab99d6baf6081d0f1b",
+      "size": 61136
+    },
+    {
+      "name": "libffi8",
+      "version": "3.4.8-2",
+      "url": "https://deb.debian.org/debian/pool/main/libf/libffi/libffi8_3.4.8-2_amd64.deb",
+      "sha256": "0ebdc340de33333639c3c63874cd4b15ac2e83dfa1ef3053b7eefaf4919f4f68",
+      "size": 24144
+    },
+    {
+      "name": "libgbm-dev",
+      "version": "25.0.7-2+deb13u1",
+      "url": "https://deb.debian.org/debian/pool/main/m/mesa/libgbm-dev_25.0.7-2+deb13u1_amd64.deb",
+      "sha256": "8e3f9958fbcd4838953ebc7cb11e661e26652059473278d8f7e130c246f97c2a",
+      "size": 23764
+    },
+    {
+      "name": "libgbm1",
+      "version": "25.0.7-2+deb13u1",
+      "url": "https://deb.debian.org/debian/pool/main/m/mesa/libgbm1_25.0.7-2+deb13u1_amd64.deb",
+      "sha256": "31fb6d76b9ceaf13848fa617df53f85f62626b4fe7464a93811c720af6d5f2dd",
+      "size": 44592
+    },
+    {
+      "name": "libgio-2.0-dev",
+      "version": "2.84.4-3~deb13u5",
+      "url": "https://deb.debian.org/debian/pool/main/g/glib2.0/libgio-2.0-dev_2.84.4-3~deb13u5_amd64.deb",
+      "sha256": "a9bbd748ddd40a08b336e8d6b1755e698957ac640d081ddc4c330b716c6b89c3",
+      "size": 1691796
+    },
+    {
+      "name": "libgio-2.0-dev-bin",
+      "version": "2.84.4-3~deb13u5",
+      "url": "https://deb.debian.org/debian/pool/main/g/glib2.0/libgio-2.0-dev-bin_2.84.4-3~deb13u5_amd64.deb",
+      "sha256": "d43dddb9b306cb8427bd383e100b8510da8cfa03b5968624f3787bc66a5a95b8",
+      "size": 168564
+    },
+    {
+      "name": "libgirepository-2.0-0",
+      "version": "2.84.4-3~deb13u5",
+      "url": "https://deb.debian.org/debian/pool/main/g/glib2.0/libgirepository-2.0-0_2.84.4-3~deb13u5_amd64.deb",
+      "sha256": "c87a2d4dac81be719fb3dc2e3a1d78376151d8c5c34071e08c10304b8d1fd3c3",
+      "size": 144928
+    },
+    {
+      "name": "libgl-dev",
+      "version": "1.7.0-1+b2",
+      "url": "https://deb.debian.org/debian/pool/main/libg/libglvnd/libgl-dev_1.7.0-1+b2_amd64.deb",
+      "sha256": "2c5044a44bc7cd7a196d554ca6ff78ae0358fbb98b7d2cce49176bdc6a816fe4",
+      "size": 100680
+    },
+    {
+      "name": "libgl1",
+      "version": "1.7.0-1+b2",
+      "url": "https://deb.debian.org/debian/pool/main/libg/libglvnd/libgl1_1.7.0-1+b2_amd64.deb",
+      "sha256": "87fa2f6e5abaed4ed385fac879c8dd735af719ee2300222d901793c66e041678",
+      "size": 89504
+    },
+    {
+      "name": "libgles-dev",
+      "version": "1.7.0-1+b2",
+      "url": "https://deb.debian.org/debian/pool/main/libg/libglvnd/libgles-dev_1.7.0-1+b2_amd64.deb",
+      "sha256": "87af52464cb40d54e78ecf2046db019bf1ab19a8bed7511ab282be623d1216de",
+      "size": 50776
+    },
+    {
+      "name": "libgles1",
+      "version": "1.7.0-1+b2",
+      "url": "https://deb.debian.org/debian/pool/main/libg/libglvnd/libgles1_1.7.0-1+b2_amd64.deb",
+      "sha256": "ef909f784ed99a849bfdf69abaa0747cf842abbb6d3f4f119481a2f9e3431284",
+      "size": 12148
+    },
+    {
+      "name": "libgles2",
+      "version": "1.7.0-1+b2",
+      "url": "https://deb.debian.org/debian/pool/main/libg/libglvnd/libgles2_1.7.0-1+b2_amd64.deb",
+      "sha256": "e12c18aa77939d122ee1dea520ba0440b97dc19200b7396e03dff03a3ece74c1",
+      "size": 17256
+    },
+    {
+      "name": "libglib2.0-0t64",
+      "version": "2.84.4-3~deb13u5",
+      "url": "https://deb.debian.org/debian/pool/main/g/glib2.0/libglib2.0-0t64_2.84.4-3~deb13u5_amd64.deb",
+      "sha256": "e2baf92c57d1db1753e5781a61450d9a01e7833c7bd2dfe87776a6811c11ecc2",
+      "size": 1521120
+    },
+    {
+      "name": "libglib2.0-dev",
+      "version": "2.84.4-3~deb13u5",
+      "url": "https://deb.debian.org/debian/pool/main/g/glib2.0/libglib2.0-dev_2.84.4-3~deb13u5_amd64.deb",
+      "sha256": "ad98b1a769da55a8007ea9953306b0deb6092205d4fac8d915e2bd83d4ecc8a5",
+      "size": 57744
+    },
+    {
+      "name": "libglib2.0-dev-bin",
+      "version": "2.84.4-3~deb13u5",
+      "url": "https://deb.debian.org/debian/pool/main/g/glib2.0/libglib2.0-dev-bin_2.84.4-3~deb13u5_amd64.deb",
+      "sha256": "d35ef75a4b04ea10081d484e025b0a4fecd0232ffc0e76403bcd249b3b47e643",
+      "size": 56944
+    },
+    {
+      "name": "libglvnd0",
+      "version": "1.7.0-1+b2",
+      "url": "https://deb.debian.org/debian/pool/main/libg/libglvnd/libglvnd0_1.7.0-1+b2_amd64.deb",
+      "sha256": "887f74008166549ce9e100c906aa937e95d6e5ce1c8d86efe8c95fd953359b9c",
+      "size": 51960
+    },
+    {
+      "name": "libglx-dev",
+      "version": "1.7.0-1+b2",
+      "url": "https://deb.debian.org/debian/pool/main/libg/libglvnd/libglx-dev_1.7.0-1+b2_amd64.deb",
+      "sha256": "93d456321c07009491b942783db8c57065b616db713ef5f6a0c629ca078c4ea0",
+      "size": 15804
+    },
+    {
+      "name": "libglx0",
+      "version": "1.7.0-1+b2",
+      "url": "https://deb.debian.org/debian/pool/main/libg/libglvnd/libglx0_1.7.0-1+b2_amd64.deb",
+      "sha256": "2721fdca0fe3bd963cb39482eabc253af52b88f4a7f6dbb69e475549daf5af3b",
+      "size": 34892
+    },
+    {
+      "name": "libgudev-1.0-0",
+      "version": "238-6",
+      "url": "https://deb.debian.org/debian/pool/main/libg/libgudev/libgudev-1.0-0_238-6_amd64.deb",
+      "sha256": "890a55ea26f52062f377389e6326abeadb72a14741c95ab6a1c5a19c77c3c3d0",
+      "size": 14504
+    },
+    {
+      "name": "libgudev-1.0-dev",
+      "version": "238-6",
+      "url": "https://deb.debian.org/debian/pool/main/libg/libgudev/libgudev-1.0-dev_238-6_amd64.deb",
+      "sha256": "108abbee46325fa4f4f38bd8881f624e7f856152e804ef3f0b61cd959de1272d",
+      "size": 28896
+    },
+    {
+      "name": "libibus-1.0-5",
+      "version": "1.5.32-2",
+      "url": "https://deb.debian.org/debian/pool/main/i/ibus/libibus-1.0-5_1.5.32-2_amd64.deb",
+      "sha256": "68bdb1d1f4ef76b865025754c4205dd8dd1e759606f1eda1859a3aa9c0271ad0",
+      "size": 464272
+    },
+    {
+      "name": "libibus-1.0-dev",
+      "version": "1.5.32-2",
+      "url": "https://deb.debian.org/debian/pool/main/i/ibus/libibus-1.0-dev_1.5.32-2_amd64.deb",
+      "sha256": "cdfc567aa0900775b50d24056331d5c2f330dd6a3e911d2c7ef127a220cb0adc",
+      "size": 493444
+    },
+    {
+      "name": "libice-dev",
+      "version": "2:1.1.1-1",
+      "url": "https://deb.debian.org/debian/pool/main/libi/libice/libice-dev_1.1.1-1_amd64.deb",
+      "sha256": "cd4dceeb1afbb75c00df04be44ff117da8861a4c8e6ab45126baf3a78ebf1a24",
+      "size": 73772
+    },
+    {
+      "name": "libice6",
+      "version": "2:1.1.1-1",
+      "url": "https://deb.debian.org/debian/pool/main/libi/libice/libice6_1.1.1-1_amd64.deb",
+      "sha256": "38185997162793b5dfb768644badc57852879784a2f9d83c6c4e47efa5e36698",
+      "size": 65376
+    },
+    {
+      "name": "libinput-dev",
+      "version": "1.28.1-1+deb13u1",
+      "url": "https://deb.debian.org/debian/pool/main/libi/libinput/libinput-dev_1.28.1-1+deb13u1_amd64.deb",
+      "sha256": "e87786154bb9d8f3450437747b400ebe9ff51125034fa481bd11c966889edb22",
+      "size": 36260
+    },
+    {
+      "name": "libinput10",
+      "version": "1.28.1-1+deb13u1",
+      "url": "https://deb.debian.org/debian/pool/main/libi/libinput/libinput10_1.28.1-1+deb13u1_amd64.deb",
+      "sha256": "fa967b1a25d8e5c0314459f6abd9e0e7518de7d8e02a8d4e69f51642a88569d4",
+      "size": 143596
+    },
+    {
+      "name": "libluajit-5.1-2",
+      "version": "2.1.0+openresty20250117-2",
+      "url": "https://deb.debian.org/debian/pool/main/l/luajit/libluajit-5.1-2_2.1.0+openresty20250117-2_amd64.deb",
+      "sha256": "bff40b395d3036deb69e55d25ccf780e01b4e874c7738bea3e1a824be01c3f09",
+      "size": 265040
+    },
+    {
+      "name": "libluajit-5.1-common",
+      "version": "2.1.0+openresty20250117-2",
+      "url": "https://deb.debian.org/debian/pool/main/l/luajit/libluajit-5.1-common_2.1.0+openresty20250117-2_all.deb",
+      "sha256": "4e3434e50f7a5b54454217e18bd7ce0c03296d21bcb4f2e0ad8d44dbcc7b3f4f",
+      "size": 53312
+    },
+    {
+      "name": "libluajit-5.1-dev",
+      "version": "2.1.0+openresty20250117-2",
+      "url": "https://deb.debian.org/debian/pool/main/l/luajit/libluajit-5.1-dev_2.1.0+openresty20250117-2_amd64.deb",
+      "sha256": "d7b02112c2edc6d32a24865a3c4b918e14788dfca67333f5918206b724c58109",
+      "size": 283692
+    },
+    {
+      "name": "libmount-dev",
+      "version": "2.41.5-0+deb13u1",
+      "url": "https://deb.debian.org/debian/pool/main/u/util-linux/libmount-dev_2.41.5-0+deb13u1_amd64.deb",
+      "sha256": "2bef03b918e927648c6552143e17e82aa7ed2a4ce180fabd07a7d1cac7ff8686",
+      "size": 30740
+    },
+    {
+      "name": "libmount1",
+      "version": "2.41.5-0+deb13u1",
+      "url": "https://deb.debian.org/debian/pool/main/u/util-linux/libmount1_2.41.5-0+deb13u1_amd64.deb",
+      "sha256": "6d00f45f2e80e078e906e3eedecd3ba6913e39fef49bff361ee583f17f00ec05",
+      "size": 210408
+    },
+    {
+      "name": "libmtdev-dev",
+      "version": "1.1.7-1",
+      "url": "https://deb.debian.org/debian/pool/main/m/mtdev/libmtdev-dev_1.1.7-1_amd64.deb",
+      "sha256": "cdf2ce0314d5eb2e4f10165063fac0293111a55d1a545d9d28b3c79d017e8cfa",
+      "size": 23268
+    },
+    {
+      "name": "libmtdev1t64",
+      "version": "1.1.7-1",
+      "url": "https://deb.debian.org/debian/pool/main/m/mtdev/libmtdev1t64_1.1.7-1_amd64.deb",
+      "sha256": "736089af4684b6fe2fc824cb118c82a9722d6a31ad45f845998debe37714cbe5",
+      "size": 22556
+    },
+    {
+      "name": "libpciaccess-dev",
+      "version": "0.17-3+b3",
+      "url": "https://deb.debian.org/debian/pool/main/libp/libpciaccess/libpciaccess-dev_0.17-3+b3_amd64.deb",
+      "sha256": "dfaa687d4ccb943f5b222261a11a1678992bc499abe472d539aa59c4787a0c33",
+      "size": 55448
+    },
+    {
+      "name": "libpciaccess0",
+      "version": "0.17-3+b3",
+      "url": "https://deb.debian.org/debian/pool/main/libp/libpciaccess/libpciaccess0_0.17-3+b3_amd64.deb",
+      "sha256": "d9a0091071635a84e837051e4813005ac445071731becea28fba4d9806df5252",
+      "size": 51920
+    },
+    {
+      "name": "libpixman-1-0",
+      "version": "0.44.0-3",
+      "url": "https://deb.debian.org/debian/pool/main/p/pixman/libpixman-1-0_0.44.0-3_amd64.deb",
+      "sha256": "3862c87596f6b4b60fc916395fd69aa10af28a875a8e5c081a8cf30ddd120bd6",
+      "size": 247888
+    },
+    {
+      "name": "libpixman-1-dev",
+      "version": "0.44.0-3",
+      "url": "https://deb.debian.org/debian/pool/main/p/pixman/libpixman-1-dev_0.44.0-3_amd64.deb",
+      "sha256": "091478a78864d25257788473a36b9545ae2e0bc3f621bad3c229090b54b67e1e",
+      "size": 11380
+    },
+    {
+      "name": "libpulse-dev",
+      "version": "17.0+dfsg1-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/p/pulseaudio/libpulse-dev_17.0+dfsg1-2+b1_amd64.deb",
+      "sha256": "bcbd91aae55d1794f8fe8b1e766ec810173a6415b2165642bf756858e20ab7c4",
+      "size": 90596
+    },
+    {
+      "name": "libpulse-mainloop-glib0",
+      "version": "17.0+dfsg1-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/p/pulseaudio/libpulse-mainloop-glib0_17.0+dfsg1-2+b1_amd64.deb",
+      "sha256": "c7203de1ed95fbbecfeefafbd957db2db24be9b56984f0ecc4d6e382bd325c9f",
+      "size": 28396
+    },
+    {
+      "name": "libpulse0",
+      "version": "17.0+dfsg1-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/p/pulseaudio/libpulse0_17.0+dfsg1-2+b1_amd64.deb",
+      "sha256": "786aca79119cb249562708fd24dcdf817604cfe75bbfcb8cda3464042e17f40e",
+      "size": 275632
+    },
+    {
+      "name": "libsamplerate0",
+      "version": "0.2.2-4+b2",
+      "url": "https://deb.debian.org/debian/pool/main/libs/libsamplerate/libsamplerate0_0.2.2-4+b2_amd64.deb",
+      "sha256": "2665417fa996c1e249dbaa65c32305ac666e5ae865fad0f109b629935ec0bd18",
+      "size": 950084
+    },
+    {
+      "name": "libsamplerate0-dev",
+      "version": "0.2.2-4+b2",
+      "url": "https://deb.debian.org/debian/pool/main/libs/libsamplerate/libsamplerate0-dev_0.2.2-4+b2_amd64.deb",
+      "sha256": "04ea390f4e862561ab0383759c71e00612d9110e601891aee7ec107d9bae482a",
+      "size": 62936
+    },
+    {
+      "name": "libsdl2-2.0-0",
+      "version": "2.32.4+dfsg-1",
+      "url": "https://deb.debian.org/debian/pool/main/libs/libsdl2/libsdl2-2.0-0_2.32.4+dfsg-1_amd64.deb",
+      "sha256": "c61af1033d79fa6a393c49fac987165876de8ff27ebbd6a36cf19f5fc84d7a7a",
+      "size": 669048
+    },
+    {
+      "name": "libsdl2-dev",
+      "version": "2.32.4+dfsg-1",
+      "url": "https://deb.debian.org/debian/pool/main/libs/libsdl2/libsdl2-dev_2.32.4+dfsg-1_amd64.deb",
+      "sha256": "277dc6373473df2079ed44ac8661575b97b39fa263bfa424b0324c1501d21413",
+      "size": 1099832
+    },
+    {
+      "name": "libseat-dev",
+      "version": "0.9.1-1",
+      "url": "https://deb.debian.org/debian/pool/main/s/seatd/libseat-dev_0.9.1-1_amd64.deb",
+      "sha256": "fa8a9fb6660529e731e7a6d4a39d2a616e21603e93db0684ca215f0621b4b51d",
+      "size": 6588
+    },
+    {
+      "name": "libseat1",
+      "version": "0.9.1-1",
+      "url": "https://deb.debian.org/debian/pool/main/s/seatd/libseat1_0.9.1-1_amd64.deb",
+      "sha256": "20c08d9460b87f98f36ffe200ef9ac074c3ca23961cb5fd47399f20946f5b185",
+      "size": 28036
+    },
+    {
+      "name": "libselinux1",
+      "version": "3.8.1-1",
+      "url": "https://deb.debian.org/debian/pool/main/libs/libselinux/libselinux1_3.8.1-1_amd64.deb",
+      "sha256": "68bb8d32bd8d6d7d2f5952a169db03d1484b46ae1e52abccdec42a19dccea5d5",
+      "size": 84680
+    },
+    {
+      "name": "libselinux1-dev",
+      "version": "3.8.1-1",
+      "url": "https://deb.debian.org/debian/pool/main/libs/libselinux/libselinux1-dev_3.8.1-1_amd64.deb",
+      "sha256": "0107595c65dd5cfe7ce3643d400e7b2be2c2528bcd110ad5af8605711a858921",
+      "size": 169104
+    },
+    {
+      "name": "libsepol-dev",
+      "version": "3.8.1-1",
+      "url": "https://deb.debian.org/debian/pool/main/libs/libsepol/libsepol-dev_3.8.1-1_amd64.deb",
+      "sha256": "c085881d0546f6d539909f5710d7a3243aeb24338f6dc455b0ef6199f45bd753",
+      "size": 372908
+    },
+    {
+      "name": "libsepol2",
+      "version": "3.8.1-1",
+      "url": "https://deb.debian.org/debian/pool/main/libs/libsepol/libsepol2_3.8.1-1_amd64.deb",
+      "sha256": "3595d2d3a6d24695e7953f4f00cdfe6974c9242d9a8dfee8998e77fbf7b2ba09",
+      "size": 295588
+    },
+    {
+      "name": "libsm-dev",
+      "version": "2:1.2.6-1",
+      "url": "https://deb.debian.org/debian/pool/main/libs/libsm/libsm-dev_1.2.6-1_amd64.deb",
+      "sha256": "22c83f0579dac10ff4583c31d0997097cfb4bc3ea8682eb75dafe35ae8251aea",
+      "size": 39704
+    },
+    {
+      "name": "libsm6",
+      "version": "2:1.2.6-1",
+      "url": "https://deb.debian.org/debian/pool/main/libs/libsm/libsm6_1.2.6-1_amd64.deb",
+      "sha256": "03038b3002e6f44322554e335d60d8ff87acfcf2e21c904b6866610a9913ee00",
+      "size": 37264
+    },
+    {
+      "name": "libsndio-dev",
+      "version": "1.10.0-0.1",
+      "url": "https://deb.debian.org/debian/pool/main/s/sndio/libsndio-dev_1.10.0-0.1_amd64.deb",
+      "sha256": "df8c30f4b63f53a7507740c89e7eada80df05a434d5090bc5bd9a9776ab08925",
+      "size": 25104
+    },
+    {
+      "name": "libsndio7.0",
+      "version": "1.10.0-0.1",
+      "url": "https://deb.debian.org/debian/pool/main/s/sndio/libsndio7.0_1.10.0-0.1_amd64.deb",
+      "sha256": "4ddb8b7c9cafbea65b65727dbba207e3a33c08457ef6c179b23296cb9d5b52dc",
+      "size": 27612
+    },
+    {
+      "name": "libsysprof-capture-4-dev",
+      "version": "48.0-2",
+      "url": "https://deb.debian.org/debian/pool/main/s/sysprof/libsysprof-capture-4-dev_48.0-2_amd64.deb",
+      "sha256": "3cb76e124187700f5977a0acb914b3f82b2bd28105fce6f1cf2a34497b234af2",
+      "size": 49864
+    },
+    {
+      "name": "libsystemd-dev",
+      "version": "257.13-1~deb13u1",
+      "url": "https://deb.debian.org/debian/pool/main/s/systemd/libsystemd-dev_257.13-1~deb13u1_amd64.deb",
+      "sha256": "4db2d02ce32dfd9f2994a565a51c640b8e7a96a2e2b277484f9a2de7c0cd63e4",
+      "size": 1358540
+    },
+    {
+      "name": "libsystemd0",
+      "version": "257.13-1~deb13u1",
+      "url": "https://deb.debian.org/debian/pool/main/s/systemd/libsystemd0_257.13-1~deb13u1_amd64.deb",
+      "sha256": "ab0d4127b5e46e6f8c015a1db15a62ba9ae274cdefa150083adf90ada0600ea1",
+      "size": 454648
+    },
+    {
+      "name": "libudev-dev",
+      "version": "257.13-1~deb13u1",
+      "url": "https://deb.debian.org/debian/pool/main/s/systemd/libudev-dev_257.13-1~deb13u1_amd64.deb",
+      "sha256": "73c3ed98a435ec420b327ef267d89ece81bf23c2c19391265bb4f261cbf5d558",
+      "size": 75256
+    },
+    {
+      "name": "libudev1",
+      "version": "257.13-1~deb13u1",
+      "url": "https://deb.debian.org/debian/pool/main/s/systemd/libudev1_257.13-1~deb13u1_amd64.deb",
+      "sha256": "5d41c284f5a93b05bc7d648b61a02dd2bb9ff05b2261ad1a8b7d96044a0cfa88",
+      "size": 152300
+    },
+    {
+      "name": "libuuid1",
+      "version": "2.41.5-0+deb13u1",
+      "url": "https://deb.debian.org/debian/pool/main/u/util-linux/libuuid1_2.41.5-0+deb13u1_amd64.deb",
+      "sha256": "c1bf4c4c3ff48c57fabf93307dfb56996b60cfa33927afc4158b5db36fb2721e",
+      "size": 37848
+    },
+    {
+      "name": "libvulkan-dev",
+      "version": "1.4.309.0-1",
+      "url": "https://deb.debian.org/debian/pool/main/v/vulkan-loader/libvulkan-dev_1.4.309.0-1_amd64.deb",
+      "sha256": "8d329d465e16168afff58b1bd0dd6db46aac2cc3f56054a481b25a04e90b345a",
+      "size": 1556388
+    },
+    {
+      "name": "libvulkan1",
+      "version": "1.4.309.0-1",
+      "url": "https://deb.debian.org/debian/pool/main/v/vulkan-loader/libvulkan1_1.4.309.0-1_amd64.deb",
+      "sha256": "f47da79cd140264fe21cceb08bc87a71bc7fec05819e4a421f3f518d21101a37",
+      "size": 130128
+    },
+    {
+      "name": "libwacom-dev",
+      "version": "2.14.0-1",
+      "url": "https://deb.debian.org/debian/pool/main/libw/libwacom/libwacom-dev_2.14.0-1_amd64.deb",
+      "sha256": "19d2f8d2aa6b7eae42397cdd64f19ccd5de6c08c7681bd559624c3067c5f3358",
+      "size": 10668
+    },
+    {
+      "name": "libwacom9",
+      "version": "2.14.0-1",
+      "url": "https://deb.debian.org/debian/pool/main/libw/libwacom/libwacom9_2.14.0-1_amd64.deb",
+      "sha256": "884cb03fe12ffb871f9a199c13d1a455c5abb30b4619c58babb3940755b7b3c8",
+      "size": 25324
+    },
+    {
+      "name": "libwayland-bin",
+      "version": "1.23.1-3",
+      "url": "https://deb.debian.org/debian/pool/main/w/wayland/libwayland-bin_1.23.1-3_amd64.deb",
+      "sha256": "9360776a0e973ae3cfb601aa6baa72b855f69109532ec06d5acb727ccc4e003b",
+      "size": 21748
+    },
+    {
+      "name": "libwayland-dev",
+      "version": "1.23.1-3",
+      "url": "https://deb.debian.org/debian/pool/main/w/wayland/libwayland-dev_1.23.1-3_amd64.deb",
+      "sha256": "66055b7df9a6c4b15fe0b52a42a76680bb4d0f4d1083800e7cd7ba26e59e68ed",
+      "size": 73892
+    },
+    {
+      "name": "libx11-dev",
+      "version": "2:1.8.12-1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libx11/libx11-dev_1.8.12-1_amd64.deb",
+      "sha256": "530de60c9c6dadd997ae7d74eca2a41b25e849373a5ad5dcdb619aa05713d6e0",
+      "size": 894476
+    },
+    {
+      "name": "libxau-dev",
+      "version": "1:1.0.11-1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxau/libxau-dev_1.0.11-1_amd64.deb",
+      "sha256": "1e29410af794a3d3790aab9fa0c1b0ec9324697502e982fce4dcdd4610ce3e8a",
+      "size": 23580
+    },
+    {
+      "name": "libxau6",
+      "version": "1:1.0.11-1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxau/libxau6_1.0.11-1_amd64.deb",
+      "sha256": "689a9f0e0ba3e2c65431f864871e303ee904de69dd28abfc462663fae030227f",
+      "size": 20392
+    },
+    {
+      "name": "libxcb-composite0",
+      "version": "1.17.0-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcb/libxcb-composite0_1.17.0-2+b1_amd64.deb",
+      "sha256": "5e9eb63ce6ae1fb282059510078f2df88c3780bfea37ac2dac5c374250cb4789",
+      "size": 104820
+    },
+    {
+      "name": "libxcb-composite0-dev",
+      "version": "1.17.0-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcb/libxcb-composite0-dev_1.17.0-2+b1_amd64.deb",
+      "sha256": "2073bed3f2e2f8d7876217286a364dc58b3b55f6f63ab71847a32851f9959099",
+      "size": 106204
+    },
+    {
+      "name": "libxcb-dri3-0",
+      "version": "1.17.0-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcb/libxcb-dri3-0_1.17.0-2+b1_amd64.deb",
+      "sha256": "f446d42fb5fcebbb3e347368ba83616769fdb271d85b2f49048e337f3163d267",
+      "size": 106892
+    },
+    {
+      "name": "libxcb-dri3-dev",
+      "version": "1.17.0-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcb/libxcb-dri3-dev_1.17.0-2+b1_amd64.deb",
+      "sha256": "08069d76b5d51e80ff24b7a4b20f7136a601b0842be6570f1b582c592e90c03b",
+      "size": 108160
+    },
+    {
+      "name": "libxcb-errors-dev",
+      "version": "1.0.1-4",
+      "url": "https://deb.debian.org/debian/pool/main/x/xcb-util-errors/libxcb-errors-dev_1.0.1-4_amd64.deb",
+      "sha256": "e97fa2846ccdac31af48d824c4db2cfae86fe05500951575e6ef7436f074ed1e",
+      "size": 18204
+    },
+    {
+      "name": "libxcb-errors0",
+      "version": "1.0.1-4",
+      "url": "https://deb.debian.org/debian/pool/main/x/xcb-util-errors/libxcb-errors0_1.0.1-4_amd64.deb",
+      "sha256": "615988141767a0794767ee9287bcd65e0f9b6823826cfb2b5c87248591fec086",
+      "size": 17292
+    },
+    {
+      "name": "libxcb-ewmh-dev",
+      "version": "0.4.2-1",
+      "url": "https://deb.debian.org/debian/pool/main/x/xcb-util-wm/libxcb-ewmh-dev_0.4.2-1_amd64.deb",
+      "sha256": "521ef7920e45f7e54d1c3e714e276630e70de7dbcee949d2c65d17846d382433",
+      "size": 39664
+    },
+    {
+      "name": "libxcb-ewmh2",
+      "version": "0.4.2-1",
+      "url": "https://deb.debian.org/debian/pool/main/x/xcb-util-wm/libxcb-ewmh2_0.4.2-1_amd64.deb",
+      "sha256": "9dda3db4efb484c7047f0629c14aba9ab0dbe8bde7461e1ed6c90525cfbbc0d4",
+      "size": 32764
+    },
+    {
+      "name": "libxcb-icccm4",
+      "version": "0.4.2-1",
+      "url": "https://deb.debian.org/debian/pool/main/x/xcb-util-wm/libxcb-icccm4_0.4.2-1_amd64.deb",
+      "sha256": "28f04c7fa76939bbc03fbaa1191dc58200c0c894d48ac6105a7039ba4d223b4a",
+      "size": 27460
+    },
+    {
+      "name": "libxcb-icccm4-dev",
+      "version": "0.4.2-1",
+      "url": "https://deb.debian.org/debian/pool/main/x/xcb-util-wm/libxcb-icccm4-dev_0.4.2-1_amd64.deb",
+      "sha256": "e6aa6a5e7b1679502b2820c0e028b2a4ab603913ec0a1692d363bb257f2ca486",
+      "size": 28784
+    },
+    {
+      "name": "libxcb-present-dev",
+      "version": "1.17.0-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcb/libxcb-present-dev_1.17.0-2+b1_amd64.deb",
+      "sha256": "46cc01f1e4e26692c7f532d74413d8e79dc7c9644dac6ef4b64d66f55d3a789a",
+      "size": 107392
+    },
+    {
+      "name": "libxcb-present0",
+      "version": "1.17.0-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcb/libxcb-present0_1.17.0-2+b1_amd64.deb",
+      "sha256": "db95ea4630c55bd7f3281cb60ccf75b1627ef2f4399e1939f8f6161e584a92fb",
+      "size": 105612
+    },
+    {
+      "name": "libxcb-randr0",
+      "version": "1.17.0-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcb/libxcb-randr0_1.17.0-2+b1_amd64.deb",
+      "sha256": "f5d9fe5fdf797918f81f0abf6cfd4270bd54659540cddb4da709ab7154523214",
+      "size": 116736
+    },
+    {
+      "name": "libxcb-randr0-dev",
+      "version": "1.17.0-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcb/libxcb-randr0-dev_1.17.0-2+b1_amd64.deb",
+      "sha256": "5f2e27d6d79c82689e652f60a09f52022196242292abc15e4e3a0ef55c429b15",
+      "size": 120684
+    },
+    {
+      "name": "libxcb-render-util0",
+      "version": "0.3.10-1",
+      "url": "https://deb.debian.org/debian/pool/main/x/xcb-util-renderutil/libxcb-render-util0_0.3.10-1_amd64.deb",
+      "sha256": "9bdd6247e45cea5047e4da883dabf168366474fb1b00a37bb194359ca1f975ab",
+      "size": 18400
+    },
+    {
+      "name": "libxcb-render-util0-dev",
+      "version": "0.3.10-1",
+      "url": "https://deb.debian.org/debian/pool/main/x/xcb-util-renderutil/libxcb-render-util0-dev_0.3.10-1_amd64.deb",
+      "sha256": "f1d6f68be34c193cc6bc730d2501d8def8d4227a5cabd03d9329df8c4708fd6a",
+      "size": 17504
+    },
+    {
+      "name": "libxcb-render0",
+      "version": "1.17.0-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcb/libxcb-render0_1.17.0-2+b1_amd64.deb",
+      "sha256": "7f6e36978e0f70a590fbad4042a692c70b50ca7cbcdc53fa7e9d9ab87933acc6",
+      "size": 115100
+    },
+    {
+      "name": "libxcb-render0-dev",
+      "version": "1.17.0-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcb/libxcb-render0-dev_1.17.0-2+b1_amd64.deb",
+      "sha256": "cf76ecebf0dc0adc5f24bcd024e6eda69afe0c89fd38953c5ad363416fe03add",
+      "size": 118472
+    },
+    {
+      "name": "libxcb-res0",
+      "version": "1.17.0-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcb/libxcb-res0_1.17.0-2+b1_amd64.deb",
+      "sha256": "028fed79fb32327b42e51e79ce39be2e3bc827eb1b4b96015477425a11d3cde0",
+      "size": 106184
+    },
+    {
+      "name": "libxcb-res0-dev",
+      "version": "1.17.0-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcb/libxcb-res0-dev_1.17.0-2+b1_amd64.deb",
+      "sha256": "b3d1b9fbeec5fcadff55e197413bd4c37623d262c0f160c0dedd0573d2d0e57b",
+      "size": 107124
+    },
+    {
+      "name": "libxcb-shape0",
+      "version": "1.17.0-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcb/libxcb-shape0_1.17.0-2+b1_amd64.deb",
+      "sha256": "eb94a643d66714929053e78ff8f38a90ce8af4ed854e3cbca0b14f8bbccc7bfc",
+      "size": 105624
+    },
+    {
+      "name": "libxcb-shape0-dev",
+      "version": "1.17.0-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcb/libxcb-shape0-dev_1.17.0-2+b1_amd64.deb",
+      "sha256": "28e12725fa7fa8905199a21fa227ee068332c1259f1c6e8371dff7d917b8ad96",
+      "size": 106956
+    },
+    {
+      "name": "libxcb-sync-dev",
+      "version": "1.17.0-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcb/libxcb-sync-dev_1.17.0-2+b1_amd64.deb",
+      "sha256": "5ac93aa77d9c39145de0898c0bd19a400efce070f14fab906d506106730c2a3d",
+      "size": 110460
+    },
+    {
+      "name": "libxcb-sync1",
+      "version": "1.17.0-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcb/libxcb-sync1_1.17.0-2+b1_amd64.deb",
+      "sha256": "0ce4770ed1505be9ddc6473045e4662d062aff2f3077ee684265f01cfb543559",
+      "size": 108688
+    },
+    {
+      "name": "libxcb-util-dev",
+      "version": "0.4.1-1",
+      "url": "https://deb.debian.org/debian/pool/main/x/xcb-util/libxcb-util-dev_0.4.1-1_amd64.deb",
+      "sha256": "3d19fbd16d2e9f28ad6623ca97900ad76cde456c0105301089316c85db758a3e",
+      "size": 24884
+    },
+    {
+      "name": "libxcb-util1",
+      "version": "0.4.1-1",
+      "url": "https://deb.debian.org/debian/pool/main/x/xcb-util/libxcb-util1_0.4.1-1_amd64.deb",
+      "sha256": "c242371fdfc806aa5599290150c6008a723c9b0fdb34ac6688f1a4083682172a",
+      "size": 23520
+    },
+    {
+      "name": "libxcb-xfixes0",
+      "version": "1.17.0-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcb/libxcb-xfixes0_1.17.0-2+b1_amd64.deb",
+      "sha256": "f9c1aafc18bf9e4662e34bbaf3bb00f1f4e8c2fc1dd786fdfb6cb9cb6c64fae7",
+      "size": 109288
+    },
+    {
+      "name": "libxcb-xfixes0-dev",
+      "version": "1.17.0-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcb/libxcb-xfixes0-dev_1.17.0-2+b1_amd64.deb",
+      "sha256": "3b6ca65d5ab9c6049d4aae731f93302fefafe8dd3de601b78b9dcfb59a63f2db",
+      "size": 112056
+    },
+    {
+      "name": "libxcb-xinput-dev",
+      "version": "1.17.0-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcb/libxcb-xinput-dev_1.17.0-2+b1_amd64.deb",
+      "sha256": "7acda59e92391f7f8e604d17e72bacf9672cd50d94b386a632a7880f853096c2",
+      "size": 143476
+    },
+    {
+      "name": "libxcb-xinput0",
+      "version": "1.17.0-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcb/libxcb-xinput0_1.17.0-2+b1_amd64.deb",
+      "sha256": "10f588b006a5a1a527c9971f4e9712d9aac12b98acd5d65c3f7b53a10ac36198",
+      "size": 130384
+    },
+    {
+      "name": "libxcb1",
+      "version": "1.17.0-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcb/libxcb1_1.17.0-2+b1_amd64.deb",
+      "sha256": "5c222a72d11b866447da31693254f738430726e3e065a384e82687b2fd2f978b",
+      "size": 144340
+    },
+    {
+      "name": "libxcb1-dev",
+      "version": "1.17.0-2+b1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcb/libxcb1-dev_1.17.0-2+b1_amd64.deb",
+      "sha256": "669949f8d5dff76616630d839b9047b76af553c62c376458094bd759f8fdb903",
+      "size": 181152
+    },
+    {
+      "name": "libxcomposite-dev",
+      "version": "1:0.4.6-1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcomposite/libxcomposite-dev_0.4.6-1_amd64.deb",
+      "sha256": "2bc810b18f2465d515032db70fbac77c2bb604ced67962960e7ff2f935cc9112",
+      "size": 20064
+    },
+    {
+      "name": "libxcomposite1",
+      "version": "1:0.4.6-1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcomposite/libxcomposite1_0.4.6-1_amd64.deb",
+      "sha256": "20e3c1d9b2135f0c8c4246a9fd26a51a57d5850c3b36ecc173c45d6be7328af3",
+      "size": 16348
+    },
+    {
+      "name": "libxcursor-dev",
+      "version": "1:1.2.3-1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcursor/libxcursor-dev_1.2.3-1_amd64.deb",
+      "sha256": "57f2fc575496edc9f3dd286423494499d231a8b1cdb417bb8401f6b66b584a26",
+      "size": 51164
+    },
+    {
+      "name": "libxcursor1",
+      "version": "1:1.2.3-1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxcursor/libxcursor1_1.2.3-1_amd64.deb",
+      "sha256": "bb0dbf58b804faaa74ed9efdae61c4b14bb0b4855680798f63e5ca6a4954976b",
+      "size": 39732
+    },
+    {
+      "name": "libxdamage-dev",
+      "version": "1:1.1.6-1+b2",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxdamage/libxdamage-dev_1.1.6-1+b2_amd64.deb",
+      "sha256": "f3db43ea4b375f03fda800f8eac8aef670e873fba091e4364ad1bc682a0fc2bc",
+      "size": 15324
+    },
+    {
+      "name": "libxdamage1",
+      "version": "1:1.1.6-1+b2",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxdamage/libxdamage1_1.1.6-1+b2_amd64.deb",
+      "sha256": "e51e43f23f3befbc1f9408271f4df6773d37caece9ce7e1f38abade382f7fbf7",
+      "size": 15460
+    },
+    {
+      "name": "libxdmcp-dev",
+      "version": "1:1.1.5-1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxdmcp/libxdmcp-dev_1.1.5-1_amd64.deb",
+      "sha256": "bc845297d20cf63388c6b248d9ee169a3890347cb1c29bcd9f771684bf17b528",
+      "size": 44336
+    },
+    {
+      "name": "libxdmcp6",
+      "version": "1:1.1.5-1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxdmcp/libxdmcp6_1.1.5-1_amd64.deb",
+      "sha256": "0740dc760916b2008b45417a42a8fd7dd5de370fb57d31373f15034cda8acf0b",
+      "size": 27756
+    },
+    {
+      "name": "libxext-dev",
+      "version": "2:1.3.4-1+b3",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxext/libxext-dev_1.3.4-1+b3_amd64.deb",
+      "sha256": "e6bd898976d762a6955ec465870e7f12a3b149f4c5b231b0687e293ed5726532",
+      "size": 104436
+    },
+    {
+      "name": "libxext6",
+      "version": "2:1.3.4-1+b3",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxext/libxext6_1.3.4-1+b3_amd64.deb",
+      "sha256": "fc618ec40465e5ce48622606299cb47833efc3fb235ba15543b81f850722f443",
+      "size": 50448
+    },
+    {
+      "name": "libxfixes-dev",
+      "version": "1:6.0.0-2+b4",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxfixes/libxfixes-dev_6.0.0-2+b4_amd64.deb",
+      "sha256": "1070e0721765992c5355a9585f6eae9e0d11437a7d2b4a2c28123e6e5b0c0b2f",
+      "size": 22356
+    },
+    {
+      "name": "libxfixes3",
+      "version": "1:6.0.0-2+b4",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxfixes/libxfixes3_6.0.0-2+b4_amd64.deb",
+      "sha256": "3fdd95d86d8e9d63e11f52070935c8f9f912c36aa3b17338d969f7685f3ed4fb",
+      "size": 20228
+    },
+    {
+      "name": "libxi-dev",
+      "version": "2:1.8.2-1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxi/libxi-dev_1.8.2-1_amd64.deb",
+      "sha256": "be3ca6202327858845aa0a8d70374b08dae5c89250ad8997256e02b2833501d3",
+      "size": 240828
+    },
+    {
+      "name": "libxi6",
+      "version": "2:1.8.2-1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxi/libxi6_1.8.2-1_amd64.deb",
+      "sha256": "093d0903f35bb7a9f6815180ee040e6951fecf9b66c128cd72f064710210606e",
+      "size": 78896
+    },
+    {
+      "name": "libxinerama-dev",
+      "version": "2:1.1.4-3+b4",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxinerama/libxinerama-dev_1.1.4-3+b4_amd64.deb",
+      "sha256": "711206b2a759461fe27b86099c4b593cb80c1f558fa64dd92239706f8c2a43b3",
+      "size": 18364
+    },
+    {
+      "name": "libxinerama1",
+      "version": "2:1.1.4-3+b4",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxinerama/libxinerama1_1.1.4-3+b4_amd64.deb",
+      "sha256": "49d4e1628960407b8be2880a42428e7629801715a8a5697d42c0b0ca0a479911",
+      "size": 15992
+    },
+    {
+      "name": "libxkbcommon-dev",
+      "version": "1.7.0-2",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxkbcommon/libxkbcommon-dev_1.7.0-2_amd64.deb",
+      "sha256": "b62327152ae59bec442c0d7ae893520a3a3a2381100c83332e4a3497157ce5ec",
+      "size": 53644
+    },
+    {
+      "name": "libxmu-dev",
+      "version": "2:1.1.3-3+b4",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxmu/libxmu-dev_1.1.3-3+b4_amd64.deb",
+      "sha256": "ef1b5fa89d7968b7948e095ede4e45ba69a72d3e749c517ce7458b1548b79366",
+      "size": 65308
+    },
+    {
+      "name": "libxmu-headers",
+      "version": "2:1.1.3-3",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxmu/libxmu-headers_1.1.3-3_all.deb",
+      "sha256": "3d568fcc8717a407ca994ed26d683e897d26194fb35ce0a8831e507903b99e19",
+      "size": 68460
+    },
+    {
+      "name": "libxmu6",
+      "version": "2:1.1.3-3+b4",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxmu/libxmu6_1.1.3-3+b4_amd64.deb",
+      "sha256": "cfdf1dee8f9abd87f503222fc8b04a30ce820fb1255247b7c3a28ff9c244431a",
+      "size": 58972
+    },
+    {
+      "name": "libxrandr-dev",
+      "version": "2:1.5.4-1+b3",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxrandr/libxrandr-dev_1.5.4-1+b3_amd64.deb",
+      "sha256": "e408e4f8c77135725e9055d445635587225839a929d348c04b85adfa84bdefb1",
+      "size": 44396
+    },
+    {
+      "name": "libxrandr2",
+      "version": "2:1.5.4-1+b3",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxrandr/libxrandr2_1.5.4-1+b3_amd64.deb",
+      "sha256": "11e3490de93a8bbee3daba719cb8e1325a26fb3c125525c34bdcb7deb05eb9b2",
+      "size": 36312
+    },
+    {
+      "name": "libxrender-dev",
+      "version": "1:0.9.12-1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxrender/libxrender-dev_0.9.12-1_amd64.deb",
+      "sha256": "55121741c44e03cbeb03dabb5721ded1341c987f055d7cae991de7431c9edfa6",
+      "size": 38956
+    },
+    {
+      "name": "libxrender1",
+      "version": "1:0.9.12-1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxrender/libxrender1_0.9.12-1_amd64.deb",
+      "sha256": "9d042dfd5e613be1e02e6ddd0c5c4adef19c5eb08f6db838c2eba672c496dca4",
+      "size": 27896
+    },
+    {
+      "name": "libxres-dev",
+      "version": "2:1.2.1-1+b2",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxres/libxres-dev_1.2.1-1+b2_amd64.deb",
+      "sha256": "3f484761a68f38cfbcd2ec428bb990f7142981a2280777f37e5f60da0e0d3315",
+      "size": 19800
+    },
+    {
+      "name": "libxres1",
+      "version": "2:1.2.1-1+b2",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxres/libxres1_1.2.1-1+b2_amd64.deb",
+      "sha256": "995b467fa9d0d47b4bff46cafd11ac7067f36a0e30cfaa121e73df7f8af93041",
+      "size": 17492
+    },
+    {
+      "name": "libxss-dev",
+      "version": "1:1.2.3-1+b3",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxss/libxss-dev_1.2.3-1+b3_amd64.deb",
+      "sha256": "81d21bf2c9afff27392faba0d52d4b0dec7246f6146eaa05e7c461be620b21cc",
+      "size": 22676
+    },
+    {
+      "name": "libxss1",
+      "version": "1:1.2.3-1+b3",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxss/libxss1_1.2.3-1+b3_amd64.deb",
+      "sha256": "302d4a97800429fa0d67ae2e0e8e3adc1228b12d25d3d3cca6c9d24eeff40a6c",
+      "size": 16984
+    },
+    {
+      "name": "libxt-dev",
+      "version": "1:1.2.1-1.2+b2",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxt/libxt-dev_1.2.1-1.2+b2_amd64.deb",
+      "sha256": "fb67298b1a2b1ca2f5d77167deaf8f6e4c3d5a7a1476ae72d2e0a91c5c41a1a4",
+      "size": 407468
+    },
+    {
+      "name": "libxt6t64",
+      "version": "1:1.2.1-1.2+b2",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxt/libxt6t64_1.2.1-1.2+b2_amd64.deb",
+      "sha256": "a1f4557c03113681ee24863495adc244cecec95fe3ab7256ce76e87320157300",
+      "size": 188232
+    },
+    {
+      "name": "libxtst-dev",
+      "version": "2:1.2.5-1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxtst/libxtst-dev_1.2.5-1_amd64.deb",
+      "sha256": "a2e96a14e0d5eebf186bd374e9a828799055fe6a07d14d32268f4a9795d01002",
+      "size": 30024
+    },
+    {
+      "name": "libxtst6",
+      "version": "2:1.2.5-1",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxtst/libxtst6_1.2.5-1_amd64.deb",
+      "sha256": "4f254f80b8984203474745d6428e8c2de2148f19b37aa01a601dbe9ac03196eb",
+      "size": 25756
+    },
+    {
+      "name": "libxv-dev",
+      "version": "2:1.0.11-1.1+b3",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxv/libxv-dev_1.0.11-1.1+b3_amd64.deb",
+      "sha256": "b36a8025062b93eaec729337ebab4c5b7c0e37faa328d4bb699f50c4e9345781",
+      "size": 47020
+    },
+    {
+      "name": "libxv1",
+      "version": "2:1.0.11-1.1+b3",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxv/libxv1_1.0.11-1.1+b3_amd64.deb",
+      "sha256": "e19f6bdcd20c1c28fefea29f0a95c33232dd5f0d26e0079675ac8ba4af4eda07",
+      "size": 23356
+    },
+    {
+      "name": "libxxf86vm-dev",
+      "version": "1:1.1.4-1+b4",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxxf86vm/libxxf86vm-dev_1.1.4-1+b4_amd64.deb",
+      "sha256": "cba80fa53162a7c3e3e4e8ec519c2fc3b19c2b4b4d4b22641b7236caeb5edba4",
+      "size": 24068
+    },
+    {
+      "name": "libxxf86vm1",
+      "version": "1:1.1.4-1+b4",
+      "url": "https://deb.debian.org/debian/pool/main/libx/libxxf86vm/libxxf86vm1_1.1.4-1+b4_amd64.deb",
+      "sha256": "f9f8487e536293e7ecf91fe7feb14e97e02a3aa652e207c661442dce775d3b14",
+      "size": 19320
+    },
+    {
+      "name": "native-architecture",
+      "version": "0.2.6",
+      "url": "https://deb.debian.org/debian/pool/main/a/architecture-properties/native-architecture_0.2.6_all.deb",
+      "sha256": "cb065efb2dd0ad8de45ace298bdb959e4d66478ca8599312bde4fa543d8b7532",
+      "size": 2264
+    },
+    {
+      "name": "pci.ids",
+      "version": "0.0~2025.06.09-1",
+      "url": "https://deb.debian.org/debian/pool/main/p/pci.ids/pci.ids_0.0~2025.06.09-1_all.deb",
+      "sha256": "132bc7520473e53939e277cbf4512261b8d73ae244d77c277f674ecaf174598c",
+      "size": 269172
+    },
+    {
+      "name": "pkg-config",
+      "version": "1.8.1-4",
+      "url": "https://deb.debian.org/debian/pool/main/p/pkgconf/pkg-config_1.8.1-4_amd64.deb",
+      "sha256": "385209ba52e5c97808bbdc2fc4da22aea9020f96fbab6fbfb144921c4a31d400",
+      "size": 13968
+    },
+    {
+      "name": "pnp.ids",
+      "version": "0.394-1",
+      "url": "https://deb.debian.org/debian/pool/main/h/hwdata/pnp.ids_0.394-1_all.deb",
+      "sha256": "f9960e334c922a9e032986566318577da45e94960a6ea57bf88ae4e6e0badaee",
+      "size": 27292
+    },
+    {
+      "name": "seatd",
+      "version": "0.9.1-1",
+      "url": "https://deb.debian.org/debian/pool/main/s/seatd/seatd_0.9.1-1_amd64.deb",
+      "sha256": "f2f36d7660ca281c1e2603c21f6f87acc0990149017a49777d222cdca9a4a3c6",
+      "size": 27312
+    },
+    {
+      "name": "sgml-base",
+      "version": "1.31+nmu1",
+      "url": "https://deb.debian.org/debian/pool/main/s/sgml-base/sgml-base_1.31+nmu1_all.deb",
+      "sha256": "a355b832d9f0f4dc9eca1a661080db5dc118e6c435f107a5c4dd201d7af59ba8",
+      "size": 10868
+    },
+    {
+      "name": "usb.ids",
+      "version": "2025.07.26-1",
+      "url": "https://deb.debian.org/debian/pool/main/u/usb.ids/usb.ids_2025.07.26-1_all.deb",
+      "sha256": "4b440f0f5d73d3412dad08b0d810b941e75fd4ca9a46f2a3fbd4b5ec852d5041",
+      "size": 209204
+    },
+    {
+      "name": "uuid-dev",
+      "version": "2.41.5-0+deb13u1",
+      "url": "https://deb.debian.org/debian/pool/main/u/util-linux/uuid-dev_2.41.5-0+deb13u1_amd64.deb",
+      "sha256": "cb7d7db20e5d91193c2c6629a3f4aa917e3bc558c72b7f2db7203bcfa9a3ba1b",
+      "size": 49068
+    },
+    {
+      "name": "wayland-protocols",
+      "version": "1.44-1",
+      "url": "https://deb.debian.org/debian/pool/main/w/wayland-protocols/wayland-protocols_1.44-1_all.deb",
+      "sha256": "3bbe8044f92fbf6822039064764d1d4b3a1dbb931083ab40ea189c9fd1d7a04f",
+      "size": 125132
+    },
+    {
+      "name": "x11proto-dev",
+      "version": "2024.1-1",
+      "url": "https://deb.debian.org/debian/pool/main/x/xorgproto/x11proto-dev_2024.1-1_all.deb",
+      "sha256": "6a6764500eb8171d3cd6d793c09902974f8ea87bd20c68d9eac5f1eeaf3fc407",
+      "size": 602628
+    },
+    {
+      "name": "x11proto-scrnsaver-dev",
+      "version": "2024.1-1",
+      "url": "https://deb.debian.org/debian/pool/main/x/xorgproto/x11proto-scrnsaver-dev_2024.1-1_all.deb",
+      "sha256": "a1eeb8c637bf817d69ddff48ec74f55dd571a0a486054806845db53b54f39fce",
+      "size": 3320
+    },
+    {
+      "name": "x11proto-video-dev",
+      "version": "2024.1-1",
+      "url": "https://deb.debian.org/debian/pool/main/x/xorgproto/x11proto-video-dev_2024.1-1_all.deb",
+      "sha256": "ce3006a6f1177c9864eed76c5dcff4914ee7faaa444dacfc9f02167fc243fea8",
+      "size": 3316
+    },
+    {
+      "name": "x11proto-xf86vidmode-dev",
+      "version": "2024.1-1",
+      "url": "https://deb.debian.org/debian/pool/main/x/xorgproto/x11proto-xf86vidmode-dev_2024.1-1_all.deb",
+      "sha256": "ef611c147e699a3db090d811b649442d2b08cb4274f5e0d407fff8ded4d0e28d",
+      "size": 3328
+    },
+    {
+      "name": "xml-core",
+      "version": "0.19",
+      "url": "https://deb.debian.org/debian/pool/main/x/xml-core/xml-core_0.19_all.deb",
+      "sha256": "079ec5e10b1c49aa23a6c53ae8e55e33aec121d1c87a131d2172bdabc3f4030e",
+      "size": 20088
+    },
+    {
+      "name": "xorg-sgml-doctools",
+      "version": "1:1.11-1.1",
+      "url": "https://deb.debian.org/debian/pool/main/x/xorg-sgml-doctools/xorg-sgml-doctools_1.11-1.1_all.deb",
+      "sha256": "168345058319094e475a87ace66f5fb6ae802109650ea8434d672117982b5d0a",
+      "size": 22064
+    },
+    {
+      "name": "xtrans-dev",
+      "version": "1.4.0-1",
+      "url": "https://deb.debian.org/debian/pool/main/x/xtrans/xtrans-dev_1.4.0-1_all.deb",
+      "sha256": "9ce1af9464faee0c679348dd11cdf63934c12e734a64e0903692b0cb5af38e06",
+      "size": 98740
+    },
+    {
+      "name": "xwayland",
+      "version": "2:24.1.6-1",
+      "url": "https://deb.debian.org/debian/pool/main/x/xwayland/xwayland_24.1.6-1_amd64.deb",
+      "sha256": "7e51a144e858d5be7e91d6644c2758a618e425c7222234d2e8f059e5aba6c1f5",
+      "size": 904212
+    }
+  ]
+}

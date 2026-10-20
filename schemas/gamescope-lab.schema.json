@@ -1,0 +1,553 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docksr.invalid/schemas/gamescope-lab.schema.json",
+  "title": "DockSR experimental Gamescope lab status v1",
+  "description": "R006-M1 status emitted by the trusted compositor-thread adapter. CONTRACT_TEST is reserved for state-machine unit callbacks and never proves rendering. Frame counts are observations supplied by the adapter, not hardware attestations. Control protocol v1 accepts exact ASCII ON <id>, BYPASS <id>, or STATUS <id> with at most one final LF; payload is bounded to64 bytes, IDs are positive uint64 and strictly increase across accepted commands. Mode requests apply only at the next actual safe frame boundary. frame_presented_count includes linear bypass/fallback presentations; filter_frame_presented_count counts only custom output. Cross-field arithmetic and authenticity require independent runtime validation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "document_type",
+    "experiment_id",
+    "control_protocol_version",
+    "upstream_gamescope_commit",
+    "docksr_commit",
+    "session_id",
+    "configuration_generation",
+    "requested_configuration_generation",
+    "backend_present",
+    "backend_attached",
+    "mode_requested",
+    "mode_effective",
+    "filter_selected",
+    "filter_dispatched",
+    "filter_output_presented",
+    "input_extent",
+    "output_extent",
+    "frame_seen_count",
+    "frame_processed_count",
+    "frame_presented_count",
+    "filter_frame_presented_count",
+    "last_frame_id",
+    "last_frame_generation",
+    "fallback_count",
+    "fallback_reason",
+    "last_error",
+    "control_ack_state",
+    "last_control_request_id",
+    "last_request_id",
+    "evidence_class",
+    "capture_method",
+    "environment",
+    "npu_device_detected",
+    "npu_runtime_ready",
+    "npu_inference_verified",
+    "npu_game_frames_consumed"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "document_type": {
+      "const": "docksr_gamescope_lab"
+    },
+    "experiment_id": {
+      "const": "R006-M1"
+    },
+    "control_protocol_version": {
+      "const": 1
+    },
+    "upstream_gamescope_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "docksr_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "session_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.:-]{1,128}$"
+    },
+    "configuration_generation": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "requested_configuration_generation": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "backend_present": {
+      "const": true
+    },
+    "backend_attached": {
+      "type": "boolean"
+    },
+    "mode_requested": {
+      "enum": [
+        "DOCKSR_ACTIVE",
+        "BYPASS"
+      ]
+    },
+    "mode_effective": {
+      "enum": [
+        "DOCKSR_ACTIVE",
+        "BYPASS",
+        "FALLBACK",
+        "UNAVAILABLE"
+      ]
+    },
+    "filter_selected": {
+      "type": "boolean"
+    },
+    "filter_dispatched": {
+      "type": "boolean"
+    },
+    "filter_output_presented": {
+      "type": "boolean"
+    },
+    "input_extent": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/extent"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "output_extent": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/extent"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "frame_seen_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "frame_processed_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "frame_presented_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "filter_frame_presented_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "last_frame_id": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "last_frame_generation": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "fallback_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "fallback_reason": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:-]{1,128}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "last_error": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:-]{1,128}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "control_ack_state": {
+      "enum": [
+        "NONE",
+        "PENDING",
+        "APPLIED",
+        "PRESENTED",
+        "FALLBACK",
+        "FALLBACK_PRESENTED"
+      ]
+    },
+    "last_control_request_id": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "last_request_id": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "evidence_class": {
+      "enum": [
+        "SOURCE_INSPECTED",
+        "BUILD_VERIFIED",
+        "NOT_RUN",
+        "BLOCKED",
+        "FAILED",
+        "SOFTWARE_VULKAN",
+        "VIRTUAL_WINDOW",
+        "NESTED_LIVE_GAME",
+        "PHYSICAL_GPU",
+        "CONTRACT_TEST"
+      ]
+    },
+    "capture_method": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.:-]{1,128}$"
+    },
+    "environment": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.:-]{1,128}$"
+    },
+    "npu_device_detected": {
+      "const": false
+    },
+    "npu_runtime_ready": {
+      "const": false
+    },
+    "npu_inference_verified": {
+      "const": false
+    },
+    "npu_game_frames_consumed": {
+      "const": false
+    }
+  },
+  "$defs": {
+    "extent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "width",
+        "height"
+      ],
+      "properties": {
+        "width": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "evidence_class": {
+            "enum": [
+              "SOURCE_INSPECTED",
+              "BUILD_VERIFIED",
+              "NOT_RUN",
+              "BLOCKED",
+              "FAILED"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "frame_seen_count": {
+            "const": 0
+          },
+          "frame_processed_count": {
+            "const": 0
+          },
+          "frame_presented_count": {
+            "const": 0
+          },
+          "filter_frame_presented_count": {
+            "const": 0
+          },
+          "fallback_count": {
+            "const": 0
+          },
+          "input_extent": {
+            "const": null
+          },
+          "output_extent": {
+            "const": null
+          },
+          "last_frame_id": {
+            "const": null
+          },
+          "last_frame_generation": {
+            "const": null
+          },
+          "filter_selected": {
+            "const": false
+          },
+          "filter_dispatched": {
+            "const": false
+          },
+          "filter_output_presented": {
+            "const": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "evidence_class": {
+            "const": "CONTRACT_TEST"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "environment": {
+            "const": "unit_test"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "frame_seen_count": {
+            "const": 0
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "frame_seen_count": {
+            "const": 0
+          },
+          "frame_processed_count": {
+            "const": 0
+          },
+          "frame_presented_count": {
+            "const": 0
+          },
+          "filter_frame_presented_count": {
+            "const": 0
+          },
+          "fallback_count": {
+            "const": 0
+          },
+          "input_extent": {
+            "const": null
+          },
+          "output_extent": {
+            "const": null
+          },
+          "last_frame_id": {
+            "const": null
+          },
+          "last_frame_generation": {
+            "const": null
+          },
+          "filter_selected": {
+            "const": false
+          },
+          "filter_dispatched": {
+            "const": false
+          },
+          "filter_output_presented": {
+            "const": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "frame_seen_count": {
+            "minimum": 1
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "input_extent": {
+            "$ref": "#/$defs/extent"
+          },
+          "output_extent": {
+            "$ref": "#/$defs/extent"
+          },
+          "last_frame_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 18446744073709551615
+          },
+          "last_frame_generation": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 18446744073709551615
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "filter_dispatched": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "backend_attached": {
+            "const": true
+          },
+          "filter_selected": {
+            "const": true
+          },
+          "frame_processed_count": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 18446744073709551615
+          },
+          "evidence_class": {
+            "enum": [
+              "SOFTWARE_VULKAN",
+              "VIRTUAL_WINDOW",
+              "NESTED_LIVE_GAME",
+              "PHYSICAL_GPU",
+              "CONTRACT_TEST"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "mode_effective": {
+            "const": "DOCKSR_ACTIVE"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "backend_attached": {
+            "const": true
+          },
+          "filter_selected": {
+            "const": true
+          },
+          "input_extent": {
+            "const": {
+              "width": 1280,
+              "height": 720
+            }
+          },
+          "output_extent": {
+            "const": {
+              "width": 3840,
+              "height": 2160
+            }
+          },
+          "frame_seen_count": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 18446744073709551615
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "filter_output_presented": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "mode_effective": {
+            "const": "DOCKSR_ACTIVE"
+          },
+          "filter_dispatched": {
+            "const": true
+          },
+          "filter_frame_presented_count": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 18446744073709551615
+          },
+          "frame_presented_count": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 18446744073709551615
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "mode_effective": {
+            "const": "FALLBACK"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "fallback_reason": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:-]{1,128}$"
+          },
+          "fallback_count": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 18446744073709551615
+          },
+          "filter_output_presented": {
+            "const": false
+          }
+        }
+      }
+    }
+  ]
+}

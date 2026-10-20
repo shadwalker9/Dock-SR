@@ -2,7 +2,7 @@
 
 Updated 2026-10-20. This is the implementation decision record; it does not replace private session reports.
 
-Current directive: **v1.7 R005-G0A-CLOSE, exact SESR acquisition and reference validation**. Earlier entries preserve decisions at their original stage; the appended v1.7 entry governs current scope.
+Current directive: **v1.8 DSR010 / R006-M1, Gamescope exact3× seam/live-switch experiment; bounded SESR host intake secondary**. The appended v1.8 entry governs this lab; earlier restrictions describe their original milestones.
 
 ## Reading order and authority
 
@@ -87,3 +87,16 @@ NPU backend, interop, training, Gamescope or Decky implementation is included.
   execution, integration and matched-quality whole-system cost remain critical
   acceptance gates; the date is a goal, not a measured readiness or delivery
   guarantee. This session does not relax the cost-saving MVP criterion.
+
+
+## v1.8 — DSR010 / R006-M1 (2026-10-20 America/Chicago)
+
+The owner explicitly invoked the complete v1.8 handoff and R-006, with the actual SESR attachment. Main work is a non-system pinned Gamescope experiment; model intake remains bounded and separate.
+
+- Official Gamescope `4d5b7f3c9e1b6d3ee41c5c460b835fe5e0fe71b3` exists and its current source map matches the paper. Preserve a small patch, source/dependency identity and reproducibility helper; never vendor the whole checkout or replace SteamOS Gamescope. A source build/CLI acceptance does not prove native dispatch or presented pixels.
+- Choose a **composition-only** exact1280×720→3840×2160 SDR proof. `commit_t::ShouldPreemptivelyUpscale` excludes DockSR, avoiding cached sentinel ownership across mode generations. An owned nearest reconstruction plus visible sentinel is intentionally distinct from LINEAR; it claims no learned SR/detail/quality benefit. Standard native BLIT retains color management, alpha and overlays. Unsupported input or checked allocation failure selects LINEAR with an exact reason.
+- Reuse the existing private `gamescope_private.execute`/ConCommand control on an isolated user-owned compositor socket, with a bounded queue and owner-thread application. There is no new global socket or public ABI. Commands carry strictly increasing IDs; requested, applied and backend-submitted/presented state remain distinct. Initial `-F docksr` reserves request1. Future Decky is low-rate control only, never per-frame Python/JS transport.
+- Native required Vulkan capabilities and assertions remain intact. Compatible signed distro dependencies may satisfy upstream's declared external version ranges, but must not be reported as the paper's exact submodule revision. Required source/dependency access or WSI blockers may leave runtime gates BLOCKED; do not fabricate screenshots or substitute headless success.
+- Owner-supplied SESR bytes match the independently computed expected hash/size. Graph inspection and unchanged deterministic CPU reference now pass, with known RGB-minus128 encoding. The actual graph is **2×**, so do not force it into the exact3× lab. This does not prove XDNA operator support, NPU execution, full-image tiling/quality or redistribution clearance.
+- Build, software Vulkan, virtual window, live game and physical GPU/NPU evidence remain separate. All Gamescope-lab NPU fields are false. GPU-only remains internal proof/fallback; verified NPU acceleration is still mandatory for the first usable version targeted December31,2026. Matched-quality whole-device cost remains unmeasured.
+- Reviewed source/docs/patch backups to the existing origin/main remain authorized. No release, upstream PR/new public fork, deployment, store submission, visibility change, final license selection, driver installation or model redistribution is authorized. Private reports/attachments/captures/build outputs remain outside source publication.

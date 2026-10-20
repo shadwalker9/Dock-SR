@@ -1,10 +1,45 @@
 # SESR-M7 candidate acquisition evidence
 
-Updated 2026-10-20 America/Chicago. The canonical record is [the candidate provenance manifest](../models/sesr-m7-256.provenance.json); [Gate-0 commands](gate0.md) describe validation and host execution. Current outcome: **MODEL_ACQUISITION_BLOCKED**.
+Updated 2026-10-20 UTC. The canonical record is [the candidate provenance manifest](../models/sesr-m7-256.provenance.json); [Gate-0 commands](gate0.md) describe validation and host execution. Current outcome: **MODEL_VALIDATED**, scoped to unchanged-artifact inspection and **REAL_CPU** single-tile reference inference. No physical NPU, whole-frame reconstruction, image-quality improvement or production readiness is established.
 
-The Hugging Face API, pinned model card/LICENSE and read-only Git query succeeded. Repository revision is `edbe46281e894e31da3f42aa353db1e04a50f00a`. Its selected artifact path is `onnx-models/sesr_nhwc_int8_256x256.onnx`, with publisher-advertised length **107131 bytes** and LFS SHA-256 **63d2600fa41b21c2326d1740f75486f24e0b791c490ea73a898bf64fdd429ab1**. Those are declarations, not locally measured artifact identity. A filename mentioning NHWC/INT8 is not an inspected graph signature.
+## DSR010 owner attachment — MODEL_VALIDATED (REAL_CPU)
 
-The pinned artifact URL redirects to **us.aws.cdn.hf.co**; the current proxy rejects that host's CONNECT request with HTTP 403. No artifact bytes were acquired, so actual SHA-256/size and graph signature remain null/unknown, and SESR CPU execution is NOT RUN. This is narrower than the old general Hugging Face access blocker. Signed redirect URLs are not retained in source or logs.
+The owner supplied the actual `.onnx` attachment. Existing `scripts/import_sesr.py` imported it into a new private destination, `/workspace/DockSR-model-cache/manual-sesr-010/`, outside all Git checkouts. Independently measured **107131 bytes** and SHA-256 **63d2600fa41b21c2326d1740f75486f24e0b791c490ea73a898bf64fdd429ab1** match the advertised artifact at official Hugging Face revision `edbe46281e894e31da3f42aa353db1e04a50f00a`, path `onnx-models/sesr_nhwc_int8_256x256.onnx`. This closes the prior acquisition blocker through the owner upload; no CDN retry was made. The receipt proves byte identity, rather than the owner's original retrieval route or legal clearance.
+
+The existing inspector parsed the unchanged bytes successfully:
+
+| Observed graph property | Actual value |
+| --- | --- |
+| Input | `input`: INT8 `[1,256,256,3]` |
+| Output | `output`: INT8 `[1,512,512,3]` |
+| Layout evidence | First transpose `[0,3,1,2]`, final transpose `[0,2,3,1]`: NHWC boundary tensors |
+| IR / opset / domain | IR 9; standard ONNX opset 19; empty standard domain only |
+| Nodes / initializers | 60 / 29 |
+| Operators | Add 1, Conv 9, DepthToSpace 1, DequantizeLinear 20, QuantizeLinear 20, Relu 7, Transpose 2 |
+| Quantization | Explicit INT8 I/O with Q/DQ nodes; boundary input and output scale `1.0`, zero point `0` |
+| Unsupported model features | No external data, custom domains, subgraphs, local functions, training graphs or sparse initializers observed |
+
+Preprocessing was established from the **same pinned official repository's** `onnx_runner.py`, read from an already fetched Git object and never executed. Publisher preprocessing converts OpenCV BGR pixels to RGB and subtracts `(128,128,128)`; its inference loop clips to `[-128,127]`, casts to INT8 and adds the batch dimension in the observed NHWC layout. It does **not** divide by 255. Output is centered INT8 RGB; publisher postprocessing adds 128, clips to `[0,255]`, casts to UINT8, then reverses channels for OpenCV. These operations agree with the inspected boundary Q/DQ constants. The publisher runner's general Q/DQ description is broader than its actual `run` implementation; this particular graph has unity boundary scales, so the observed implementation is consistent here.
+
+Pinned source-text SHA-256 values are `0136fcf2ffed8e953cf614ef83b4509b9dea73f5be7a1c7a96a7a11480c37828` for `onnx_runner.py` and `19a88971827e95edcd15abead29cc844c1280c1a3e64b678257d705b7fcbf7ab` for `onnx_inference.py`. Source references and dates are in the provenance manifest. No publisher script, cached NPU binary or runtime was executed.
+
+The existing `scripts/onnx_reference.py` then ran one newly created, owned synthetic RGB tile: red/green gradients, blue checkerboard and thin white/black lines, encoded as `RGB - 128`. ONNX Runtime **1.20.1**, ONNX **1.17.0**, NumPy **1.26.4**, Python **3.12.14**, CPUExecutionProvider only, sequential execution, one intra/inter-op thread, and disabled graph optimization produced a finite INT8 `[1,512,512,3]` output. Two warmups and three measured repeats succeeded; identical inputs produced bitwise-identical outputs, and retained input bytes were unchanged.
+
+| CPU reference evidence | Result |
+| --- | --- |
+| Encoded input NPY SHA-256 | `68aefeeb9f7ca7e3d2f852925109dfd86434ad40065417df33980163421afc9a` |
+| Output NPY SHA-256 | `8784d72b7b3aa2374100f9dce9fa1c05a2b886af943701118ea057c78e7e5ceb` |
+| Measured host inference samples | 69.829791, 69.609140, 97.718878 ms per single 256→512 tile |
+| Host session initialization | 9.989526 ms, separate from inference |
+| Comparison policy | `abs(candidate-reference) <= 1e-6 + 1e-5*abs(reference)`; only same-provider repeated equality exercised |
+
+These are cloud CPU reference observations with three measured samples. They are not target-device latency, whole-game FPS, watts, image-quality scores, a target NPU benchmark or an inferred tiled-frame throughput. Full-image reflect padding, 16-pixel overlap and tile merging from the publisher entry point were **not run**. The fixed **2×** tile model is a feasibility probe and does not implement the separate **3× 1280×720→3840×2160** Gamescope milestone.
+
+Private cache evidence comprises `verification.json`, `inspection.json`, `preprocessing-evidence.json`, read-only pinned source-text copies, owned input tensors and `reference-composite/{input.npy,output.npy,report.json}`. Command output is also retained under ignored `results/session-010/`. No model, input/output tensor, private upload or report is in Git. License and redistribution gates below remain independent.
+
+## Historical acquisition evidence (DSR007–DSR009)
+
+Before DSR010, Hugging Face metadata/text and the pinned source revision were reachable, but the selected artifact redirected to **us.aws.cdn.hf.co** and proxy CONNECT returned HTTP 403. No model bytes had been acquired in those sessions, so actual identity, graph signature and real-model CPU execution were unknown then. Signed redirect URLs are not retained in source or logs. The following retry records describe that historical state.
 
 ### DSR008 focused retry — MODEL_ACQUISITION_BLOCKED
 
@@ -18,11 +53,13 @@ On 2026-10-20, the exact pinned HTTPS GET returned HF HTTP 302 to `us.aws.cdn.hf
 
 Official no-smudge Git clone and exact-revision fetch succeeded. `git show` returned only the Git LFS pointer with the advertised identity, not model bytes. Native Git LFS 3.6.1 fetch was stopped after 60 seconds without an artifact. The canonical official batch API (`https://huggingface.co/amd/sesr-m7-256x256-tiles-amdnpu.git/info/lfs/objects/batch`) returned HTTP 200 and directs the requested object to the same CDN. A guessed batch path without `.git` initially returned 404; the canonical endpoint was then obtained from `git lfs env`. That path error does not mean the model is missing.
 
-No exact-size candidate was found in the existing `/workspace/DockSR-model-cache` or `/workspace/.cache`; ordinary Hugging Face cache directories were absent. Other approved artifact connectors are not callable here. No model copy was supplied by the owner. Sanitized evidence is retained under ignored `results/session-009/` and `/workspace/DockSR-model-cache/acquisition/session-009/`, without signed URLs, credentials or model bytes.
+No exact-size candidate was found in the existing `/workspace/DockSR-model-cache` or `/workspace/.cache`; ordinary Hugging Face cache directories were absent. Other approved artifact connectors were not callable. No model copy had been supplied by the owner during DSR009. Sanitized evidence is retained under ignored `results/session-009/` and `/workspace/DockSR-model-cache/acquisition/session-009/`, without signed URLs, credentials or model bytes.
 
-Stop network retries until a meaningful access change. Either use supported environment/platform help to establish active CDN policy, or supply the exact artifact through the manual procedure below. No proxy bypass, mirror, different revision or download framework was used. Graph inspection and real-model CPU reference remain NOT_RUN.
+The DSR009 stop decision was to avoid further network retries until a meaningful access change or an exact owner upload. No proxy bypass, mirror, different revision or download framework was used. Graph inspection and real-model CPU reference were NOT_RUN in DSR009; the DSR010 upload and results above supersede that blocker.
 
-## Manual fallback for the owner
+## Manual fallback for future owner-supplied copies
+
+The current attachment is already verified; no further owner download is needed for DSR010. These instructions remain available for reproducing the exact intake elsewhere.
 
 1. Open this exact pinned URL in an ordinary browser on a network where you are authorized to download it. Save the actual `.onnx` file as `sesr_nhwc_int8_256x256.onnx`, rather than a webpage or Git LFS pointer:
 
@@ -82,7 +119,7 @@ Then use the existing inspector, preserving all original bytes:
   --output /workspace/DockSR-model-cache/manual-sesr-009/inspection.json
 ```
 
-Read actual signatures, domains, quantization and preprocessing evidence before generating constant/gradient/edge/checkerboard inputs. Only after input encoding is understood, run `scripts/onnx_reference.py MODEL --input VERIFIED_INPUT.npy --output-dir NEW_REFERENCE_DIRECTORY` with the separate Gate-0 Python environment. Layout and ranges must come from evidence; no NHWC/NCHW, scaling or image-quality meaning is inferred from a filename. Unsupported operators or preprocessing ambiguity remain explicit blockers, without rewriting the graph. Tool regression commands are in [gate0.md](gate0.md). The manual acquisition/import/real-model commands are a future procedure, not a claim that this unavailable artifact ran here.
+Read actual signatures, domains, quantization and preprocessing evidence before generating constant/gradient/edge/checkerboard inputs. Only after input encoding is understood, run `scripts/onnx_reference.py MODEL --input VERIFIED_INPUT.npy --output-dir NEW_REFERENCE_DIRECTORY` with the separate Gate-0 Python environment. Layout and ranges must come from evidence; no NHWC/NCHW, scaling or image-quality meaning is inferred from a filename. Unsupported operators or preprocessing ambiguity remain explicit blockers, without rewriting the graph. Tool regression commands are in [gate0.md](gate0.md). The examples here require new destinations; DSR010 used `manual-sesr-010` and the retained reference described above.
 
 ## License separation
 
@@ -91,4 +128,4 @@ Read actual signatures, domains, quantization and preprocessing evidence before 
 - The intended AMD Linux/Vitis AI stack is a future test plan, not an installed or executed runtime. Its binary/EULA distribution terms are not evaluated by a model-card declaration.
 - DIV2K training is disclosed by the model card. Model-weight rights do not grant rights to redistribute its training images; dataset rights remain a separate unresolved scope. No dataset or natural-image samples were downloaded for this implementation.
 
-Read-only source metadata/text evidence is cached outside Git under `/workspace/DockSR-model-cache/acquisition/sesr-m7-256/`; the public manifest records pinned URLs, dates and hashes without copying weights, signed URLs or private reports. Missing guessed LICENSE paths were ordinary 404 path errors; the actual LICENSE and LICENSE.txt files above were found and read. No runtime installation, driver action, model inference or license clearance is implied by these source observations.
+Read-only source metadata/text evidence is cached outside Git under `/workspace/DockSR-model-cache/acquisition/sesr-m7-256/`; DSR010 also read exact-revision source objects from the existing official Git cache. The public manifest records pinned URLs, dates and hashes without copying weights, signed URLs or private reports. Missing guessed LICENSE paths were ordinary 404 path errors; the actual LICENSE and LICENSE.txt files above were found and read. Source-license observations do not establish runtime installation, driver action or redistribution clearance. The separately recorded model inference above is REAL_CPU only.

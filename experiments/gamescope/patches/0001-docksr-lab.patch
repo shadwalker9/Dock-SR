@@ -1,0 +1,883 @@
+diff --git a/src/Backends/DRMBackend.cpp b/src/Backends/DRMBackend.cpp
+index c9034b7..24abd73 100644
+--- a/src/Backends/DRMBackend.cpp
++++ b/src/Backends/DRMBackend.cpp
+@@ -3916,6 +3916,7 @@ namespace gamescope
+ 			bNeedsFullComposite |= pFrameInfo->useFSRLayer0;
+ 			bNeedsFullComposite |= pFrameInfo->useNISLayer0;
+ 			bNeedsFullComposite |= pFrameInfo->useSGSRLayer0;
++            bNeedsFullComposite |= pFrameInfo->useDockSRLayer0;
+ 			bNeedsFullComposite |= pFrameInfo->blurLayer0;
+ 			bNeedsFullComposite |= bNeedsCompositeFromFilter;
+ 			bNeedsFullComposite |= !cv_drm_cursor_plane && bDrewCursor;
+diff --git a/src/Backends/OpenVRBackend.cpp b/src/Backends/OpenVRBackend.cpp
+index dae8cb3..d1ba23b 100644
+--- a/src/Backends/OpenVRBackend.cpp
++++ b/src/Backends/OpenVRBackend.cpp
+@@ -1852,6 +1852,7 @@ namespace gamescope
+         bNeedsFullComposite |= pFrameInfo->useFSRLayer0;
+         bNeedsFullComposite |= pFrameInfo->useNISLayer0;
+         bNeedsFullComposite |= pFrameInfo->useSGSRLayer0;
++            bNeedsFullComposite |= pFrameInfo->useDockSRLayer0;
+         bNeedsFullComposite |= pFrameInfo->blurLayer0;
+         bNeedsFullComposite |= bNeedsCompositeFromFilter;
+         bNeedsFullComposite |= g_bColorSliderInUse;
+diff --git a/src/Backends/SDLBackend.cpp b/src/Backends/SDLBackend.cpp
+index d35e218..122cd0c 100644
+--- a/src/Backends/SDLBackend.cpp
++++ b/src/Backends/SDLBackend.cpp
+@@ -347,7 +347,7 @@ namespace gamescope
+ 		if ( !oCompositeResult )
+ 			return -EINVAL;
+ 
+-		vulkan_present_to_window();
++		const bool bPresentQueued = vulkan_present_to_window();
+ 
+ 		// TODO: Hook up PresentationFeedback.
+ 
+@@ -358,7 +358,7 @@ namespace gamescope
+ 		GetVBlankTimer().UpdateWasCompositing( true );
+ 		GetVBlankTimer().UpdateLastDrawTime( get_time_in_nanos() - g_SteamCompMgrVBlankTime.ulWakeupTime );
+ 
+-		return 0;
++		return bPresentQueued ? 0 : -EIO;
+ 	}
+ 
+ 	void CSDLConnector::SetCursorImage( std::shared_ptr<INestedHints::CursorInfo> info )
+diff --git a/src/Backends/WaylandBackend.cpp b/src/Backends/WaylandBackend.cpp
+index bc9293d..4f375b5 100644
+--- a/src/Backends/WaylandBackend.cpp
++++ b/src/Backends/WaylandBackend.cpp
+@@ -1103,6 +1103,7 @@ namespace gamescope
+             bNeedsFullComposite |= pFrameInfo->useFSRLayer0;
+             bNeedsFullComposite |= pFrameInfo->useNISLayer0;
+             bNeedsFullComposite |= pFrameInfo->useSGSRLayer0;
++            bNeedsFullComposite |= pFrameInfo->useDockSRLayer0;
+             bNeedsFullComposite |= pFrameInfo->blurLayer0;
+             bNeedsFullComposite |= bNeedsCompositeFromFilter;
+             bNeedsFullComposite |= g_bColorSliderInUse;
+diff --git a/src/commit.cpp b/src/commit.cpp
+index 456bae7..d9bf80b 100644
+--- a/src/commit.cpp
++++ b/src/commit.cpp
+@@ -138,6 +138,11 @@ void calc_scale_factor_scaler(GamescopeUpscaleScaler eScaler, float &out_scale_x
+ 
+ bool commit_t::ShouldPreemptivelyUpscale( GamescopeUpscaleFilter eFilter, GamescopeUpscaleScaler eScaler )
+ {
++    // DSR010 deliberately uses composition only: runtime generations cannot
++    // consume a cached sentinel from an earlier configuration.
++    if ( eFilter == GamescopeUpscaleFilter::DOCKSR )
++        return false;
++
+     // Don't pre-emptively upscale if we are not a FIFO commit.
+     // Don't want to FSR upscale 1000fps content.
+     if ( !fifo )
+diff --git a/src/hdmi.h b/src/hdmi.h
+index 92d1495..cca8011 100644
+--- a/src/hdmi.h
++++ b/src/hdmi.h
+@@ -8,7 +8,9 @@
+ #define HDMI_EOTF_ST2084 2
+ #define HDMI_EOTF_HLG 3
+ 
+-#if HAVE_DRM
++#if HAVE_DRM || __has_include(<drm_mode.h>)
++// Nested-only builds still include DRM metadata through wlroots/backend.h.
++// Reuse available system definitions rather than declaring duplicate structs.
+ #include <drm_mode.h>
+ #else
+ /**
+diff --git a/src/main.cpp b/src/main.cpp
+index 6a0fdb1..4eb7158 100644
+--- a/src/main.cpp
++++ b/src/main.cpp
+@@ -176,7 +176,7 @@ const char usage[] =
+ 	"  -r, --nested-refresh           game refresh rate (frames per second)\n"
+ 	"  -m, --max-scale                maximum scale factor\n"
+ 	"  -S, --scaler                   upscaler type (auto, integer, fit, fill, stretch)\n"
+-	"  -F, --filter                   upscaler filter (linear, nearest, fsr, nis, pixel, sgsr)\n"
++	"  -F, --filter                   upscaler filter (linear, nearest, fsr, nis, pixel, sgsr, docksr)\n"
+ 	"                                     fsr => AMD FidelityFX™ Super Resolution 1.0\n"
+ 	"                                     nis => NVIDIA Image Scaling v1.0.3\n"
+ 	"                                     sgsr => Snapdragon™ Game Super Resolution 1 with RCAS\n"
+diff --git a/src/main.hpp b/src/main.hpp
+index b2a169f..3f2fc08 100644
+--- a/src/main.hpp
++++ b/src/main.hpp
+@@ -45,6 +45,7 @@ enum class GamescopeUpscaleFilter : uint32_t
+     NIS,
+     PIXEL,
+     SGSR,
++    DOCKSR, // Experimental exact-3x SDR GPU sentinel, not a quality upscaler.
+ 
+     FROM_VIEW = 0xF, // internal
+ };
+@@ -118,6 +119,7 @@ inline std::optional<GamescopeUpscaleFilter> ParseUpscaleFilter( std::string_vie
+         { "nis",     GamescopeUpscaleFilter::NIS },
+         { "pixel",   GamescopeUpscaleFilter::PIXEL },
+         { "sgsr",    GamescopeUpscaleFilter::SGSR },
++        { "docksr",  GamescopeUpscaleFilter::DOCKSR },
+     };
+     for ( const auto &[svFilterName, eFilter] : k_Filters )
+     {
+diff --git a/src/meson.build b/src/meson.build
+index 498bca6..1e36880 100644
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -10,6 +10,8 @@ dep_xres = dependency('xres')
+ dep_xmu = dependency('xmu')
+ dep_xi = dependency('xi')
+ 
++# Timeline.cpp uses DRM syncobj functions even when the KMS backend is disabled.
++drm_core_dep = dependency('libdrm', version: '>= 2.4.113')
+ drm_dep = dependency('libdrm', version: '>= 2.4.113', required: get_option('drm_backend'))
+ eis_dep = dependency('libeis-1.0', required : get_option('input_emulation'))
+ 
+@@ -73,6 +75,7 @@ shader_src = [
+   'shaders/cs_nis_hdr_linear_fp16.comp',
+   'shaders/cs_rgb_to_nv12.comp',
+   'shaders/cs_sgsr.comp',
++  'shaders/cs_docksr.comp',
+ ]
+ 
+ spirv_shaders = glsl_generator.process(shader_src)
+@@ -110,6 +113,7 @@ src = [
+   'convar.cpp',
+   'convar_script.cpp',
+   'commit.cpp',
++  'docksr_integration.cpp',
+   'color_helpers.cpp',
+   'main.cpp',
+   'edid.cpp',
+@@ -198,7 +202,7 @@ gamescope_version = configure_file(
+     include_directories : [reshade_include, sol2_include],
+     dependencies: [
+       dep_wayland, dep_x11, dep_xdamage, dep_xcomposite, dep_xrender, dep_xext, dep_xfixes,
+-      dep_xxf86vm, dep_xres, glm_dep, drm_dep, wayland_server,
++      dep_xxf86vm, dep_xres, glm_dep, drm_core_dep, drm_dep, wayland_server,
+       xkbcommon, thread_dep, sdl2_dep, wlroots_dep,
+       vulkan_dep, liftoff_dep, dep_xtst, dep_xmu, cap_dep, epoll_dep, pipewire_dep, librt_dep,
+       stb_dep, displayinfo_dep, openvr_dep, dep_xcursor, avif_dep, dep_xi,
+diff --git a/src/rendervulkan.cpp b/src/rendervulkan.cpp
+index c204220..3cceb23 100644
+--- a/src/rendervulkan.cpp
++++ b/src/rendervulkan.cpp
+@@ -52,6 +52,8 @@
+ #include "cs_nis_hdr_linear_fp16.h"
+ #include "cs_rgb_to_nv12.h"
+ #include "cs_sgsr.h"
++#include "cs_docksr.h"
++#include "docksr_integration.hpp"
+ 
+ #define A_CPU
+ #include "shaders/ffx_a.h"
+@@ -990,6 +992,7 @@ bool CVulkanDevice::createShaders()
+ 	}
+ 	SHADER(RGB_TO_NV12, cs_rgb_to_nv12);
+ 	SHADER(SGSR, cs_sgsr);
++	SHADER(DOCKSR, cs_docksr);
+ #undef SHADER
+ 
+ 	for (uint32_t i = 0; i < shaderInfos.size(); i++)
+@@ -1222,6 +1225,7 @@ void CVulkanDevice::compileAllPipelines(std::stop_token st)
+ 	SHADER(NIS_HDR_LINEAR, 1, 1, 1);
+ 	SHADER(RGB_TO_NV12, 1, 1, 1);
+ 	SHADER(SGSR, 1, 1, 1);
++	SHADER(DOCKSR, 1, 1, 1);
+ #undef SHADER
+ 
+ 	for (auto& info : pipelineInfos) {
+@@ -3108,7 +3112,7 @@ void vulkan_update_swapchain_hdr_metadata( VulkanOutput_t *pOutput )
+ 	g_device.vk.SetHdrMetadataEXT(g_device.device(), 1, &g_output.swapChain, &metadata);
+ }
+ 
+-void vulkan_present_to_window( void )
++bool vulkan_present_to_window( void )
+ {
+ 	static uint64_t s_lastPresentId = 0;
+ 
+@@ -3146,7 +3150,8 @@ void vulkan_present_to_window( void )
+ 		.pImageIndices = &g_output.nOutImage,
+ 	};
+ 
+-	if ( g_device.vk.QueuePresentKHR( g_device.queue(), &presentInfo ) == VK_SUCCESS )
++	const bool bPresentQueued = g_device.vk.QueuePresentKHR( g_device.queue(), &presentInfo ) == VK_SUCCESS;
++	if ( bPresentQueued )
+ 	{
+ 		g_currentPresentWaitId = presentId;
+ 		g_currentPresentWaitId.notify_all();
+@@ -3156,6 +3161,7 @@ void vulkan_present_to_window( void )
+ 
+ 	while ( !acquire_next_image() )
+ 		vulkan_remake_swapchain();
++	return bPresentQueued;
+ }
+ 
+ gamescope::Rc<CVulkanTexture> vulkan_create_1d_lut(uint32_t size)
+@@ -3629,6 +3635,21 @@ static uint32_t tmp_image_format( GamescopeAppTextureColorspace colorspace )
+ 	}
+ }
+ 
++static gamescope::Rc<CVulkanTexture> g_docksrLabOutput;
++static bool EnsureDockSRLabOutput()
++{
++	if ( g_docksrLabOutput )
++		return true;
++	CVulkanTexture::createFlags flags;
++	flags.bSampled = true;
++	flags.bStorage = true;
++	gamescope::Rc<CVulkanTexture> candidate = new CVulkanTexture();
++	if ( !candidate->BInit( 3840, 2160, 1u, DRM_FORMAT_ARGB8888, flags, nullptr ) )
++		return false;
++	g_docksrLabOutput = std::move( candidate );
++	return true;
++}
++
+ static void update_tmp_images( uint32_t width, uint32_t height, uint32_t uFormat )
+ {
+ 	if ( g_output.tmpOutput != nullptr
+@@ -3911,7 +3932,7 @@ struct BlitPushData_t
+ 			offset[i] = layer->offsetPixelCenter();
+ 			opacity[i] = layer->opacity;
+             // SGSR only exists as a pre-pass, a layer still carrying it samples as linear.
+-            GamescopeUpscaleFilter eFilter = layer->filter == GamescopeUpscaleFilter::SGSR ? GamescopeUpscaleFilter::LINEAR : layer->filter;
++            GamescopeUpscaleFilter eFilter = (layer->filter == GamescopeUpscaleFilter::SGSR || layer->filter == GamescopeUpscaleFilter::DOCKSR) ? GamescopeUpscaleFilter::LINEAR : layer->filter;
+             if (layer->isScreenSize() || (eFilter == GamescopeUpscaleFilter::LINEAR && layer->viewConvertsToLinearAutomatically()))
+                 u_shaderFilter |= ((uint32_t)GamescopeUpscaleFilter::FROM_VIEW) << (i * 4);
+             else
+@@ -4082,7 +4103,7 @@ struct RcasPushData_t
+ 		{
+ 			const FrameInfo_t::Layer_t *layer = &frameInfo->layers.get( i );
+ 
+-            GamescopeUpscaleFilter eFilter = layer->filter == GamescopeUpscaleFilter::SGSR ? GamescopeUpscaleFilter::LINEAR : layer->filter;
++            GamescopeUpscaleFilter eFilter = (layer->filter == GamescopeUpscaleFilter::SGSR || layer->filter == GamescopeUpscaleFilter::DOCKSR) ? GamescopeUpscaleFilter::LINEAR : layer->filter;
+             if (i == 0 || layer->isScreenSize() || (eFilter == GamescopeUpscaleFilter::LINEAR && layer->viewConvertsToLinearAutomatically()))
+                 u_shaderFilter |= ((uint32_t)GamescopeUpscaleFilter::FROM_VIEW) << (i * 4);
+             else
+@@ -4267,6 +4288,7 @@ namespace
+ 			case GamescopeUpscaleFilter::NIS:     return "nis";
+ 			case GamescopeUpscaleFilter::PIXEL:   return "pixel";
+ 			case GamescopeUpscaleFilter::SGSR:    return "sgsr";
++			case GamescopeUpscaleFilter::DOCKSR:  return "docksr";
+ 			default:                              return "view";
+ 		}
+ 	}
+@@ -4451,7 +4473,62 @@ std::optional<uint64_t> vulkan_composite( struct FrameInfo_t *frameInfo, gamesco
+ 	for (uint32_t i = 0; i < EOTF_Count; i++)
+ 		cmdBuffer->bindColorMgmtLuts(i, frameInfo->shaperLut[i], frameInfo->lut3D[i]);
+ 
+-	if ( frameInfo->useFSRLayer0 || frameInfo->useSGSRLayer0 )
++	// This lab supports only the exact unrotated 720p -> 2160p SDR case.
++	// All rejection paths use the existing LINEAR compositor; no cached result
++	// is published on failure. The GPU pass never reads back a frame to CPU.
++	if ( frameInfo->useDockSRLayer0 )
++	{
++		const auto &layer = frameInfo->layers.get( 0 );
++		const char *reason = nullptr;
++		if ( layer.tex->width() != 1280 || layer.tex->height() != 720 ||
++		     currentOutputWidth != 3840 || currentOutputHeight != 2160 ||
++		     compositeImage->width() != 3840 || compositeImage->height() != 2160 ||
++		     !close_enough( layer.scale.x, 1.0f / 3.0f ) || !close_enough( layer.scale.y, 1.0f / 3.0f ) ||
++		     layer.offset.x != 0.0f || layer.offset.y != 0.0f || uOutputRotation != 0 )
++			reason = "UNSUPPORTED_GEOMETRY";
++		else if ( layer.isYcbcr() || !SgsrSupportsInput( layer.colorspace, false ) ||
++		          frameInfo->outputEncodingEOTF == EOTF_PQ )
++			reason = "UNSUPPORTED_COLORSPACE";
++		else if ( layer.tex->drmFormat() != DRM_FORMAT_ARGB8888 && layer.tex->drmFormat() != DRM_FORMAT_XRGB8888 &&
++		          layer.tex->drmFormat() != DRM_FORMAT_ABGR8888 && layer.tex->drmFormat() != DRM_FORMAT_XBGR8888 )
++			reason = "UNSUPPORTED_FORMAT";
++		else if ( !g_device.pipeline( SHADER_TYPE_DOCKSR ) || !EnsureDockSRLabOutput() )
++			reason = "RESOURCE_INITIALIZATION_FAILED";
++		if ( reason )
++		{
++			frameInfo->useDockSRLayer0 = false;
++			frameInfo->layers.get( 0 ).filter = GamescopeUpscaleFilter::LINEAR;
++			DockSRLabFallback( frameInfo, reason );
++		}
++	}
++
++	if ( frameInfo->useDockSRLayer0 )
++	{
++		cmdBuffer->bindPipeline( g_device.pipeline( SHADER_TYPE_DOCKSR ) );
++		cmdBuffer->bindTarget( g_docksrLabOutput );
++		cmdBuffer->bindTexture( 0, frameInfo->layers.get( 0 ).tex );
++		// Match the native pre-pass convention: sample raw encoded components.
++		cmdBuffer->setTextureSrgb( 0, true );
++		cmdBuffer->setSamplerUnnormalized( 0, false );
++		cmdBuffer->setSamplerNearest( 0, true );
++		cmdBuffer->uploadConstants<SgsrPushData_t>( 3840, 2160 );
++		cmdBuffer->dispatch( div_roundup( 3840u, 16u ), div_roundup( 2160u, 16u ) );
++		if ( oTimingSlot )
++			CompositeTimingMid( cmdBuffer.get(), *oTimingSlot );
++
++		// Feed the owned intermediate through the standard colour-management,
++		// alpha and overlay compositor, rather than bypassing presentation.
++		FrameInfo_t labFrameInfo = *frameInfo;
++		labFrameInfo.layers.get( 0 ).tex = g_docksrLabOutput;
++		labFrameInfo.layers.get( 0 ).scale = { 1.0f, 1.0f };
++		labFrameInfo.layers.get( 0 ).filter = GamescopeUpscaleFilter::LINEAR;
++		cmdBuffer->bindPipeline( g_device.pipeline( SHADER_TYPE_BLIT, labFrameInfo.layers.count(), labFrameInfo.ycbcrMask(), 0u, labFrameInfo.colorspaceMask(), outputTF ) );
++		bind_all_layers( cmdBuffer.get(), &labFrameInfo );
++		cmdBuffer->bindTarget( compositeImage );
++		cmdBuffer->uploadConstants<BlitPushData_t>( &labFrameInfo, uOutputRotation );
++		cmdBuffer->dispatch( div_roundup( currentOutputWidth, 8u ), div_roundup( currentOutputHeight, 8u ) );
++	}
++	else if ( frameInfo->useFSRLayer0 || frameInfo->useSGSRLayer0 )
+ 	{
+ 		uint32_t inputX = frameInfo->layers.get( 0 ).tex->width();
+ 		uint32_t inputY = frameInfo->layers.get( 0 ).tex->height();
+@@ -4647,7 +4724,9 @@ std::optional<uint64_t> vulkan_composite( struct FrameInfo_t *frameInfo, gamesco
+ 		static char szKeys[ 3 ][ 2 ][ 8 ][ 32 ];
+ 		GamescopeUpscaleFilter eFilter = frameInfo->layers.count() ? frameInfo->layers.get( 0 ).filter : GamescopeUpscaleFilter::LINEAR;
+ 		// Label the pass that ran, including HDR fallback and cached frames.
+-		if ( frameInfo->useSGSRLayer0 )
++		if ( frameInfo->useDockSRLayer0 )
++			eFilter = GamescopeUpscaleFilter::DOCKSR;
++		else if ( frameInfo->useSGSRLayer0 )
+ 			eFilter = GamescopeUpscaleFilter::SGSR;
+ 		else if ( frameInfo->useFSRLayer0 )
+ 			eFilter = GamescopeUpscaleFilter::FSR;
+@@ -4667,6 +4746,8 @@ std::optional<uint64_t> vulkan_composite( struct FrameInfo_t *frameInfo, gamesco
+ 	}
+ 
+ 	uint64_t sequence = g_device.submit(std::move(cmdBuffer));
++	if ( sequence != 0 && frameInfo->useDockSRLayer0 && !pOutputOverride )
++		DockSRLabDispatched( frameInfo );
+ 	if ( oTimingSlot )
+ 		g_CompositeTiming.pending.back().ulSeqNo = sequence;
+ 
+diff --git a/src/rendervulkan.hpp b/src/rendervulkan.hpp
+index 033fa66..7cfc7be 100644
+--- a/src/rendervulkan.hpp
++++ b/src/rendervulkan.hpp
+@@ -289,6 +289,10 @@ struct FrameInfo_t
+ 	bool useFSRLayer0;
+ 	bool useNISLayer0;
+ 	bool useSGSRLayer0;
++	bool useDockSRLayer0 = false;
++	uint64_t docksrFrameId = 0;
++	uint64_t docksrGeneration = 0;
++	bool docksrDispatched = false;
+ 	// Upscale settings for this frame.
+ 	GamescopeUpscaleFilter eUpscaleFilter = GamescopeUpscaleFilter::LINEAR;
+ 	GamescopeUpscaleScaler eUpscaleScaler = GamescopeUpscaleScaler::AUTO;
+@@ -475,7 +479,7 @@ gamescope::Rc<CVulkanTexture> vulkan_acquire_screenshot_texture(uint32_t width,
+ gamescope::Rc<CVulkanTexture> vulkan_acquire_capture_texture(uint32_t width, uint32_t height, bool exportable, uint32_t drmFormat, EStreamColorspace colorspace = k_EStreamColorspace_Unknown);
+ uint32_t vulkan_get_rgb10_capture_format( void );
+ 
+-void vulkan_present_to_window( void );
++bool vulkan_present_to_window( void );
+ 
+ void vulkan_garbage_collect( void );
+ bool vulkan_remake_swapchain( void );
+@@ -624,6 +628,7 @@ enum ShaderType {
+ 	SHADER_TYPE_NIS_HDR_LINEAR,
+ 	SHADER_TYPE_RGB_TO_NV12,
+ 	SHADER_TYPE_SGSR,
++	SHADER_TYPE_DOCKSR,
+ 
+ 	SHADER_TYPE_COUNT
+ };
+diff --git a/src/steamcompmgr.cpp b/src/steamcompmgr.cpp
+index 9d82f9a..8ae0d8b 100644
+--- a/src/steamcompmgr.cpp
++++ b/src/steamcompmgr.cpp
+@@ -30,6 +30,7 @@
+  */
+ 
+ #include "backend.h"
++#include "docksr_integration.hpp"
+ #include "gamescope_shared.h"
+ #include "xwayland_ctx.hpp"
+ #include <X11/X.h>
+@@ -1141,7 +1142,18 @@ static gamescope::ConCommand cc_focus_info( "focus_info", "Dump debug info about
+ static std::atomic<int32_t> g_nPendingUpscaleFilter = { -1 };
+ static std::atomic<int32_t> g_nPendingUpscaleSharpness = { -1 };
+ 
+-static gamescope::ConCommand cc_scaling_filter( "scaling_filter", "Set the scaling filter (linear, nearest, fsr, nis, pixel, sgsr)",
++static gamescope::ConCommand cc_docksr_lab( "docksr_lab", "Experimental scoped lab: ON|BYPASS|STATUS <monotonic id>",
++[]( std::span<std::string_view> args )
++{
++	if ( args.size() != 2 )
++	{
++		DockSRLabQueueCommand( "INVALID" );
++		return;
++	}
++	DockSRLabQueueCommand( args[1] );
++});
++
++static gamescope::ConCommand cc_scaling_filter( "scaling_filter", "Set the scaling filter (linear, nearest, fsr, nis, pixel, sgsr, docksr)",
+ []( std::span<std::string_view> args )
+ {
+ 	if ( args.size() < 2 )
+@@ -3240,6 +3252,7 @@ paint_all( global_focus_t *pFocus, bool async, bool bRepeatFrame )
+ 					frameInfo.useFSRLayer0 = eLayer0Filter == GamescopeUpscaleFilter::FSR && needsScaling;
+ 					frameInfo.useNISLayer0 = eLayer0Filter == GamescopeUpscaleFilter::NIS && needsScaling;
+ 					frameInfo.useSGSRLayer0 = eLayer0Filter == GamescopeUpscaleFilter::SGSR && needsScaling;
++					frameInfo.useDockSRLayer0 = eLayer0Filter == GamescopeUpscaleFilter::DOCKSR;
+ 				}
+ 				if ( pFocus == GetCurrentMouseFocus() )
+ 					update_touch_scaling( &frameInfo );
+@@ -3413,6 +3426,7 @@ paint_all( global_focus_t *pFocus, bool async, bool bRepeatFrame )
+ 		frameInfo.useFSRLayer0 = false;
+ 		frameInfo.useNISLayer0 = false;
+ 		frameInfo.useSGSRLayer0 = false;
++		frameInfo.useDockSRLayer0 = false;
+ 	}
+ 
+ 	pFocus->eActiveUpscaler = GamescopeUpscaleFilter::LINEAR;
+@@ -3422,6 +3436,8 @@ paint_all( global_focus_t *pFocus, bool async, bool bRepeatFrame )
+ 		pFocus->eActiveUpscaler = GamescopeUpscaleFilter::NIS;
+ 	else if ( frameInfo.useSGSRLayer0 )
+ 		pFocus->eActiveUpscaler = GamescopeUpscaleFilter::SGSR;
++	else if ( frameInfo.useDockSRLayer0 )
++		pFocus->eActiveUpscaler = GamescopeUpscaleFilter::DOCKSR;
+ 	// A full blur draws layer 0 from the blurred image, so its filter never runs.
+ 	else if ( frameInfo.layers.count() && !frameInfo.layers.get( 0 ).isScreenSize() && frameInfo.blurLayer0 != BLUR_MODE_ALWAYS )
+ 	{
+@@ -3460,9 +3476,11 @@ paint_all( global_focus_t *pFocus, bool async, bool bRepeatFrame )
+ 		//
+ 		// Check what we cached for the current dynamic refresh Hz we put in -- otherwise, convert
+ 		// g_nOutputRefresh -> Hz rounded.
+-		int32_t nCurrentDynamicOutputHz = g_nDynamicRefreshHz
+-			? g_nDynamicRefreshHz
+-			: gamescope::ConvertmHzToHz( g_nOutputRefresh );
++		int32_t nCurrentDynamicOutputHz = gamescope::ConvertmHzToHz( g_nOutputRefresh );
++#if HAVE_DRM
++		if ( g_nDynamicRefreshHz )
++			nCurrentDynamicOutputHz = g_nDynamicRefreshHz;
++#endif
+ 
+ 		if ( nCurrentDynamicOutputHz == nTargetRefreshHz )
+ 		{
+@@ -3505,11 +3523,20 @@ paint_all( global_focus_t *pFocus, bool async, bool bRepeatFrame )
+ 		}
+ 	}
+ 
++	DockSRLabBeginFrame( &frameInfo );
+ 	if ( pConnector && pConnector->Present( &frameInfo, async ) != 0 )
+ 	{
++		DockSRLabFallback( &frameInfo, "BACKEND_PRESENT_FAILED" );
+ 		return;
+ 	}
+ 
++	// Submission success is separate from physical display feedback. Headless
++	// Present returns zero without rendering, so it must never count here.
++	if ( pConnector && GetBackend()->UsesVulkanSwapchain() )
++		DockSRLabPresented( &frameInfo );
++	if ( pFocus->eActiveUpscaler == GamescopeUpscaleFilter::DOCKSR && !frameInfo.useDockSRLayer0 )
++		pFocus->eActiveUpscaler = GamescopeUpscaleFilter::LINEAR;
++
+ 	// A torn frame can be replaced before the next vblank pass reports it.
+ 	commit_t *pTornCommit = async && pConnector ? pFocus->HeldCommits[ HELD_COMMIT_BASE ].get() : nullptr;
+ 	if ( pTornCommit && pTornCommit->present_timing.serial )
+@@ -10733,6 +10760,7 @@ steamcompmgr_main(int argc, char **argv)
+ 			DumpFocusInfo();
+ 
+ 		ApplyPendingUpscaleSettings();
++		DockSRLabApplyPending();
+ 
+ 		g_bSteamIsActiveWindow = GetCurrentFocus() && window_is_steam( GetCurrentFocus()->focusWindow );
+ 
+diff --git a/src/wlserver.cpp b/src/wlserver.cpp
+index 5852d73..011d95c 100644
+--- a/src/wlserver.cpp
++++ b/src/wlserver.cpp
+@@ -26,9 +26,8 @@
+ #include "wlr_begin.hpp"
+ #include <wlr/backend.h>
+ #include <wlr/backend/headless.h>
+-#if HAVE_DRM
++// Touch association uses these declarations in nested-only builds too.
+ #include <wlr/backend/libinput.h>
+-#endif
+ #include <wlr/backend/multi.h>
+ #include <wlr/interfaces/wlr_keyboard.h>
+ #include <wlr/render/wlr_renderer.h>
+@@ -1308,6 +1307,7 @@ void drm_sleep_screen( gamescope::GamescopeScreenType eType, bool bSleep );
+ 
+ static void gamescope_control_display_sleep( struct wl_client *client, struct wl_resource *resource, uint32_t display_type_flags, uint32_t flags )
+ {
++#if HAVE_DRM
+ 	if ( flags & ( GAMESCOPE_CONTROL_DISPLAY_SLEEP_FLAGS_SLEEP | GAMESCOPE_CONTROL_DISPLAY_SLEEP_FLAGS_WAKE ) )
+ 	{
+ 		const bool sleep = !!( flags & GAMESCOPE_CONTROL_DISPLAY_SLEEP_FLAGS_SLEEP );
+@@ -1317,6 +1317,9 @@ static void gamescope_control_display_sleep( struct wl_client *client, struct wl
+ 		if ( display_type_flags & GAMESCOPE_CONTROL_DISPLAY_TYPE_FLAGS_INTERNAL_DISPLAY )
+ 			drm_sleep_screen( gamescope::GAMESCOPE_SCREEN_TYPE_INTERNAL, sleep );
+ 	}
++#else
++	wl_log.errorf( "display_sleep unavailable: DRM backend disabled in this build" );
++#endif
+ }
+ 
+ extern gamescope::ConVar<bool> cv_overlay_unmultiplied_alpha;
+@@ -1837,8 +1840,10 @@ static bool filter_global(const struct wl_client *client, const struct wl_global
+ {
+ 	const struct wl_interface *iface = wl_global_get_interface(global);
+ 
++#if HAVE_DRM
+ 	if ( cv_drm_debug_disable_explicit_sync && iface->name == "wp_linux_drm_syncobj_manager_v1"sv )
+ 		return false;
++#endif
+ 
+ 	if (strcmp(iface->name, wl_output_interface.name) != 0)
+ 		return true;
+diff --git a/tests/test_upscale.cpp b/tests/test_upscale.cpp
+index 6161c61..54104cd 100644
+--- a/tests/test_upscale.cpp
++++ b/tests/test_upscale.cpp
+@@ -28,6 +28,8 @@ TEST_CASE("ParseUpscaleFilter names every filter", "[upscale]") {
+ 	REQUIRE( ParseUpscaleFilter( "nis" ) == GamescopeUpscaleFilter::NIS );
+ 	REQUIRE( ParseUpscaleFilter( "pixel" ) == GamescopeUpscaleFilter::PIXEL );
+ 	REQUIRE( ParseUpscaleFilter( "sgsr" ) == GamescopeUpscaleFilter::SGSR );
++	REQUIRE( ParseUpscaleFilter( "docksr" ) == GamescopeUpscaleFilter::DOCKSR );
++	REQUIRE_FALSE( ParseUpscaleFilter( "DOCKSR" ).has_value() );
+ 	REQUIRE_FALSE( ParseUpscaleFilter( "sharp" ).has_value() );
+ }
+ 
+@@ -37,6 +39,18 @@ TEST_CASE("UpscaleFilterUsesSharpness", "[upscale]") {
+ 	REQUIRE( UpscaleFilterUsesSharpness( GamescopeUpscaleFilter::NIS ) );
+ 	REQUIRE_FALSE( UpscaleFilterUsesSharpness( GamescopeUpscaleFilter::LINEAR ) );
+ 	REQUIRE_FALSE( UpscaleFilterUsesSharpness( GamescopeUpscaleFilter::PIXEL ) );
++	REQUIRE_FALSE( UpscaleFilterUsesSharpness( GamescopeUpscaleFilter::DOCKSR ) );
++}
++
++TEST_CASE("DockSR leaves existing filter identities unchanged", "[upscale]") {
++	REQUIRE( uint32_t( GamescopeUpscaleFilter::LINEAR ) == 0 );
++	REQUIRE( uint32_t( GamescopeUpscaleFilter::NEAREST ) == 1 );
++	REQUIRE( uint32_t( GamescopeUpscaleFilter::FSR ) == 2 );
++	REQUIRE( uint32_t( GamescopeUpscaleFilter::NIS ) == 3 );
++	REQUIRE( uint32_t( GamescopeUpscaleFilter::PIXEL ) == 4 );
++	REQUIRE( uint32_t( GamescopeUpscaleFilter::SGSR ) == 5 );
++	REQUIRE( uint32_t( GamescopeUpscaleFilter::DOCKSR ) == 6 );
++	REQUIRE_FALSE( DoesHardwareSupportUpscaleFilter( GamescopeUpscaleFilter::DOCKSR ) );
+ }
+ 
+ TEST_CASE("GetUpscaleSettings", "[upscale]") {
+diff --git a/src/docksr_integration.cpp b/src/docksr_integration.cpp
+new file mode 100644
+index 0000000..3f97af6
+--- /dev/null
++++ b/src/docksr_integration.cpp
+@@ -0,0 +1,274 @@
++// DockSR-owned R006-M1 adapter for the explicitly enabled experimental build.
++// Neither a second frame scheduler nor evidence of physical display scanout.
++#include "docksr_integration.hpp"
++#include "docksr_lab.hpp"
++#include "main.hpp"
++#include "rendervulkan.hpp"
++#include "steamcompmgr.hpp"
++
++#include <chrono>
++#include <cstdio>
++#include <cstdlib>
++#include <deque>
++#include <limits>
++#include <mutex>
++#include <string>
++#include <unistd.h>
++
++namespace
++{
++constexpr std::size_t kQueueLimit = 16;
++constexpr std::size_t kCommandLimit = 256;
++
++bool Enabled()
++{
++    static const bool enabled = [] {
++        const char *value = std::getenv( "DOCKSR_LAB" );
++        return value && std::string_view( value ) == "1";
++    }();
++    return enabled;
++}
++
++docksr::lab::Identity Identity()
++{
++    docksr::lab::Identity identity;
++    identity.upstream_commit = "4d5b7f3c9e1b6d3ee41c5c460b835fe5e0fe71b3";
++    identity.docksr_commit = "d7cc16e67f2138030c9cf0cbd29e57e9d4967bac";
++    const auto tick = std::chrono::steady_clock::now().time_since_epoch().count();
++    identity.session_id = "docksr-" + std::to_string( getpid() ) + "-" + std::to_string( tick );
++    identity.environment = "explicit_context_not_supplied";
++    identity.capture_method = "none";
++    identity.evidence = docksr::lab::Evidence::NotRun;
++    if ( const char *value = std::getenv( "DOCKSR_LAB_EVIDENCE" ) )
++    {
++        // These opt-in labels identify the authorized test context. They do
++        // not detect hardware, prove pixels or turn a headless submit into a
++        // backend presentation. The calling hooks must establish operations.
++        const std::string_view context( value );
++        if ( context == "SOFTWARE_VULKAN" )
++        {
++            identity.evidence = docksr::lab::Evidence::SoftwareVulkan;
++            identity.environment = "explicit_software_vulkan_context";
++            identity.capture_method = "backend_submit_log";
++        }
++        else if ( context == "VIRTUAL_WINDOW" )
++        {
++            identity.evidence = docksr::lab::Evidence::VirtualWindow;
++            identity.environment = "explicit_virtual_window_context";
++            identity.capture_method = "backend_present_log";
++        }
++    }
++    return identity;
++}
++
++struct Adapter
++{
++    std::mutex queue_mutex;
++    std::deque<std::string> commands;
++    docksr::lab::LabState state{ Identity() };
++    std::uint64_t frame_sequence{};
++    bool bootstrapped{};
++};
++
++Adapter &GetAdapter()
++{
++    static Adapter adapter;
++    return adapter;
++}
++
++void Emit( const docksr::lab::LabState &state )
++{
++    // Only the compositor owner emits complete snapshots. Flush is deliberate
++    // for this diagnostic experiment; this is not a production logging policy.
++    const std::string json = state.json();
++    std::fputs( "DOCKSR_STATUS ", stdout );
++    std::fwrite( json.data(), 1, json.size(), stdout );
++    std::fputc( '\n', stdout );
++    std::fflush( stdout );
++}
++
++bool HasExecutionContext( const Adapter &adapter )
++{
++    return adapter.state.valid() && docksr::lab::execution_evidence( adapter.state.identity().evidence );
++}
++
++docksr::lab::FrameToken Token( const FrameInfo_t *frame )
++{
++    return { frame->docksrFrameId, frame->docksrGeneration };
++}
++
++void UseLinear( FrameInfo_t *frame )
++{
++    // Selection flags are consumed separately from eUpscaleFilter by the
++    // Vulkan composition path. Clear every reconstruction prepass flag so a
++    // fallback cannot accidentally dispatch another selected algorithm.
++    frame->useFSRLayer0 = frame->useNISLayer0 = frame->useSGSRLayer0 = false;
++    frame->useDockSRLayer0 = false;
++    frame->eUpscaleFilter = GamescopeUpscaleFilter::LINEAR;
++    if ( frame->layers.count() )
++        frame->layers.get( 0 ).filter = GamescopeUpscaleFilter::LINEAR;
++}
++
++void RejectQueue( const char *reason )
++{
++    // No LabState mutation from a console/script thread. No success ack is
++    // emitted for commands that never reached the compositor-owned parser.
++    std::fprintf( stderr, "DOCKSR_CONTROL_REJECTED %s\n", reason );
++}
++}
++
++bool DockSRLabQueueCommand( std::string_view command )
++{
++    if ( !Enabled() )
++        return false;
++    if ( command.empty() || command.size() > kCommandLimit )
++    {
++        RejectQueue( "CONTROL_QUEUE_BOUNDS" );
++        return false;
++    }
++    for ( std::size_t index = 0; index < command.size(); ++index )
++    {
++        const unsigned char value = command[index];
++        if ( ( value < 0x20 || value > 0x7e ) && !( value == '\n' && index + 1 == command.size() ) )
++        {
++            RejectQueue( "CONTROL_QUEUE_ENCODING" );
++            return false;
++        }
++    }
++    auto &adapter = GetAdapter();
++    std::lock_guard lock( adapter.queue_mutex );
++    if ( adapter.commands.size() >= kQueueLimit )
++    {
++        RejectQueue( "CONTROL_QUEUE_FULL" );
++        return false;
++    }
++    adapter.commands.emplace_back( command );
++    return true;
++}
++
++void DockSRLabApplyPending()
++{
++    if ( !Enabled() )
++        return;
++    auto &adapter = GetAdapter();
++    if ( !adapter.bootstrapped )
++    {
++        adapter.bootstrapped = true;
++        // Reserve request 1 for an explicitly selected initial -F docksr.
++        // Ordinary CLI filters remain unchanged until an accepted ON/BYPASS.
++        if ( g_wantedUpscaleFilter == GamescopeUpscaleFilter::DOCKSR )
++        {
++            adapter.state.command( "ON 1" );
++            Emit( adapter.state );
++        }
++    }
++    std::deque<std::string> pending;
++    {
++        std::lock_guard lock( adapter.queue_mutex );
++        pending.swap( adapter.commands );
++    }
++    for ( const auto &command : pending )
++    {
++        const auto reply = adapter.state.command( command );
++        if ( reply.accepted && reply.ack == "PENDING" )
++            g_wantedUpscaleFilter = adapter.state.snapshot().mode_requested == docksr::lab::Mode::Active
++                ? GamescopeUpscaleFilter::DOCKSR : GamescopeUpscaleFilter::LINEAR;
++        Emit( adapter.state );
++    }
++}
++
++void DockSRLabBeginFrame( FrameInfo_t *frame )
++{
++    if ( !Enabled() || !frame )
++        return;
++    frame->docksrFrameId = frame->docksrGeneration = 0;
++    frame->docksrDispatched = false;
++    auto &adapter = GetAdapter();
++    if ( !HasExecutionContext( adapter ) )
++        return;
++    if ( adapter.frame_sequence == std::numeric_limits<std::uint64_t>::max() )
++    {
++        RejectQueue( "FRAME_SEQUENCE_EXHAUSTED" );
++        return;
++    }
++    const bool resources = frame->layers.count() > 0 && frame->layers.get( 0 ).tex;
++    docksr::lab::Extent input{};
++    bool sdr = frame->outputEncodingEOTF == EOTF_Gamma22;
++    if ( resources )
++    {
++        const auto &layer = frame->layers.get( 0 );
++        input = { layer.tex->width(), layer.tex->height() };
++        sdr = sdr && !layer.isYcbcr() &&
++            ( layer.colorspace == GAMESCOPE_APP_TEXTURE_COLORSPACE_LINEAR ||
++              layer.colorspace == GAMESCOPE_APP_TEXTURE_COLORSPACE_SRGB );
++    }
++    // Entering this real frame/composition path establishes attachment, not a
++    // presentation. Empty frames cannot establish a usable attached backend.
++    adapter.state.set_attached( resources );
++    const auto token = adapter.state.begin_frame( ++adapter.frame_sequence, input,
++        { currentOutputWidth, currentOutputHeight }, sdr, resources );
++    frame->docksrFrameId = token.id;
++    frame->docksrGeneration = token.generation;
++    if ( !token.id )
++        return;
++    if ( adapter.state.snapshot().mode_effective == docksr::lab::Mode::Fallback ||
++         adapter.state.snapshot().mode_effective == docksr::lab::Mode::Unavailable )
++        UseLinear( frame );
++    else if ( adapter.state.snapshot().mode_requested == docksr::lab::Mode::Active &&
++              frame->eUpscaleFilter != GamescopeUpscaleFilter::DOCKSR )
++        DockSRLabFallback( frame, "FILTER_NOT_SELECTED" );
++    else if ( adapter.state.snapshot().mode_requested == docksr::lab::Mode::Active &&
++              !frame->useDockSRLayer0 )
++        DockSRLabFallback( frame, "FILTER_NOT_DISPATCHABLE" );
++    else if ( adapter.state.snapshot().mode_requested != docksr::lab::Mode::Active &&
++              ( frame->eUpscaleFilter == GamescopeUpscaleFilter::DOCKSR || frame->useDockSRLayer0 ) )
++        DockSRLabFallback( frame, "FILTER_CONTROL_MISMATCH" );
++}
++
++void DockSRLabDispatched( FrameInfo_t *frame )
++{
++    if ( !Enabled() || !frame || !frame->docksrFrameId )
++        return;
++    auto &adapter = GetAdapter();
++    if ( adapter.state.mark_dispatched( Token( frame ) ) )
++        frame->docksrDispatched = true;
++}
++
++void DockSRLabPresented( FrameInfo_t *frame )
++{
++    if ( !Enabled() || !frame || !frame->docksrFrameId )
++        return;
++    auto &adapter = GetAdapter();
++    // Callers must have completed a genuine connector/backend presentation.
++    // A compute submit, headless frame or returned texture is insufficient.
++    adapter.state.mark_presented( Token( frame ) );
++    Emit( adapter.state );
++}
++
++void DockSRLabFallback( FrameInfo_t *frame, const char *reason )
++{
++    if ( !Enabled() || !frame || !frame->docksrFrameId )
++        return;
++    auto &adapter = GetAdapter();
++    std::string code;
++    if ( reason )
++    {
++        for ( std::size_t index = 0; index <= 128 && reason[index]; ++index )
++        {
++            const char value = reason[index];
++            if ( !( ( value >= 'a' && value <= 'z' ) || ( value >= 'A' && value <= 'Z' ) ||
++                    ( value >= '0' && value <= '9' ) || value == '_' || value == '-' || value == '.' || value == ':' ) )
++            {
++                code.clear();
++                break;
++            }
++            code += value;
++        }
++    }
++    if ( code.empty() || code.size() > 128 )
++        code = "ADAPTER_FALLBACK";
++    adapter.state.fail_frame( Token( frame ), code );
++    frame->docksrDispatched = false;
++    UseLinear( frame );
++    Emit( adapter.state );
++}
+diff --git a/src/docksr_integration.hpp b/src/docksr_integration.hpp
+new file mode 100644
+index 0000000..2b8cc8d
+--- /dev/null
++++ b/src/docksr_integration.hpp
+@@ -0,0 +1,15 @@
++#pragma once
++
++// DockSR-owned, experiment-only adapter. Rendering state is owned exclusively
++// by the compositor thread. Console/script callbacks may only enqueue bounded
++// control messages; there is no external socket or per-frame IPC here.
++#include <string_view>
++
++struct FrameInfo_t;
++
++bool DockSRLabQueueCommand( std::string_view command );
++void DockSRLabApplyPending();
++void DockSRLabBeginFrame( FrameInfo_t *frame );
++void DockSRLabDispatched( FrameInfo_t *frame );
++void DockSRLabPresented( FrameInfo_t *frame );
++void DockSRLabFallback( FrameInfo_t *frame, const char *reason );
+diff --git a/src/shaders/cs_docksr.comp b/src/shaders/cs_docksr.comp
+new file mode 100644
+index 0000000..1161472
+--- /dev/null
++++ b/src/shaders/cs_docksr.comp
+@@ -0,0 +1,19 @@
++// DockSR DSR010 owned experiment. Proof sentinel only; no quality claim.
++#version 460
++#extension GL_GOOGLE_include_directive : require
++#extension GL_EXT_scalar_block_layout : require
++#include "descriptor_set.h"
++layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
++layout(binding = 0, scalar) uniform extent_t { uint width; uint height; };
++void main()
++{
++    uvec2 p = gl_GlobalInvocationID.xy;
++    if (p.x >= width || p.y >= height) return;
++    // Exact 3x nearest reconstruction preserves the complete source alpha.
++    vec4 color = texelFetch(s_samplers[0], ivec2(p / 3u), 0);
++    // Opt-in experimental visible proof, distinct from ordinary LINEAR.
++    // Keep alpha and premultiplied bounds even in the marked 48x48 corner.
++    if (p.x < 48u && p.y < 48u)
++        color.rgb = ((p.x / 8u + p.y / 8u) % 2u == 0u ? vec3(1,0,1) : vec3(0,1,1)) * color.a;
++    imageStore(dst, ivec2(p), color);
++}

@@ -1,0 +1,237 @@
+{
+  "schema_version": 1,
+  "experiment_id": "R006-M1",
+  "evidence_class": "SOURCE_INSPECTED",
+  "upstream": {
+    "canonical_origin": "https://github.com/ValveSoftware/gamescope",
+    "commit": "4d5b7f3c9e1b6d3ee41c5c460b835fe5e0fe71b3",
+    "checked_utc": "2026-10-20T14:28:15.066154+00:00",
+    "license_file": {
+      "path": "LICENSE",
+      "size_bytes": 4593,
+      "sha256": "907dd845489cd09c25f18b6819f476805285e2adcad8c099e3506260023e9e5f"
+    },
+    "license_observations": [
+      "Main Gamescope BSD-2-Clause; preserve LICENSE",
+      "OpenColorIO tetrahedral3DLUT BSD-3-Clause notice bundled in LICENSE",
+      "ReShade compiler BSD-3-Clause notice bundled in LICENSE",
+      "Private protocol MIT-style copyright notices retained; dependency-specific notices remain separate"
+    ]
+  },
+  "docksr_base_commit": "d7cc16e67f2138030c9cf0cbd29e57e9d4967bac",
+  "source_identity_note": "The experimental native status docksr_commit is the DockSR base checkpoint, not a clean binary identity. The upstream commit, this patch SHA256, copied header SHA256 and build manifest jointly identify the modified source.",
+  "patch": {
+    "path": "patches/0001-docksr-lab.patch",
+    "size_bytes": 36766,
+    "sha256": "362d6182278f95e4519a08f1f5814b65e053b05ef5df8b56df1c0106d1681cd9"
+  },
+  "contract_header": {
+    "source": "docksr_lab.hpp",
+    "destination": "src/docksr_lab.hpp",
+    "size_bytes": 16619,
+    "sha256": "7e162fde94f2209bf5e43a6a13162f60ba7b66c964bdaae39e44874fa4daa4e6"
+  },
+  "files": [
+    {
+      "path": "src/Backends/DRMBackend.cpp",
+      "upstream": {
+        "size_bytes": 146554,
+        "sha256": "ec5c6c4899c345b62bf0595a60e99422304e85cca97040c4674af565a6f3f0c8"
+      },
+      "patched": {
+        "size_bytes": 146618,
+        "sha256": "186310049de6e60da06bffbb0442454f32fc9b33529c93f4a3aca1942871e31b"
+      }
+    },
+    {
+      "path": "src/Backends/OpenVRBackend.cpp",
+      "upstream": {
+        "size_bytes": 99375,
+        "sha256": "3113e27bcc89781812d482115dc50c236b5289d7783bcc1ae60922f864823b63"
+      },
+      "patched": {
+        "size_bytes": 99439,
+        "sha256": "4fd52ec27bf4596a9b5cfaa5f13b8e036a476f45080640d5ee941489a8146592"
+      }
+    },
+    {
+      "path": "src/Backends/SDLBackend.cpp",
+      "upstream": {
+        "size_bytes": 27475,
+        "sha256": "0e0471f5cd2af5e43eb3b920f6d5952aa74c7630aa8e3af19211ec7fd6b7df73"
+      },
+      "patched": {
+        "size_bytes": 27527,
+        "sha256": "ba5ab28cf89f488ddac5a71bdfbb4fad4eb9a1840259457d129542cd18d625ed"
+      }
+    },
+    {
+      "path": "src/Backends/WaylandBackend.cpp",
+      "upstream": {
+        "size_bytes": 142723,
+        "sha256": "612a769f05183f60c996f80319947f7ab583435f2a010a8b3db3730237e25bb2"
+      },
+      "patched": {
+        "size_bytes": 142787,
+        "sha256": "eefa002a17e633a539a4fb070259995c8cafff7e435d1dadfe067dddc87ed6b4"
+      }
+    },
+    {
+      "path": "src/commit.cpp",
+      "upstream": {
+        "size_bytes": 5061,
+        "sha256": "589fd0d314d5f148cfa9a3f2e8b8bde363a411e0ac54990674b1fe63ea35577c"
+      },
+      "patched": {
+        "size_bytes": 5278,
+        "sha256": "5b36c5fa66c72c229e1dd73e6d7289deed97a4aaf58f825accb2ed3c3c271681"
+      }
+    },
+    {
+      "path": "src/hdmi.h",
+      "upstream": {
+        "size_bytes": 2787,
+        "sha256": "21656a0f86d2b78a415f2fb87cf87e532488e5b31f740412be9832cb70872a30"
+      },
+      "patched": {
+        "size_bytes": 2973,
+        "sha256": "05ea2d02d169247bd22b777ee1b1c4dce85e53bd2cbcfd1f9a2543759956a426"
+      }
+    },
+    {
+      "path": "src/main.cpp",
+      "upstream": {
+        "size_bytes": 40142,
+        "sha256": "618bc9de81ab1b724b07985cdee14e6a9369fb4fc03057a896efbeac1c42e9cd"
+      },
+      "patched": {
+        "size_bytes": 40150,
+        "sha256": "23c590c4a922dd3213d09892c93bcd07ef55a6dde84e9028a8d3dd9c7f508ea2"
+      }
+    },
+    {
+      "path": "src/main.hpp",
+      "upstream": {
+        "size_bytes": 4256,
+        "sha256": "3be4fd25206bada9502a58205085e2d4c599094c25835b198eb479a6ed094153"
+      },
+      "patched": {
+        "size_bytes": 4390,
+        "sha256": "49d00cff5daf48f3a4904e5464cc7b5f2c36dc6dd68e516e73148db17ebd0c0e"
+      }
+    },
+    {
+      "path": "src/meson.build",
+      "upstream": {
+        "size_bytes": 7970,
+        "sha256": "4832916bcfcd77866fb0055cac055cfe755eea17599450233ed94113ecfd91d9"
+      },
+      "patched": {
+        "size_bytes": 8180,
+        "sha256": "19dee3df0039724976f5bb2d4640291d206ece77650700efacef4e43e042fc48"
+      }
+    },
+    {
+      "path": "src/rendervulkan.cpp",
+      "upstream": {
+        "size_bytes": 156238,
+        "sha256": "29666c9060d17819ecc303ce40c5c023402680dd5dd1803c790751832ee359ca"
+      },
+      "patched": {
+        "size_bytes": 160194,
+        "sha256": "71da37f0c1de377327582e4f41e6c96e085fa1afe8bf834da03ceb3f5b720a33"
+      }
+    },
+    {
+      "path": "src/rendervulkan.hpp",
+      "upstream": {
+        "size_bytes": 32468,
+        "sha256": "c4550f530305d5f9fdd96822c859a089b41100257d7c831e53507a84901fbb06"
+      },
+      "patched": {
+        "size_bytes": 32613,
+        "sha256": "ffaaa23a3b97d362ae35746db9639773933dc360cfa8a44ce6abd857bdc7e338"
+      }
+    },
+    {
+      "path": "src/steamcompmgr.cpp",
+      "upstream": {
+        "size_bytes": 365944,
+        "sha256": "aa9beb7c5d7c54d4f6cd2e5f75b0fcd9b47029523000ee7ae28e8ca1fd8ab705"
+      },
+      "patched": {
+        "size_bytes": 367055,
+        "sha256": "b477845372b9e91769c509ff0c6b251d0ff415fda6425c1eeb2923e24805cb26"
+      }
+    },
+    {
+      "path": "src/wlserver.cpp",
+      "upstream": {
+        "size_bytes": 119330,
+        "sha256": "a1e00bc4e6e832dc70ce1cb62d1cb1b1d549be370bb3a8c984d1d52d447a906f"
+      },
+      "patched": {
+        "size_bytes": 119511,
+        "sha256": "551a7eeb2b65d70b844e1739dbf97eb39f811bc82f5f4ac8b352959524c5607e"
+      }
+    },
+    {
+      "path": "tests/test_upscale.cpp",
+      "upstream": {
+        "size_bytes": 3497,
+        "sha256": "f4a1db3c03b8e406823267863291a6c05d3f8e38d964422cddb3ffa977f08bec"
+      },
+      "patched": {
+        "size_bytes": 4304,
+        "sha256": "7e54ac7735bad07fa7efce4eee90ebe892e626d007a466194f2b42ab478b9446"
+      }
+    },
+    {
+      "path": "src/docksr_integration.cpp",
+      "upstream": null,
+      "patched": {
+        "size_bytes": 9743,
+        "sha256": "c915219124b917536020b3ee36bb9ce27c3b268c98611dc835f7528b9c6efa19"
+      }
+    },
+    {
+      "path": "src/docksr_integration.hpp",
+      "upstream": null,
+      "patched": {
+        "size_bytes": 584,
+        "sha256": "35991c7ade8457feb50d73aa23c86173412aad382c63904abd88dc89247b9008"
+      }
+    },
+    {
+      "path": "src/shaders/cs_docksr.comp",
+      "upstream": null,
+      "patched": {
+        "size_bytes": 908,
+        "sha256": "3400eb3fb753eb3050b78e1150b030c97c878c9067067136cf59574d97da35d9"
+      }
+    }
+  ],
+  "dependencies": {
+    "upstream_gitlinks": {
+      "src/reshade": "696b14cd6006ae9ca174e6164450619ace043283",
+      "subprojects/vkroots": "20733b938267dcac60f6ac105dbb757f9cc8df9c",
+      "thirdparty/SPIRV-Headers": "d790ced752b5bfc06b6988baadef6eb2d16bdf96",
+      "subprojects/wlroots": "d783533489e1f75d6886c2ab5c5960090ef268f8",
+      "subprojects/libdisplay-info": "c67a3e9bedb05ab61c7443704a1a107e76254595"
+    },
+    "cloud_variant": {
+      "wlroots": "Debian sid libwlroots-0.20(-dev) 0.20.2-1; supported declared >=0.20,<0.21 external dependency, not upstream gitlink",
+      "wlroots_runtime_sha256": "24f40437ac0c844290ed6f21082e47144de0fef1e847ea3c917b2fa39af8f0c0",
+      "wlroots_development_sha256": "25c025f3a4bb1975c00fde4856ed82934921032424af2d9bff34703d09270cc9",
+      "libdisplay_info": "Debian sid 0.3.0; supported declared >=0.2,<0.5 external dependency, not upstream gitlink",
+      "trust": "Official Debian signed indexes and package SHA256 verification; workspace-only extraction. See cloud lock manifests for exact packages."
+    },
+    "blocked_exact_sources": "Official GitLab CONNECT403 for wlroots/libdisplay-info; required GitHub submodules preserved. No assertion/version/feature check waived."
+  },
+  "distribution_limits": [
+    "No complete Gamescope checkout, binary or dependency packages are vendored here.",
+    "Upstream notices and dependency notices must be retained for any authorized distribution.",
+    "DockSR original licensing remains pending; no release, deployment, model/runtime redistribution or new upstream fork is authorized by this manifest."
+  ],
+  "execution_note": "Pinned source and hash validation do not establish shader execution, live presentation, physical GPU/NPU acceleration or performance."
+}

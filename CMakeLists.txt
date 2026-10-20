@@ -48,6 +48,17 @@ foreach(docksr_command IN ITEMS docksr-scale docksr-preview docksr-bench)
 endforeach()
 
 if(BUILD_TESTING)
+  # Independent control-contract checks; no Gamescope or graphics dependency.
+  add_executable(docksr-gamescope-lab-tests tests/gamescope_lab_tests.cpp)
+  target_include_directories(docksr-gamescope-lab-tests PRIVATE "${PROJECT_SOURCE_DIR}")
+  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(docksr-gamescope-lab-tests PRIVATE -Wall -Wextra -Wpedantic -Werror -fno-exceptions)
+  endif()
+  add_test(NAME gamescope_lab_contract COMMAND docksr-gamescope-lab-tests)
+  add_test(NAME gamescope_lab_schema
+           COMMAND "${Python3_EXECUTABLE}" "${PROJECT_SOURCE_DIR}/tests/test_gamescope_lab_schema.py"
+                   "$<TARGET_FILE:docksr-gamescope-lab-tests>"
+                   "${PROJECT_SOURCE_DIR}/schemas/gamescope-lab.schema.json")
   add_test(NAME detection COMMAND "${Python3_EXECUTABLE}" "${PROJECT_SOURCE_DIR}/tests/test_detection.py")
   add_test(NAME telemetry COMMAND "${Python3_EXECUTABLE}" "${PROJECT_SOURCE_DIR}/tests/test_telemetry.py")
   add_test(NAME frame_payload COMMAND "${Python3_EXECUTABLE}" "${PROJECT_SOURCE_DIR}/tests/test_frame_payload.py")

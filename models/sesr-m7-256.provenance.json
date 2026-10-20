@@ -11,14 +11,14 @@
   "artifact": {
     "filename": "sesr_nhwc_int8_256x256.onnx",
     "source_url": "https://huggingface.co/amd/sesr-m7-256x256-tiles-amdnpu/resolve/edbe46281e894e31da3f42aa353db1e04a50f00a/onnx-models/sesr_nhwc_int8_256x256.onnx",
-    "sha256": null,
+    "sha256": "63d2600fa41b21c2326d1740f75486f24e0b791c490ea73a898bf64fdd429ab1",
     "advertised_sha256": "63d2600fa41b21c2326d1740f75486f24e0b791c490ea73a898bf64fdd429ab1",
-    "size_bytes": null,
-    "verification_status": "DECLARED_ONLY"
+    "size_bytes": 107131,
+    "verification_status": "LOCALLY_HASHED"
   },
   "acquisition": {
-    "status": "BLOCKED",
-    "reason": "DSR009 (2026-10-20): pinned HTTPS GET returns HF302 to us.aws.cdn.hf.co then proxy CONNECT403. Official Git exact-revision fetch and canonical LFS batch metadata succeed, but batch directs the same object to that CDN; native LFS fetch stopped at60seconds without bytes. Trusted caches contain no candidate. Saved custom allowlist includes CDN; actual runtime activation is unverified and no activation control is callable. Actual artifact size/hash remain unknown; owner manual import is the supported fallback."
+    "status": "ACQUIRED",
+    "reason": "DSR010 (2026-10-20): owner attachment imported into a new private cache using the existing exact-identity importer; independently measured 107131 bytes and SHA256 match the pinned publisher identity. Unchanged graph inspected: IR9, standard opset19, INT8 NHWC [1,256,256,3] to [1,512,512,3], 60 nodes, no custom domains/external data. Pinned AMD runner source establishes RGB pixel-minus-128 input/output centering; existing CPU-only reference passed two warmups and three bitwise-equal measured repeats on one owned composite tile. MODEL_VALIDATED is bounded REAL_CPU artifact validation, not NPU compatibility, quality, 3x production scaling or redistribution clearance. Private receipts/inspection/preprocessing/reference evidence retained outside Git at /workspace/DockSR-model-cache/manual-sesr-010/. No CDN retry."
   },
   "licenses": {
     "model_weights": {
@@ -28,7 +28,7 @@
         "hf-card-pinned",
         "hf-license-pinned"
       ],
-      "notes": "Pinned AMD model card declares Apache-2.0 and links the Apache LICENSE in the same revision. Artifact itself was unavailable; no asset-specific redistribution clearance is asserted."
+      "notes": "Pinned AMD model card declares Apache-2.0 and links the Apache LICENSE in the same revision. Locally hashed artifact now matches the pinned advertised identity; associated notices and asset-specific redistribution scope still require review before bundling."
     },
     "source_code": {
       "status": "VERIFIED",
@@ -70,7 +70,7 @@
     "version": "1.8.0",
     "version_status": "DECLARED",
     "execution_status": "NOT_RUN",
-    "notes": "Intended future hardware stack from R-005; not installed, tested, artifact-pinned or redistributed here. Gate-0 host tests use CPU-only ONNX Runtime1.20.1 and ONNX1.17.0."
+    "notes": "Intended future hardware stack from R-005; not installed, tested, artifact-pinned or redistributed here. DSR010 unchanged SESR artifact passed CPU-only ONNX Runtime1.20.1 / ONNX1.17.0 reference inference; no AMD runtime or NPU execution occurred."
   },
   "redistribution": {
     "status": "unresolved",
@@ -79,7 +79,7 @@
       "hf-card-pinned",
       "hf-license-pinned"
     ],
-    "notes": "Keep weights outside Git. Resolve actual artifact, hash, associated notices and distribution scope before bundling; no final project license selected."
+    "notes": "Keep weights outside Git. Actual artifact and hash are now locally verified; resolve associated notices and distribution scope before bundling. No final project license selected."
   },
   "evidence_references": [
     {
@@ -162,12 +162,30 @@
       "sha256": "4634046c6ce0ab663515ff877c360d6441a6b5fa8cefd3f55352824699358030",
       "status": "OBSERVED",
       "notes": "Read-only pinned source inspection; no remote script executed. Hash identifies retrieved metadata/text, not the model artifact."
+    },
+    {
+      "id": "hf-runner-pinned",
+      "url": "https://huggingface.co/amd/sesr-m7-256x256-tiles-amdnpu/raw/edbe46281e894e31da3f42aa353db1e04a50f00a/onnx_runner.py",
+      "revision": "edbe46281e894e31da3f42aa353db1e04a50f00a",
+      "retrieved_date": "2026-10-20",
+      "sha256": "0136fcf2ffed8e953cf614ef83b4509b9dea73f5be7a1c7a96a7a11480c37828",
+      "status": "OBSERVED",
+      "notes": "Read from the already fetched exact-revision official Git object; inspected as text, never executed. preprocess, OnnxRunner.run and postprocess establish RGB centering at128 and NHWC INT8 tile encoding; actual graph input/output QDQ scales1/zero-points0 independently agree."
+    },
+    {
+      "id": "hf-inference-pinned",
+      "url": "https://huggingface.co/amd/sesr-m7-256x256-tiles-amdnpu/raw/edbe46281e894e31da3f42aa353db1e04a50f00a/onnx_inference.py",
+      "revision": "edbe46281e894e31da3f42aa353db1e04a50f00a",
+      "retrieved_date": "2026-10-20",
+      "sha256": "19a88971827e95edcd15abead29cc844c1280c1a3e64b678257d705b7fcbf7ab",
+      "status": "OBSERVED",
+      "notes": "Read from the already fetched exact-revision official Git object; inspected as text, never executed. Publisher entry point declares sr_scale2 and tile_overlap16. Full-image tiling was not exercised by the bounded single-tile reference."
     }
   ],
   "outstanding_questions": [
-    "Acquire the exact pinned107131-byte artifact through the permitted CDN and independently verify SHA256.",
-    "Inspect actual graph types/shapes/operators; filename NHWC/INT8 and card 2x/tile descriptions are declarations, not a graph signature.",
-    "Run CPU reference only if standard host ORT supports the actual graph and preprocessing is documented; never rewrite a graph to fake support.",
-    "Verify exact runtime/operator placement and all hardware/copy/sync/power results on the target; no such evidence exists here."
+    "Review associated model notices and asset-specific redistribution scope before bundling any weights or publisher source.",
+    "Validate natural-image quality, full-image overlap/merge behavior and target suitability separately; the verified graph is a fixed2x tile probe, not an exact3x production candidate.",
+    "Verify exact AMD runtime/operator placement, CPU fallback partitioning and all hardware/copy/sync/power results on the target; no such evidence exists here.",
+    "Reproduce the retained CPU input/output comparison on any future provider with documented tolerances; cross-provider determinism is not tested."
   ]
 }
