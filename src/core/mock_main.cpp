@@ -1,6 +1,7 @@
 #include "docksr/core/frame_scheduler.hpp"
 #include "docksr/core/json.hpp"
 #include "docksr/core/profile_registry.hpp"
+#include "docksr/core/schedule_simulation.hpp"
 
 #include <algorithm>
 #include <array>
@@ -157,6 +158,8 @@ int error(std::string_view message, int code = 2) {
 }  // namespace
 
 int main(int argc, char** argv) {
+  if (argc > 1 && std::string_view(argv[1]) == "--schedule")
+    return docksr::core::schedule_cli(argc - 2, argv + 2);
   try {
     std::string profile_id(ProfileRegistry::default_profile);
     std::string scenario = "normal";
@@ -171,6 +174,7 @@ int main(int argc, char** argv) {
         (arg == "--profile" ? profile_id : scenario) = argv[++i];
       } else if (arg == "--help") {
         std::cout << "Dock SR deterministic host simulation; no NPU or physical timing.\n"
+                     "Scheduling experiment: docksr-mock --schedule --help\n"
                      "Usage: docksr-mock [--enable] [--profile ID] [--scenario NAME]\n"
                      "Scenarios: normal late late-consumer crash resize suspend exhaustion stale\n"
                      "Without --enable: disabled/unvalidated state; no scenario executes.\n"

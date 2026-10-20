@@ -2,7 +2,7 @@
 
 Updated 2026-10-19. This is the implementation decision record; it does not replace private session reports.
 
-Current directive: **v1.5 Gate-0A**. Earlier entries below preserve the decisions and next-task suggestions at their original stage; the appended v1.5 entry governs current scope.
+Current directive: **v1.6 model validation, conditional R005-G0B-1 simulation and project mission**. Earlier entries preserve the decisions and next-task suggestions at their original stage; the appended v1.6 entry governs current scope.
 
 ## Reading order and authority
 
@@ -48,3 +48,14 @@ The owner directed R-005 to be read first, then the full v1.5 handoff, and autho
 - Prior owner approval for reviewed source backups to the existing repository remains in force. Preserve repository visibility and private-data boundaries; no final source license, release, deployment or driver authorization is inferred. R-005's description of repo privacy is not a new independent visibility check.
 
 The separate model, source-code, runtime and dataset license evidence and current candidate blockers are canonical in [the provenance manifest](../models/sesr-m7-256.provenance.json) and [acquisition notes](model-acquisition.md). Schema validation is not license clearance or hardware attestation.
+
+## v1.6 — bounded continuation and mission (2026-10-19 America/Chicago)
+
+The owner authorized the v1.6 handoff: update the mission/AI-assistance/licensing-pending README, time-box another exact SESR acquisition attempt and, if blocked, implement R005-G0B-1 deterministic scheduling plus a small payload calculator. This specifically supersedes v1.5's deferral of those two host-side tools; it does not authorize the NPU adapter, interop layer, training, Gamescope or Decky work.
+
+- The current saved configuration includes the CDN host and shows a newer base version with no pending draft at inspection. Actual execution still rejects the CDN CONNECT with 403. Do not repeat the historical instruction to publish the old DSR007 draft as though it explains the current denial. Investigate runtime rule activation through supported controls; no agent-callable activation control exists here.
+- Model acquisition remains blocked after a focused normal HTTPS retry; actual model identity/signature and CPU reference remain unknown/unrun. Proceed with the explicitly authorized simulation work, without treating it as actual NPU dispatch or full Gate-0 completion.
+- Scheduling assumptions must identify latency, single-server service capacity, deadline behavior, queue pressure and delivered frames separately. Additional slots and frame delay cannot create NPU throughput. Reused, missed or bypassed output cannot count as a new completed neural frame.
+- Payload arithmetic describes logical bytes and copy read/write volume, not measured physical bus traffic, latency or power.
+- DockSR's mission is longer useful device life through efficient accessible reconstruction. Human direction and substantial ChatGPT/Codex assistance are disclosed. Community reuse/forking with attribution is an intention, not a license grant. Formal source/research terms, third-party rights, public visibility and release readiness remain separate owner decisions.
+- Reviewed normal source backup pushes remain authorized; preserve visibility and private report/model/cache boundaries. No final license, release, deployment or system changes are inferred.

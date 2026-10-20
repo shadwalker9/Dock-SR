@@ -24,7 +24,8 @@ enum class FrameDecision {
   FallbackCrash, CompletionDiscarded, StaleCompletion, Resized, Suspended,
   Resumed, BackendCrashed, QuiescenceAcknowledged, Restarted,
   OutputConsumed, OutputReleased, FallbackStaleOutput,
-  InvalidConsumerAcquire, InvalidConsumerRelease
+  InvalidConsumerAcquire, InvalidConsumerRelease,
+  QueuedCancelled, InvalidQueuedCancellation
 };
 
 enum class SchedulerState { Running, Suspended, Crashed };
@@ -69,6 +70,9 @@ class FrameScheduler {
   // Called only once the GPU consumer has finished ALL access, or the adapter
   // has established that ready output will never be submitted to a consumer.
   FrameDecision release_output(FrameTicket ticket, Tick now);
+  // Trusted simulation-driver acknowledgement: no producer ever started this
+  // queued ticket and no consumer can access it. Never a timeout-based cancel.
+  FrameDecision acknowledge_unstarted_cancel(FrameTicket ticket, Tick now);
   void advance_to(Tick now);
   void resize(Tick now);
   void suspend(Tick now);

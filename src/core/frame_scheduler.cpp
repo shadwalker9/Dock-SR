@@ -149,6 +149,22 @@ FrameDecision FrameScheduler::release_output(FrameTicket ticket, Tick now) {
   return FrameDecision::OutputReleased;
 }
 
+FrameDecision FrameScheduler::acknowledge_unstarted_cancel(FrameTicket ticket, Tick now) {
+  advance_to(now);
+  if (ticket.slot >= slots_.size() || slots_[ticket.slot].ticket != ticket) {
+    emit(FrameDecision::StaleCompletion, {}, ticket);
+    return FrameDecision::StaleCompletion;
+  }
+  auto& slot = slots_[ticket.slot];
+  if (slot.phase != Slot::Phase::ProducerPending) {
+    emit(FrameDecision::InvalidQueuedCancellation, slot.frame_id, ticket);
+    return FrameDecision::InvalidQueuedCancellation;
+  }
+  emit(FrameDecision::QueuedCancelled, slot.frame_id, ticket);
+  slot = Slot{};
+  return FrameDecision::QueuedCancelled;
+}
+
 void FrameScheduler::invalidate(FrameDecision reason) {
   if (generation_ == std::numeric_limits<std::uint64_t>::max())
     throw std::overflow_error("scheduler generation exhausted");
@@ -234,6 +250,8 @@ std::string_view to_string(FrameDecision decision) {
     case FrameDecision::FallbackStaleOutput: return "fallback_stale_output";
     case FrameDecision::InvalidConsumerAcquire: return "invalid_consumer_acquire";
     case FrameDecision::InvalidConsumerRelease: return "invalid_consumer_release";
+    case FrameDecision::QueuedCancelled: return "queued_cancelled";
+    case FrameDecision::InvalidQueuedCancellation: return "invalid_queued_cancellation";
   }
   return "unknown_enum";
 }

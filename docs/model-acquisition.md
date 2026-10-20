@@ -4,7 +4,15 @@ Inspected 2026-10-20 UTC (2026-10-19 America/Chicago). The canonical record is [
 
 The Hugging Face API, pinned model card/LICENSE and read-only Git query succeeded. Repository revision is `edbe46281e894e31da3f42aa353db1e04a50f00a`. Its selected artifact path is `onnx-models/sesr_nhwc_int8_256x256.onnx`, with publisher-advertised length **107131 bytes** and LFS SHA-256 **63d2600fa41b21c2326d1740f75486f24e0b791c490ea73a898bf64fdd429ab1**. Those are declarations, not locally measured artifact identity. A filename mentioning NHWC/INT8 is not an inspected graph signature.
 
-The pinned artifact URL returns HTTP 302 to **us.aws.cdn.hf.co**; the current proxy rejects that host's CONNECT request with HTTP 403. No artifact bytes were acquired, so actual SHA-256/size and graph signature remain null/unknown, and SESR CPU execution is NOT RUN. This is narrower than the old general Hugging Face access blocker. Signed redirect URLs are not retained in source or logs. The required CDN hostname has been added to an environment configuration draft; saving a draft does not apply or publish it. Review/save the network addition in environment settings before retrying in the updated runtime.
+The pinned artifact URL redirects to **us.aws.cdn.hf.co**; the current proxy rejects that host's CONNECT request with HTTP 403. No artifact bytes were acquired, so actual SHA-256/size and graph signature remain null/unknown, and SESR CPU execution is NOT RUN. This is narrower than the old general Hugging Face access blocker. Signed redirect URLs are not retained in source or logs.
+
+### DSR008 focused retry — MODEL_ACQUISITION_BLOCKED
+
+At 2026-10-20 04:39 UTC, the environment configuration read showed a different base version from DSR007, no pending draft, and `us.aws.cdn.hf.co` in the custom allowlist. DSR007's statement that this addition was only a pending draft is therefore historical. Saved configuration alone does not establish that the current runtime proxy has activated the rule; no agent-callable publication/runtime-activation control is available here.
+
+A single normal HTTPS retrieval of the exact pinned artifact, with redirects, TLS verification, a 60-second deadline and 1 MiB cap, returned curl exit 22 / HTTP 403 without artifact bytes. Separate read-only HEAD checks returned HTTP 200 for the pinned model card and `Tunnel connection failed: 403 Forbidden` for the CDN host. The artifact remains blocked despite the saved allowlist entry. No proxy bypass, mirror, different revision or model rewrite was attempted. Graph inspection and CPU reference remain NOT RUN. Sanitized attempt/connectivity records are retained outside Git under `/workspace/DockSR-model-cache/acquisition/session-008/`.
+
+The next access investigation should establish whether the current execution proxy has received the saved CDN rule, using supported environment controls or administrator help. Repeatedly saving the same hostname is not evidence that activation occurred. Retry artifact acquisition after an actual runtime access change, then require the identity checks below before inspection.
 
 ## Controlled manual acquisition after access is available
 

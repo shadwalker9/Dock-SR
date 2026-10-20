@@ -1,5 +1,5 @@
 add_library(docksr_core profile_registry.cpp frame_scheduler.cpp json.cpp)
-target_sources(docksr_core PRIVATE status_snapshot.cpp)
+target_sources(docksr_core PRIVATE status_snapshot.cpp schedule_simulation.cpp)
 target_include_directories(docksr_core PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_compile_features(docksr_core PUBLIC cxx_std_20)
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
@@ -15,7 +15,13 @@ if(BUILD_TESTING)
   add_executable(docksr-core-tests ${PROJECT_SOURCE_DIR}/tests/core_tests.cpp)
   target_link_libraries(docksr-core-tests PRIVATE docksr_core)
   add_test(NAME docksr-core COMMAND docksr-core-tests)
+  add_executable(docksr-schedule-tests ${PROJECT_SOURCE_DIR}/tests/schedule_tests.cpp)
+  target_link_libraries(docksr-schedule-tests PRIVATE docksr_core)
+  add_test(NAME docksr-schedule COMMAND docksr-schedule-tests)
   if(BUILD_CLI)
+    add_test(NAME docksr-schedule-cli
+             COMMAND "${Python3_EXECUTABLE}" "${PROJECT_SOURCE_DIR}/tests/test_schedule_cli.py"
+                     "$<TARGET_FILE:docksr-mock>")
     add_test(NAME docksr-mock-default COMMAND docksr-mock)
     foreach(docksr_scenario IN ITEMS normal late late-consumer crash resize suspend exhaustion stale)
       add_test(NAME docksr-mock-${docksr_scenario}
