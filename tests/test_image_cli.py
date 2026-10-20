@@ -10,6 +10,7 @@ small, explicit goldens; no production scaler or source generator is imported.
 
 import json
 import math
+import os
 from pathlib import Path
 import stat
 import subprocess
@@ -63,6 +64,41 @@ def read_ppm(path):
     return width, height, pixels
 
 
+def parse_self_test_log(stderr):
+    """Decode the bounded self-test records without accepting missing fields."""
+    cases = []
+    summary = None
+    case_fields = {"filter", "input", "output", "validated_pixels",
+                   "max_channel_error", "tolerance", "cpu_resize_ms"}
+    summary_fields = {"cases", "published_images", "frames_processed"}
+    for line in stderr.splitlines():
+        if not line.strip():
+            continue
+        tokens = line.split()
+        if len(tokens) < 2 or tokens[-1] != "PASS":
+            raise ValueError("Incomplete self-test result line")
+        fields = {}
+        for token in tokens[1:-1]:
+            key, separator, value = token.partition("=")
+            if not separator or not key or not value or key in fields:
+                raise ValueError("Malformed or duplicate self-test field")
+            fields[key] = value
+        if tokens[0] == "SELF_TEST_CASE" and set(fields) == case_fields:
+            for key in ("validated_pixels", "max_channel_error", "tolerance"):
+                fields[key] = int(fields[key])
+            fields["cpu_resize_ms"] = float(fields["cpu_resize_ms"])
+            cases.append(fields)
+        elif tokens[0] == "SELF_TEST_SUMMARY" and set(fields) == summary_fields:
+            if summary is not None:
+                raise ValueError("Duplicate self-test summary")
+            summary = {key: int(value) for key, value in fields.items()}
+        else:
+            raise ValueError("Unexpected self-test record or fields")
+    if summary is None:
+        raise ValueError("Missing self-test summary")
+    return cases, summary
+
+
 class ImageCliTests(unittest.TestCase):
     binary = None
 
@@ -80,11 +116,11 @@ class ImageCliTests(unittest.TestCase):
         directory.mkdir()
         return directory
 
-    def invoke(self, arguments):
+    def invoke(self, arguments, env=None):
         try:
             return subprocess.run(
                 [str(self.binary), *map(str, arguments)], capture_output=True,
-                text=True, timeout=30, check=False,
+                text=True, timeout=60, check=False, env=env,
             )
         except (OSError, subprocess.TimeoutExpired) as error:
             self.fail(f"Cannot run CPU image CLI: {error}")
@@ -359,12 +395,46 @@ class ImageCliTests(unittest.TestCase):
     def test_self_test_succeeds(self):
         directory = self.case_directory()
         status = directory / "self-test.json"
-        process = self.invoke(["--self-test", "--dump-status-json", status])
+        environment = os.environ.copy()
+        environment.update({
+            "DISPLAY": "", "WAYLAND_DISPLAY": "",
+            "VK_ICD_FILENAMES": str(directory / "missing-vulkan-icd.json"),
+            "VK_DRIVER_FILES": str(directory / "missing-vulkan-icd.json"),
+        })
+        process = self.invoke(["--self-test", "--dump-status-json", status], env=environment)
         self.assert_success(process)
         report = json.loads(process.stdout)
+        self.assertEqual(report["schema_version"], "1.0.0")
+        self.assertEqual(report["document_type"], "docksr_status")
         self.assertEqual(report["runtime_state"], "CPU_REFERENCE_ACTIVE")
         self.assertEqual(report["evidence"], "REAL_CPU")
+        self.assertEqual(report["backend_name"], "cpu-reference-self-test")
         self.assertEqual(report["frames_processed"], 0)
+        self.assertIsNone(report["dimensions"]["actual"])
+        self.assertEqual(report["dimensions"]["requested"], {
+            "input": {"width": 1280, "height": 720},
+            "output": {"width": 3840, "height": 2160},
+        })
+        self.assertIsNone(report["last_error"])
+        self.assertEqual(report["npu"]["device_status"], "NOT_TESTED")
+        self.assertEqual(report["npu"]["model_status"], "UNVALIDATED")
+        for backend in ("cpu", "gpu", "npu"):
+            self.assertIsNone(report["timings_ms"][backend])
+        cases, summary = parse_self_test_log(process.stderr)
+        self.assertEqual(len(cases), 4)
+        self.assertEqual({(case["filter"], case["input"], case["output"]) for case in cases}, {
+            (filter_name, "1280x720", output_size)
+            for filter_name in ("nearest", "bilinear")
+            for output_size in ("1920x1080", "3840x2160")
+        })
+        for case in cases:
+            expected_pixels = {"1920x1080": 2_073_600, "3840x2160": 8_294_400}[case["output"]]
+            self.assertEqual(case["validated_pixels"], expected_pixels)
+            self.assertEqual(case["max_channel_error"], 0)
+            self.assertEqual(case["tolerance"], 0)
+            self.assertTrue(math.isfinite(case["cpu_resize_ms"]))
+            self.assertGreaterEqual(case["cpu_resize_ms"], 0)
+        self.assertEqual(summary, {"cases": 4, "published_images": 0, "frames_processed": 0})
         self.assertEqual(json.loads(status.read_text(encoding="utf-8")), report)
         self.assertEqual(stat.S_IMODE(status.stat().st_mode), 0o600)
         self.assertEqual(list(directory.iterdir()), [status])

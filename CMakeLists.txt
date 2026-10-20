@@ -37,7 +37,22 @@ if(BUILD_PREVIEW)
   add_subdirectory(src/preview)
 endif()
 
+# Copied smoke executables must use the host loader, without preferring a
+# developer's absolute SDK prefix. Custom-prefix development activates its
+# documented LD_LIBRARY_PATH; no driver/library path is injected by the bundle.
+foreach(docksr_command IN ITEMS docksr-scale docksr-preview docksr-bench)
+  if(TARGET ${docksr_command})
+    set_target_properties(${docksr_command} PROPERTIES SKIP_BUILD_RPATH TRUE)
+  endif()
+endforeach()
+
 if(BUILD_TESTING)
   add_test(NAME detection COMMAND "${Python3_EXECUTABLE}" "${PROJECT_SOURCE_DIR}/tests/test_detection.py")
   add_test(NAME telemetry COMMAND "${Python3_EXECUTABLE}" "${PROJECT_SOURCE_DIR}/tests/test_telemetry.py")
+  if(BUILD_CLI)
+    add_test(NAME docksr-smoke-bundle
+             COMMAND "${Python3_EXECUTABLE}" "${PROJECT_SOURCE_DIR}/tests/test_smoke_bundle.py"
+                     "${CMAKE_BINARY_DIR}")
+    set_tests_properties(docksr-smoke-bundle PROPERTIES LABELS "packaging" TIMEOUT 180)
+  endif()
 endif()

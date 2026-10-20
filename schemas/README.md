@@ -39,11 +39,16 @@ Record the source revision, build/shader identity, run command, and collection
 time with retained run evidence. Checked-in `tests/fixtures` are explicitly
 synthetic schema examples and contain no measured performance claims.
 
-Run the required contract tests with the development Python environment:
+Run the contract tests with the development Python environment:
 
 ```sh
-python -m unittest discover -s tests -p 'test_*.py'
+python tests/test_detection.py
+python tests/test_telemetry.py
 ```
+
+Run native/CLI/window/package tests through CTest in the configured build directory;
+CTest supplies their actual executable paths. Unrestricted unittest discovery does
+not supply those arguments and is not a complete test command.
 
 Install test dependencies using the repository's hash-locked
 `requirements-dev.lock`. The detector itself uses only Python's standard library.

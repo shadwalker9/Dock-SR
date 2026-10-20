@@ -45,6 +45,11 @@ if(BUILD_TESTING)
                              "$<TARGET_FILE:docksr-bench>")
             set_tests_properties(vulkan_scaler_correctness PROPERTIES
                 LABELS "vulkan;correctness" SKIP_RETURN_CODE 77 TIMEOUT 180)
+            add_test(NAME vulkan_shader_relocation
+                     COMMAND "${Python3_EXECUTABLE}" "${PROJECT_SOURCE_DIR}/tests/test_shader_relocation.py"
+                             "$<TARGET_FILE:docksr-bench>" "${DOCKSR_SCALER_SHADER}")
+            set_tests_properties(vulkan_shader_relocation PROPERTIES
+                LABELS "vulkan;packaging" SKIP_RETURN_CODE 77 TIMEOUT 90)
         endif()
     endif()
 endif()
