@@ -1,6 +1,33 @@
 # Dock SR project state
 
-Updated 2026-10-21 America/Chicago. Read this and [DECISIONS.md](DECISIONS.md) before resuming. Latest assignment: **v2.2 DSR013-P, SteamOS-first readiness and R-009 integration**. Primary target is AMD Ryzen AI Z2 Extreme running SteamOS; other distributions are secondary diagnostics, not substitutes. No AGENTS.md or docs/OWNER_UPDATES.md exists here; approved O-002 targets are recorded in DECISIONS.md.
+Updated 2026-10-21 America/Chicago. Read this and [DECISIONS.md](DECISIONS.md) before resuming. Latest assignment: **v2.3 DSR014-H, research hub and persistent single-tile H1 laboratory**. Primary target is AMD Ryzen AI Z2 Extreme running SteamOS; other distributions are secondary diagnostics, not substitutes. No AGENTS.md or docs/OWNER_UPDATES.md exists here; approved O-002 targets are recorded in DECISIONS.md.
+
+## DSR014-H knowledge and single-tile laboratory
+
+The [research hub](research/README.md), [twelve revisable decisions](research/CONSENSUS.md)
+and [primary-source register](research/SOURCES.md) expose original summaries,
+including the superseded GPU-guide/rendering-first proposals and SteamOS-first
+owner direction. R-008 remains missing and its later outline is explicitly
+unrechecked. No full research paper, model or private report is in the hub.
+
+[H1 laboratory](h1-inference-harness.md) implements persistent CPU execution and
+an owner-approved, matching-H0-gated Vitis candidate attempt. Exact original
+SESR identity/signature, separate CPU golden, output comparison, actual provider,
+bounded supervisor, private artifacts and canonical evidence/benchmark checks are
+implemented. Only the reaping/validating supervisor publishes an accepted record.
+Candidate placement/context artifacts remain unverified: current H1 v1 cannot
+emit REAL_NPU; report adapters and attribution need physical-device validation.
+This is not the native production worker or sustained24-tile NPU/H2 execution.
+
+Fresh DSR014-H configurations pass **42/42 SDK,36/36 preview,30/30 host and17/17
+library** CTest groups, zero failures/skips (overlapping configurations). Final
+focused checks cover21 H1 host methods,6 actual-CPU owned-fixture methods in the
+SDK configuration and4 research/navigation methods. Two final unchanged-SESR
+CPU runs (seeds0/17,3/5 measured requests) agree exactly with independently
+executed CPU goldens; candidate attempts without approval and CPU attempts
+without the optional SDK are BLOCKED. Physical execution remains NOT_TESTED.
+Private artifacts/logs are outside Git under
+`/workspace/DockSR-planning/evidence/session-014-h1/`.
 
 ## DSR013-P preparation
 
@@ -24,7 +51,7 @@ areas remain NOT_TESTED. Static reinspection of the unchanged model confirms
 halo11/core234/24 tiles without inference. Private logs/source/geometry/preflight
 evidence are under `/workspace/DockSR-planning/evidence/session-013-prep/`.
 
-## Current laboratory checkpoint
+## DSR012-P laboratory checkpoints (historical scope)
 
 P-A/P-B are implemented and host-tested: [benchmark laboratory](benchmark-laboratory.md) and [SteamOS/Bazzite map](STEAMOS_INTEGRATION_MAP.md). They reuse existing hardware-evidence validation, detection and private-output policy. P-C H1/H2 execution harnesses, P-D timed collectors and P-E the complete hardware-day kit remain pending under the handoff's bounded stopping rule. No physical NPU, deployment or efficiency gate passed. The missing R-008 paper remains unreconciled; the DSR012-named attachment was the existing DSR011-R audit.
 

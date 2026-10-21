@@ -65,10 +65,62 @@ def validate_record(record, kind):
                 count = sum(node["assignment"] == value for node in critical)
                 if assignment[name] is not None and assignment[name] != count:
                     raise ValueError("Operator assignment counts differ from node observations")
+        if 'h1_run' in record:
+            _validate_h1(record)
     return {"schema_version": "1.0.0", "document_type": "docksr_gate0_validation", "status": "VALID",
             "kind": kind, "hardware_execution_verified": False,
             "license_clearance_verified": False,
             "scope": "Structure and internal consistency only; not evidence that an observation occurred."}
+
+
+def _validate_h1(record):
+    """H1 is a fail-closed lab extension, never an alternate NPU attestation."""
+    from import_sesr import PINNED_IDENTITY
+    h = record['h1_run']
+    cpu = h['mode'] == 'cpu-reference'
+    expected = 'CPUExecutionProvider' if cpu else 'VitisAIExecutionProvider'
+    if h['requested_provider'] != expected or h['provider_discovered'] != (expected in h['available_providers']):
+        raise ValueError('H1 provider metadata contradicts the requested mode')
+    if h['provider_session_created'] and (not h['provider_discovered'] or not h['active_providers'] or
+            h['active_providers'][0] != expected or (cpu and h['active_providers'] != [expected])):
+        raise ValueError('H1 session has unexpected provider fallback')
+    if h['model_verified'] and (record['model_id'] != PINNED_IDENTITY.model_id or record['model_sha256'] != PINNED_IDENTITY.sha256 or
+            record['input_shape'] != [1, 256, 256, 3] or record['output_shape'] != [1, 512, 512, 3]):
+        raise ValueError('H1 model identity/signature is not the unchanged SESR artifact')
+    c = h['comparison']
+    agreement = (c['compared_samples'] > 0 and c['max_abs_error'] == 0 and c['cpu_repeats_equal'] is True and
+                 c['input_sha256'] is not None and c['output_sha256'] is not None and c['output_sha256'] == c['reference_sha256'])
+    if h['cpu_reference_agreement_pass'] != agreement:
+        raise ValueError('H1 CPU agreement contradicts comparison evidence')
+    if agreement and (not h['model_verified'] or not h['provider_session_created']):
+        raise ValueError('H1 comparison cannot precede model/session validation')
+    if h['classification'] == 'CPU_REFERENCE_PASS':
+        if (not cpu or not h['provider_session_created'] or not h['model_verified'] or not agreement or
+                record['evidence'] != 'REAL_CPU' or record['runtime_state'] != 'CPU_REFERENCE_ACTIVE' or
+                record['backend_kind'] != 'CPU' or c['compared_samples'] != record['sample_count'] or
+                record['sample_count'] < 2 or record['warmup_count'] is None or record['warmup_count'] < 1 or
+                record['model_validation'] is None or record['model_validation']['correct_output'] is not True):
+            raise ValueError('H1 CPU pass lacks a complete CPU execution result')
+    elif record['evidence'] != 'NONE':
+        raise ValueError('Unaccepted H1 candidate/error must not claim verified execution')
+    if h['classification'] == 'INCONCLUSIVE' and (cpu or not agreement or not h['provider_session_created'] or
+            h['h0_review_sha256'] is None or record['execution_environment'] != 'TARGET_PHYSICAL'):
+        raise ValueError('H1 inconclusive candidate requires an actual approved attempt')
+    if (h['placement_status'] == 'RAW_UNVERIFIED') != bool(h['placement_refs']):
+        raise ValueError('H1 raw placement status/reference mismatch')
+    if (h['context_status'] == 'RAW_UNVERIFIED') != bool(h['context_refs']):
+        raise ValueError('H1 raw context status/reference mismatch')
+    run = record.get('benchmark_run')
+    if run is not None:
+        frames = run['frames']
+        if (run['run_id'] != h['run_id'] or run['session_id'] != h['run_id'] or run['expected_tiles_per_frame'] != 1 or
+                len(frames) != record['sample_count'] or c['compared_samples'] != len(frames)):
+            raise ValueError('H1 single-tile lifecycle identity/count mismatch')
+        for index, frame in enumerate(frames):
+            if (frame['frame_id'] != h['first_frame_id'] + index or frame['configuration_generation'] != h['configuration_generation'] or
+                    frame['started_ns'] is None or frame['completed_ns'] is None or
+                    not math.isclose((frame['completed_ns'] - frame['started_ns']) / 1e6, record['samples_ms'][index], abs_tol=1e-9)):
+                raise ValueError('H1 frame identity or ns/ms request duration mismatch')
 
 
 def _pairs(pairs):

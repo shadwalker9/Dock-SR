@@ -1,5 +1,9 @@
 # DSR011 physical NPU probe preparation
 
+**DSR014-H:** the [bounded persistent H1 runner](h1-inference-harness.md) now
+implements CPU-reference execution and an owner-approved Vitis candidate attempt.
+Physical proof adapters remain pending; a successful candidate is INCONCLUSIVE.
+
 **DSR013-P update:** primary acceptance is now **Z2 Extreme on SteamOS**.
 Use [passive SteamOS discovery](steamos-first-readiness.md) first; the legacy
 command below includes additional opt-in queries and is not the new minimal

@@ -4,7 +4,8 @@ These are **unexecuted physical protocols**, extending DSR012-P rather than new
 executors. Existing [CPU reference](fullframe-reference.md),
 [native worker](inference-worker.md), [device probe](npu-device-probe.md) and
 [benchmark analysis](benchmark-laboratory.md) remain authoritative for their
-implemented scope. P-C persistent physical H1/H2 harnesses and P-D timed collectors
+implemented scope. The [H1 runner](h1-inference-harness.md) now exposes a persistent single-tile
+attempt; validated physical proof adapters, full-frame H2 and P-D timed collectors
 are still pending. This document is not a runnable complete hardware-day kit.
 No extra backend, scheduler, model, Gamescope hook or Decky code is added.
 

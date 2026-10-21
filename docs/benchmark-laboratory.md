@@ -117,7 +117,7 @@ extends [read-only preflight and Linux mapping](STEAMOS_INTEGRATION_MAP.md).
 | Gate | Current command/interface | Actual status |
 | --- | --- | --- |
 | H0 | `scripts/steamos_readiness.py --output NEW.json`; legacy model/opt-in queries in `npu_probe.py` separate | Passive inventory implemented; target compatibility/inference NOT_TESTED |
-| H1 | [Existing device-day procedure](npu-device-probe.md) | Physical SESR execution harness remains P-C work |
+| H1 | [Existing device-day procedure](npu-device-probe.md) | [Persistent H1 attempt](h1-inference-harness.md) implemented; physical proof adapters/measurements pending |
 | H2 | CPU `scripts/sesr_fullframe.py` | CPU-only reference; physical persistent-session runner remains P-C |
 | H3 | Matched GPU workload ± physical NPU | [DSR013-P protocol](hardware-gates-steamos.md); collectors/measurements pending |
 | H4 | Eight-stage import/binding/synchronization ladder | [DSR013-P protocol](hardware-gates-steamos.md); implementation/measurements pending |

@@ -2,7 +2,7 @@
 
 Updated 2026-10-21. This is the implementation decision record; it does not replace private session reports.
 
-Current directive: **v2.2 DSR013-P, SteamOS-first XDNA2 readiness and R-009 integration**. Latest appended decisions supersede conflicting earlier deployment order. The DSR010 Gamescope experiment and DSR011/012 host infrastructure are retained.
+Current directive: **v2.3 DSR014-H, research knowledge hub and bounded persistent H1 laboratory**. Latest appended decisions supersede conflicting earlier deployment order. The DSR010 Gamescope experiment and DSR011–013 host infrastructure are retained.
 
 ## Reading order and authority
 
@@ -200,3 +200,29 @@ See [readiness](steamos-first-readiness.md), [deployment decision](steamos-deplo
 [gate plan](hardware-gates-steamos.md) and [update/removal](steamos-update-recovery.md).
 Reviewed source backup to existing origin/main remains authorized without changing
 visibility; no new publication/release/deployment/license selection is authorized.
+
+## v2.3 — DSR014-H research hub and H1 laboratory (2026-10-21)
+
+The owner authorized original contributor-facing research summaries plus the
+smallest reliable persistent single-tile SESR harness. Full private papers,
+weights, operational evidence and reports stay outside Git. R-008 is unavailable;
+its later outline must not be presented as independently reviewed source content.
+The [research hub](research/README.md) exposes twelve revisable decisions and
+public source/version limitations; licensing/contribution terms remain pending.
+
+The [H1 runner](h1-inference-harness.md) reuses existing CPU/model/private/evidence
+utilities. CPU-only and explicitly approved Vitis candidate modes are distinct.
+A matching reviewed SteamOS H0 ledger is required before candidate initialization;
+strict provider checks, separate CPU reference, bounded process supervision and
+supervisor-only final publication prevent metadata/late output from passing.
+Current installed-device placement/context formats are unvalidated. Raw report
+presence cannot establish critical NPU execution: H1 v1 stays INCONCLUSIVE and
+cannot emit REAL_NPU, pending validated report adapters and attribution.
+This is an explicit proof boundary, not a physical result or a new native backend.
+
+H1 emits single-tile benchmark-compatible identity/timing for H2 reuse. Native
+worker ownership and two-slot limits,24-tile geometry, GPU fallback, Gamescope
+build-only status and first-usable-version verified-NPU requirement are preserved.
+No concurrency scheduler, game integration, installer, runtime/driver change,
+project license or repository visibility change is authorized by this milestone.
+Reviewed non-force source backup to existing origin/main remains authorized.

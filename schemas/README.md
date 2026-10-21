@@ -88,3 +88,14 @@ record plus independent artifacts for actual execution. Artifact authenticity is
 not established by either schema. Initial hardware areas remain NOT_TESTED.
 See [SteamOS readiness](../docs/steamos-first-readiness.md) and explicitly fictional
 [fixtures](../tests/fixtures/steamos-readiness/README.md). No legacy schema changed.
+
+## DSR014-H H1 laboratory extension
+
+The canonical hardware schema optionally accepts `h1_run`; no second evidence
+format replaces it. `validate_gate0.py` adds model/mode/provider/comparison and
+lifecycle ns/ms consistency checks. The current extension deliberately prohibits
+REAL_NPU/true physical-proof milestones until installed-device placement/context
+adapters are validated. A raw report or simulated provider response cannot pass.
+CPU_REFERENCE_PASS requires an actual CPU result and separately executed golden;
+SCHEMA_EXAMPLE tests remain synthetic. See [H1 limits and commands](../docs/h1-inference-harness.md).
+Legacy records without this extension retain their original guards and format.

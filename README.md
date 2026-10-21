@@ -1,5 +1,10 @@
 # Dock SR
 
+[Overview](#mission) | **[Research](docs/research/README.md)** |
+[Architecture](docs/research/CONSENSUS.md) |
+[Development Status](docs/PROJECT_STATE.md) |
+[Contributing Research](docs/research/README.md#how-to-continue-this-research)
+
 DockSR is an experimental Linux image reconstruction project. **Primary target: AMD Ryzen AI Z2 Extreme devices running SteamOS.** Other Linux distributions, including Bazzite and AMD's Ubuntu reference environment, are secondary development and troubleshooting environments; they do not substitute for SteamOS validation. We are working toward a freely available, Decky-controlled scaler that improves image quality while costing less than an existing scaling solution at comparable quality. That advantage has **not** been demonstrated; this is a development prototype, not an installed gaming plugin.
 
 ## Mission
@@ -60,6 +65,13 @@ passive discovery](docs/steamos-first-readiness.md),
 [update/removal plan](docs/steamos-update-recovery.md). These are host-tested
 preparation tools and unexecuted device protocols. SteamOS compatibility, physical
 NPU acceleration, update survival and gaming benefit remain **NOT_TESTED**.
+
+**DSR014-H knowledge and H1 laboratory** adds the [research hub](docs/research/README.md)
+with twelve revisable decisions and the [bounded persistent H1 runner](docs/h1-inference-harness.md).
+The unchanged SESR executes in CPU-reference mode with an independently executed
+golden. An approved Vitis candidate can be attempted, but physical placement and
+context adapters are not yet validated: successful candidates remain INCONCLUSIVE.
+No physical NPU acceleration or SteamOS compatibility is claimed.
 
 **R005-G0B-1 host experiments** provide [deterministic scheduling](docs/scheduling.md) through the existing mock command and an exact [frame-payload calculator](docs/payload.md). Their virtual timing and logical byte counts are assumptions/calculations, not physical NPU throughput, game FPS or power measurements.
 

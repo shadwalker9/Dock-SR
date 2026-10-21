@@ -2,7 +2,17 @@
 
 Start with [PROJECT_STATE.md](PROJECT_STATE.md) and [DECISIONS.md](DECISIONS.md), then the current task's code and newest owner handoff. Do not re-ingest every historical research paper. Inspect the current branch, HEAD and dirty files; preserve unrelated work. Cloud tasks are isolated and do not need an extra worktree unless requested.
 
-The latest scope is v2.2 **DSR013-P: SteamOS-first readiness and R-009**.
+The latest scope is v2.3 **DSR014-H: research hub and persistent H1 laboratory**.
+Start with the [research hub](research/README.md), [consensus](research/CONSENSUS.md)
+and [H1 runner](h1-inference-harness.md). The runner's supervisor alone publishes
+accepted records after reaping/receipt/artifact checks. CPU-reference mode is
+host-verified; approved Vitis candidate execution is NOT_TESTED. Raw placement/XRT
+reports are never proof: current H1 v1 explicitly cannot emit REAL_NPU. Validate
+installed-device report adapters and attribution before changing that policy.
+Do not bypass the reviewed H0/owner approval guard. R-008 is still unavailable;
+the hub marks its later outline as unrechecked. No private paper was committed.
+
+Previous v2.2 **DSR013-P** established SteamOS-first readiness and R-009.
 Read [SteamOS readiness](steamos-first-readiness.md), [gate plan](hardware-gates-steamos.md),
 [deployment decision](steamos-deployment-decision.md) and [update/removal](steamos-update-recovery.md).
 The owner requires the primary-use Z2 Extreme to remain on SteamOS. R-009's
@@ -13,10 +23,10 @@ remain NOT_TESTED; the checklist never attests REAL_NPU.
 
 Previous v2.1 **DSR012-P** verified checkpoints P-A/P-B provide
 [offline benchmark analysis](benchmark-laboratory.md) and the
-[Linux/SteamOS integration map](STEAMOS_INTEGRATION_MAP.md). P-C physical H1/H2
-harnesses, P-D collectors and P-E full hardware-day kit remain pending; do not
-claim that the entire laboratory is ready. DSR013-P adds plans/contracts, not
-those physical runners/collectors. R-008 was missing from the supplied
+[Linux/SteamOS integration map](STEAMOS_INTEGRATION_MAP.md). P-C full-frame H2 harnesses, validated H1 proof adapters, P-D collectors and
+P-E full hardware-day kit remain pending; do not
+claim that the entire laboratory is ready. DSR013-P added plans/contracts; DSR014-H adds the single-tile attempt,
+not the complete physical runners/collectors. R-008 was missing from the supplied
 files; reconcile it before adopting its specific claims. The attachment named
 DSR012 was the preceding DSR011-R review, not a hardware result.
 
