@@ -46,6 +46,8 @@ Maintainer decisions still pending:
 
 **DSR011 NPU-first host preparation** adds a [full-frame SESR reference](docs/fullframe-reference.md), an [owned exact3× ONNX contract](docs/espcn-contract.md), a [bounded inference-worker interface](docs/inference-worker.md) and [physical-probe preparation](docs/npu-device-probe.md). All neural execution here is CPU-only. The generated3× graph is an untrained FLOAT32 fixture; INT8 compilation, image-quality advantage, physical NPU contribution and presentation remain unverified. The existing Gamescope build-only experiment is preserved separately.
 
+**DSR012-P P-A/P-B laboratory preparation** adds [offline benchmark analysis](docs/benchmark-laboratory.md) through the existing hardware-evidence contract and an expanded [read-only preflight/Linux deployment map](docs/STEAMOS_INTEGRATION_MAP.md). Synthetic lifecycle, statistics and power guards are tested; physical H1/H2 execution harnesses, collectors and the complete device-day kit remain later checkpoints. No NPU or gaming performance is established.
+
 **R005-G0B-1 host experiments** provide [deterministic scheduling](docs/scheduling.md) through the existing mock command and an exact [frame-payload calculator](docs/payload.md). Their virtual timing and logical byte counts are assumptions/calculations, not physical NPU throughput, game FPS or power measurements.
 
 The current code includes:

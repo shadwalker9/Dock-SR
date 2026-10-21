@@ -1,6 +1,14 @@
 # Dock SR project state
 
-Updated 2026-10-20 America/Chicago. Read this and [DECISIONS.md](DECISIONS.md) before resuming. Latest completed assignment: **v1.9 DSR011, NPU-first full-frame CPU reference, exact-3× model contract, worker and physical-probe preparation**. No AGENTS.md or docs/OWNER_UPDATES.md exists here; approved O-002 targets are recorded in DECISIONS.md.
+Updated 2026-10-21 America/Chicago. Read this and [DECISIONS.md](DECISIONS.md) before resuming. Latest completed assignment: **v2.1 DSR012-P checkpoints P-A/P-B, offline benchmark analysis and read-only Linux preflight/deployment mapping**. No AGENTS.md or docs/OWNER_UPDATES.md exists here; approved O-002 targets are recorded in DECISIONS.md.
+
+## Current laboratory checkpoint
+
+P-A/P-B are implemented and host-tested: [benchmark laboratory](benchmark-laboratory.md) and [SteamOS/Bazzite map](STEAMOS_INTEGRATION_MAP.md). They reuse existing hardware-evidence validation, detection and private-output policy. P-C H1/H2 execution harnesses, P-D timed collectors and P-E the complete hardware-day kit remain pending under the handoff's bounded stopping rule. No physical NPU, deployment or efficiency gate passed. The missing R-008 paper remains unreconciled; the DSR012-named attachment was the existing DSR011-R audit.
+
+Fresh DSR012-P regression configurations pass **38/38 SDK,33/33 preview,27/27 host and14/14 library**, zero failures/skips; cached options/Python selections are preserved and counts overlap. Focused analysis has12 synthetic methods; preflight has18 methods. Actual cloud preflight verifies the existing model, lists CPU/Azure ORT1.20.1, sees no accelerator/power sensor, and performs no inference or default Vulkan probe. Private checkpoint/test/source evidence is outside Git under `/workspace/DockSR-planning/evidence/session-012-prep/`. Historical foundation/DSR011 checks below remain dated evidence.
+
+DSR011-R corrected two P1 and one P2 defects at668772f: stable Worker ownership, execution-start timing validation and fail-closed seam acceptance. The existing CPU reference/model contract, driver/provider separation and blocked Gamescope status below remain valid. No new graphical runtime probe or target measurement was performed for DSR012-P.
 
 ## Implemented scope
 

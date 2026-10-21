@@ -146,3 +146,28 @@ worker, without authorizing a physical backend, training or new graphics work.
   visibility, model/private-report boundaries and licensing-pending disclosure.
   Verified NPU contribution and matched-quality lower whole-device cost remain
   mandatory product gates. December31 is aspirational, not guaranteed.
+
+## v2.1 — DSR012-P bounded laboratory preparation (2026-10-21)
+
+- Adopt P-A then P-B first, using the handoff's explicit safe stopping point.
+  P-C physical runners, P-D sampling/parsers and P-E the complete runbook are
+  separate pending checkpoints; there is no implied full laboratory acceptance.
+- Extend the existing hardware-evidence schema and probe. Offline analysis
+  preserves submitted/started/completed/validated/consumed/presented distinctions,
+  unique session frame IDs, declared clock units, unknown sensors and scoped
+  energy. Synthetic arithmetic cannot become NPU or game evidence.
+- Use declared paired comparisons and minimum sample guards; never average
+  independent percentiles as a pooled percentile. Energy requires a supported
+  sensor scope/source, aligned/bracketing readings and a stable-AC protocol;
+  energy per presented frame additionally needs recorded actual presentation.
+- Current upstream AMD driver packaging and generic Linux support do not prove
+  the vendor Vitis stack on Bazzite/SteamOS. Preserve matching driver/firmware/
+  plugin versions, host permissions/limits and portable-library ABI as distinct
+  gates. A container or Decky plugin cannot supply a missing host kernel driver.
+- Preliminary future lifecycle: persistent native child supervised by a user
+  controller, with session identity and real quiescence. No daemon, privileged
+  setup, graphics deployment, Decky UI or physical backend is installed here.
+- R-008 was unavailable; the provided DSR012-named text is DSR011-R. Public source
+  pins are in notes/UPSTREAM.md; exact shipping SteamOS layout and compatibility
+  remain on-device unknowns. Existing reviewed-source backup authorization and
+  private-report/model exclusions remain in force.

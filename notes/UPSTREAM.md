@@ -29,3 +29,33 @@ Generic Microsoft Windows ML documentation and accessible AMD sample code do not
 - S004 must separately review/pin a small UI dependency and its license before adding it. SDL/GLFW/ImGui are candidates, not current dependencies or an already-built preview.
 
 Avoid bulk upstream clones or re-reading historic documents at resumption. Consult a specific source only when it resolves the current bounded implementation question.
+
+## DSR012-P Linux deployment research (2026-10-21)
+
+Current source pins supplement the historical notes above. Retrieved AMD1.8.0
+Linux/model/XRT documentation supersedes those specific earlier access failures;
+no target runtime or physical compatibility was tested. Official Valve FAQ and
+Bazzite web requests remained CONNECT403. Bazzite's public Git documentation was
+read at its pinned revision; no proxy/access controls were bypassed. R-008 was
+not supplied. Raw source bytes/hashes and failed lookups are retained outside Git.
+
+| Source | Exact revision | Reviewed purpose |
+| --- | --- | --- |
+| [AMD xdna-driver](https://github.com/amd/xdna-driver/tree/bc5dd96b6a11fcdba0884c492f897c9e6ed5aa79) | `bc5dd96b6a11fcdba0884c492f897c9e6ed5aa79` | README: host driver, matching firmware/XRT plugin, Arch/Fedora paths and memlock |
+| [Valve Gamescope](https://github.com/ValveSoftware/gamescope/tree/aa289ea5977d8b21b92b0f246f0e8f0c225d180f) | `aa289ea5977d8b21b92b0f246f0e8f0c225d180f` | README: nested/embedded design; not installed SteamOS identity or a patch update |
+| [Valve SteamOS](https://github.com/ValveSoftware/SteamOS/tree/25e4843add550be450da0cdae9955926b01df4f2) | `25e4843add550be450da0cdae9955926b01df4f2` | README: official repair/recovery links; tracker is not a shipping package tree |
+| [SteamOS kernel public ref](https://github.com/ValveSoftware/steamos_kernel/tree/798b216f18cf4d6c605503baf7e4329efd343f24) | `798b216f18cf4d6c605503baf7e4329efd343f24` | README/ref checked; guessed amdxdna path404, no shipping-device conclusion |
+| [Bazzite](https://github.com/ublue-os/bazzite/tree/4be65019183f50b1d4805a09037c47a2f8dfd43f) | `4be65019183f50b1d4805a09037c47a2f8dfd43f` | README/Containerfile: image and Atomic context |
+| [Bazzite docs](https://github.com/bazzite-org/docs.bazzite.gg/tree/a0ac868202675862fd1f41b218964bf3abc08758) | `a0ac868202675862fd1f41b218964bf3abc08758` | Gaming Mode, layering, rollback, Flatpak and Distrobox pages |
+| [Community session](https://github.com/ChimeraOS/gamescope-session/tree/73d2da84ace7f41006a0f85bd2fdb19ef593a464) | `73d2da84ace7f41006a0f85bd2fdb19ef593a464` | Launcher, user unit and session shell; not Valve shipping-session proof |
+| [Decky loader](https://github.com/SteamDeckHomebrew/decky-loader/tree/00cd202872b85868071b041c8f1b34e734147195) | `00cd202872b85868071b041c8f1b34e734147195` | Plugin process and sandbox UID handling |
+| [Decky template](https://github.com/SteamDeckHomebrew/decky-plugin-template/tree/90d0780e882a17f5714fc6de044c645f22608290) | `90d0780e882a17f5714fc6de044c645f22608290` | callable frontend/backend boundary, original Python example |
+| [Flatpak docs](https://github.com/flatpak/flatpak-docs/tree/1017976c15fe847c48603de9301d873aeb77b197) | `1017976c15fe847c48603de9301d873aeb77b197` | docs/sandbox-permissions.rst: devices/display/bus/filesystem permissions |
+| [Distrobox](https://github.com/89luca89/distrobox/tree/24035a6dd11d0ec2f88ee46a8a4b89876d62c56b) | `24035a6dd11d0ec2f88ee46a8a4b89876d62c56b` | docs/README.md and compatibility: host integration, rootless/security limits |
+
+Mutable upstream documents retrieved and byte-identified this session:
+
+- [amd-linux](https://ryzenai.docs.amd.com/en/latest/linux.html): SHA256 `72c93f258e0ee34ecfecc76392efe3952b625417222a36aec3816f1ffc0389b7`, 38574 bytes.
+- [amd-modelrun](https://ryzenai.docs.amd.com/en/latest/modelrun.html): SHA256 `f9b0525a3f1eedbb7ebae63b20ce08a70afddfce717fba7f6e0d2245235d6126`, 80263 bytes.
+- [amd-xrt-smi](https://ryzenai.docs.amd.com/en/latest/xrt_smi.html): SHA256 `e0c767c30108c4e26b6d313768138d64290f2b5b6a3d35a8b95ad96ae5dc93c4`, 45166 bytes.
+- [amdgpu-hwmon](https://docs.kernel.org/gpu/amdgpu/thermal.html): SHA256 `586bb3c1db5c5b5633aafa15f027612eca0783fbef4737149eb0205943f059e2`, 38182 bytes.

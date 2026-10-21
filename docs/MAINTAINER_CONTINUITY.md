@@ -2,8 +2,17 @@
 
 Start with [PROJECT_STATE.md](PROJECT_STATE.md) and [DECISIONS.md](DECISIONS.md), then the current task's code and newest owner handoff. Do not re-ingest every historical research paper. Inspect the current branch, HEAD and dirty files; preserve unrelated work. Cloud tasks are isolated and do not need an extra worktree unless requested.
 
-The latest scope is v1.9 **DSR011**, NPU-first full-frame CPU reference,
-owned exact3× model contract, replaceable worker and efficiency/probe preparation.
+The latest scope is v2.1 **DSR012-P**. Verified checkpoints P-A/P-B provide
+[offline benchmark analysis](benchmark-laboratory.md) and the
+[Linux/SteamOS integration map](STEAMOS_INTEGRATION_MAP.md). P-C physical H1/H2
+harnesses, P-D collectors and P-E full hardware-day kit remain pending; do not
+claim that the entire laboratory is ready. R-008 was missing from the supplied
+files; reconcile it before adopting its specific claims. The attachment named
+DSR012 was the preceding DSR011-R review, not a hardware result.
+
+DSR011-R fixes at668772f prohibit Worker copying/moving, validate successful
+completion against execution start and reject seam mismatches before publishing.
+Preserve these invariants. The existing DSR011 neural references remain CPU-only.
 Read [full-frame reference](fullframe-reference.md), [exact3× contract](espcn-contract.md),
 [inference worker](inference-worker.md) and [device-day preparation](npu-device-probe.md).
 Do not replace these with another inspector, reference runner or parallel scheduler.

@@ -60,3 +60,19 @@ not supply those arguments and is not a complete test command.
 
 Install test dependencies using the repository's hash-locked
 `requirements-dev.lock`. The detector itself uses only Python's standard library.
+
+## DSR012-P benchmark extension
+
+`hardware-evidence.schema.json` optionally carries `benchmark_run`; prior records
+remain valid without it. The existing backend/placement rules remain in force.
+`scripts/benchmark_analysis.py` reuses Gate-0 validation and checks lifecycle
+ordering, unique frame IDs, raw sample arithmetic, coverage and clock units.
+See [benchmark laboratory](../docs/benchmark-laboratory.md) for the exact
+percentile/1% low/deadline/energy definitions, private CLI and paired uncertainty.
+Synthetic schema examples remain SIMULATED in the derived analysis. Structure
+and statistical consistency do not attest execution or matched image quality.
+
+`npu-probe.schema.json` accepts the optional `laboratory` inventory extension and
+ORT module version; it continues to prohibit physical success. Missing devices,
+permissions/configuration, unsupported queries and unmeasured sensors retain
+meaningful unavailable states. No existing runtime activation API is changed.

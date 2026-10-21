@@ -1,6 +1,7 @@
 """Read-only probe preparation never becomes physical inference evidence."""
 from __future__ import annotations
 import copy
+import gzip
 import importlib.util
 import json
 import os
@@ -130,6 +131,79 @@ class ProbeTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as root:
             base=Path(root);(base/'real').mkdir();(base/'alias').symlink_to(base/'real',target_is_directory=True)
             with self.assertRaises(probe.import_sesr.ImportFailure):probe.write_new_private(base/'alias'/'probe.json',report(base))
+
+    def test_laboratory_inventory_allowlists_cpu_and_discovers_unmeasured_sensors(self):
+        with tempfile.TemporaryDirectory() as root:
+            base=Path(root)
+            files={'proc/cpuinfo':'vendor_id : AuthenticAMD\nmodel name : owned-cpu\nserial : PRIVATE-CANARY\n',
+                   'proc/sys/kernel/osrelease':'review-kernel',
+                   'boot/config-review-kernel':'CONFIG_DRM_ACCEL=y\nCONFIG_AMD_IOMMU=y\n# CONFIG_IOMMU_SVA is not set\n',
+                   'sys/class/hwmon/hwmon0/name':'amdgpu',
+                   'sys/class/hwmon/hwmon0/power1_input':'123000000',
+                   'sys/class/hwmon/hwmon0/power1_label':'SoC',
+                   'proc/101/comm':'gamescope\n','proc/102/comm':'steam\n'}
+            for name,value in files.items():
+                p=base/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_text(value)
+            before={str(p.relative_to(base)):p.read_bytes() for p in base.rglob('*') if p.is_file()}
+            value=report(base)
+            after={str(p.relative_to(base)):p.read_bytes() for p in base.rglob('*') if p.is_file()}
+        self.validator.validate(value)
+        lab=value['laboratory']
+        self.assertEqual(before,after)
+        self.assertNotIn('PRIVATE-CANARY',json.dumps(lab))
+        self.assertEqual(lab['cpu_identity']['fields']['model name'],'owned-cpu')
+        self.assertEqual(lab['kernel_config']['symbols']['CONFIG_DRM_ACCEL'],'y')
+        self.assertEqual(lab['kernel_config']['symbols']['CONFIG_IOMMU_SVA'],'n')
+        self.assertIsNone(lab['kernel_config']['symbols']['CONFIG_DRM_ACCEL_AMDXDNA'])
+        self.assertEqual(lab['gamescope_steam_processes']['counts'],{'gamescope':1,'steam':1})
+        sensor=lab['sensor_inventory']['sensors'][0]
+        self.assertEqual(sensor['unit'],'uW')
+        self.assertEqual(sensor['measurement_status'],'NOT_RUN')
+        self.assertEqual(sensor['power_scope'],'UNKNOWN')
+        self.assertNotIn('watts',sensor)
+
+    def test_bounded_compressed_kernel_config_and_corruption(self):
+        with tempfile.TemporaryDirectory() as root:
+            fs=probe.docksr_detect.FileSystem(root);p=Path(root)/'proc/config.gz';p.parent.mkdir()
+            p.write_bytes(gzip.compress(b'CONFIG_DRM_ACCEL_AMDXDNA=m\n'))
+            value=probe.kernel_config(fs,{'status':'absent'})
+            self.assertEqual(value['symbols']['CONFIG_DRM_ACCEL_AMDXDNA'],'m')
+            p.write_bytes(b'broken-gzip')
+            self.assertEqual(probe.kernel_config(fs,{'status':'absent'})['status'],'unavailable')
+            p.write_bytes(gzip.compress(b'x'*1_048_577))
+            value=probe.kernel_config(fs,{'status':'absent'})
+            self.assertEqual(value['attempts'][0]['status'],'too_large')
+
+    def test_missing_preflight_capabilities_have_reasons(self):
+        with tempfile.TemporaryDirectory() as root:value=report(root)
+        lab=value['laboratory']
+        self.assertEqual(lab['kernel_config']['reason'],'NO_READABLE_BOUNDED_KERNEL_CONFIG')
+        self.assertEqual(lab['xrt_smi_capabilities']['status'],'missing_tool')
+        self.assertEqual(lab['sensor_inventory']['sensors'],[])
+        self.assertIsNone(lab['gamescope_steam_processes']['counts'])
+        self.assertEqual(value['physical_test_status'],'NOT_RUN')
+
+    def test_graphics_inventory_requires_explicit_opt_in(self):
+        with patch.object(probe.docksr_detect.CommandRunner,'run',return_value={'status':'ok'}) as run:
+            self.assertEqual(probe.InventoryRunner().run(['vulkaninfo'])['status'],'not_run')
+            run.assert_not_called()
+            self.assertEqual(probe.InventoryRunner(True).run(['vulkaninfo'])['status'],'ok')
+            run.assert_called_once()
+
+    def test_runtime_module_version_is_metadata_only(self):
+        process=subprocess.CompletedProcess([],0,stdout=b'{"version":"1.20.1","providers":["CPUExecutionProvider"]}',stderr=b'')
+        with patch.object(probe.subprocess,'run',return_value=process):
+            value=probe.runtime_inventory(True)
+        self.assertEqual(value['module_version'],'1.20.1')
+        self.assertFalse(value['provider_registration_is_execution'])
+
+    def test_device_permission_inventory_never_opens_a_node(self):
+        with tempfile.TemporaryDirectory() as root:
+            base=Path(root);p=base/'dev/accel/accel0';p.parent.mkdir(parents=True);p.write_text('owned node fixture');p.chmod(0o640)
+            value=report(base)
+        self.assertEqual(value['laboratory']['device_permissions'][0]['mode'],'0640')
+        self.assertFalse(value['laboratory']['device_permissions'][0]['opened'])
+        self.assertFalse(value['npu_inference_verified'])
 
 
 if __name__=='__main__':unittest.main()

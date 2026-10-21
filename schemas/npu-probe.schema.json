@@ -110,6 +110,13 @@
         },
         "provider_registration_is_execution": {
           "const": false
+        },
+        "module_version": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 128
         }
       },
       "required": [
@@ -359,6 +366,68 @@
         "type": "string",
         "minLength": 1,
         "maxLength": 512
+      }
+    },
+    "laboratory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "read_only",
+        "cpu_identity",
+        "kernel_config",
+        "memlock",
+        "firmware_files",
+        "xrt_smi_capabilities",
+        "amdxdna_firmware_metadata",
+        "gamescope_version",
+        "gamescope_steam_processes",
+        "vulkan_extension_inventory",
+        "sensor_inventory",
+        "device_permissions",
+        "gpu_metrics_inventory"
+      ],
+      "properties": {
+        "read_only": {
+          "const": true
+        },
+        "cpu_identity": {
+          "type": "object"
+        },
+        "kernel_config": {
+          "type": "object"
+        },
+        "memlock": {
+          "type": "object"
+        },
+        "firmware_files": {
+          "type": "object"
+        },
+        "xrt_smi_capabilities": {
+          "type": "object"
+        },
+        "amdxdna_firmware_metadata": {
+          "type": "object"
+        },
+        "gamescope_version": {
+          "type": "object"
+        },
+        "gamescope_steam_processes": {
+          "type": "object"
+        },
+        "vulkan_extension_inventory": {
+          "type": "object"
+        },
+        "sensor_inventory": {
+          "type": "object"
+        },
+        "device_permissions": {
+          "type": "array",
+          "maxItems": 256
+        },
+        "gpu_metrics_inventory": {
+          "type": "array",
+          "maxItems": 128
+        }
       }
     }
   },

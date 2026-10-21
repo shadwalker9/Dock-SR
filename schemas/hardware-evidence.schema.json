@@ -1017,6 +1017,16 @@
     },
     "fixture_notice": {
       "const": "SYNTHETIC SCHEMA FIXTURE - not a hardware run or proof that any stated execution occurred."
+    },
+    "benchmark_run": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/benchmark_run"
+        }
+      ]
     }
   },
   "required": [
@@ -1623,6 +1633,9 @@
               "NOT_RUN_TEMPLATE",
               "SCHEMA_EXAMPLE"
             ]
+          },
+          "benchmark_run": {
+            "type": "null"
           }
         }
       }
@@ -2081,6 +2094,445 @@
         "sha256"
       ],
       "additionalProperties": false
+    },
+    "benchmark_run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "experiment_id",
+        "run_id",
+        "session_id",
+        "pair_id",
+        "comparison_role",
+        "condition_id",
+        "platform",
+        "source_extent",
+        "output_extent",
+        "tensor",
+        "clock_domain",
+        "time_unit",
+        "observation_start_ns",
+        "observation_end_ns",
+        "configured_power_limit_w",
+        "power_profile",
+        "presentation_status",
+        "expected_tiles_per_frame",
+        "frames",
+        "power",
+        "raw_evidence_refs"
+      ],
+      "properties": {
+        "experiment_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:-]{1,128}$"
+        },
+        "run_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:-]{1,128}$"
+        },
+        "session_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:-]{1,128}$"
+        },
+        "pair_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:-]{1,128}$"
+        },
+        "comparison_role": {
+          "enum": [
+            "BASELINE",
+            "EXPERIMENTAL"
+          ]
+        },
+        "condition_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:-]{1,128}$"
+        },
+        "platform": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "device",
+            "os",
+            "kernel",
+            "software",
+            "drivers"
+          ],
+          "properties": {
+            "device": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            },
+            "os": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            },
+            "kernel": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            },
+            "software": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            },
+            "drivers": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            }
+          }
+        },
+        "source_extent": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "width",
+            "height"
+          ],
+          "properties": {
+            "width": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8192
+            },
+            "height": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8192
+            }
+          }
+        },
+        "output_extent": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "width",
+            "height"
+          ],
+          "properties": {
+            "width": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8192
+            },
+            "height": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8192
+            }
+          }
+        },
+        "tensor": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "layout",
+            "dtype"
+          ],
+          "properties": {
+            "layout": {
+              "enum": [
+                "NHWC",
+                "NCHW"
+              ]
+            },
+            "dtype": {
+              "enum": [
+                "uint8",
+                "int8",
+                "float32"
+              ]
+            }
+          }
+        },
+        "clock_domain": {
+          "enum": [
+            "HOST_MONOTONIC",
+            "PIPELINE_MONOTONIC"
+          ]
+        },
+        "time_unit": {
+          "const": "ns"
+        },
+        "observation_start_ns": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "observation_end_ns": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "configured_power_limit_w": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1000
+            }
+          ]
+        },
+        "power_profile": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "presentation_status": {
+          "enum": [
+            "RECORDED",
+            "NOT_RUN",
+            "UNAVAILABLE"
+          ]
+        },
+        "expected_tiles_per_frame": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8192
+        },
+        "frames": {
+          "type": "array",
+          "maxItems": 10000,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "frame_id",
+              "configuration_generation",
+              "submitted_ns",
+              "started_ns",
+              "completed_ns",
+              "validated_ns",
+              "consumed_ns",
+              "presented_ns",
+              "cancelled_ns",
+              "deadline_ns",
+              "completed_tiles",
+              "validated_tiles",
+              "fallback",
+              "dropped"
+            ],
+            "properties": {
+              "frame_id": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 18446744073709551615
+              },
+              "configuration_generation": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 18446744073709551615
+              },
+              "submitted_ns": {
+                "anyOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 18446744073709551615
+                  }
+                ]
+              },
+              "started_ns": {
+                "anyOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 18446744073709551615
+                  }
+                ]
+              },
+              "completed_ns": {
+                "anyOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 18446744073709551615
+                  }
+                ]
+              },
+              "validated_ns": {
+                "anyOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 18446744073709551615
+                  }
+                ]
+              },
+              "consumed_ns": {
+                "anyOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 18446744073709551615
+                  }
+                ]
+              },
+              "presented_ns": {
+                "anyOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 18446744073709551615
+                  }
+                ]
+              },
+              "cancelled_ns": {
+                "anyOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 18446744073709551615
+                  }
+                ]
+              },
+              "deadline_ns": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 18446744073709551615
+              },
+              "completed_tiles": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 8192
+              },
+              "validated_tiles": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 8192
+              },
+              "fallback": {
+                "type": "boolean"
+              },
+              "dropped": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "power": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "scope",
+                "sensor_source",
+                "unit",
+                "clock_domain",
+                "battery_state",
+                "max_gap_ns",
+                "samples"
+              ],
+              "properties": {
+                "scope": {
+                  "enum": [
+                    "UNKNOWN",
+                    "WHOLE_DEVICE",
+                    "PACKAGE",
+                    "NPU_FIRMWARE_ESTIMATE"
+                  ]
+                },
+                "sensor_source": {
+                  "anyOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 1024
+                    }
+                  ]
+                },
+                "unit": {
+                  "const": "W"
+                },
+                "clock_domain": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_.:-]{1,128}$"
+                },
+                "battery_state": {
+                  "enum": [
+                    "STABLE_AC",
+                    "CHARGING",
+                    "DISCHARGING",
+                    "UNKNOWN"
+                  ]
+                },
+                "max_gap_ns": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 18446744073709551615
+                },
+                "samples": {
+                  "type": "array",
+                  "maxItems": 100000,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "timestamp_ns",
+                      "watts"
+                    ],
+                    "properties": {
+                      "timestamp_ns": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 18446744073709551615
+                      },
+                      "watts": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 10000
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "raw_evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/artifact_ref"
+          }
+        }
+      }
     }
   }
 }
