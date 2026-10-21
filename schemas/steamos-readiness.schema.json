@@ -1,0 +1,886 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docksr.invalid/schemas/steamos-readiness.schema.json",
+  "title": "DockSR SteamOS readiness checklist v1; never an execution attestation",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "document_type": {
+      "const": "docksr_steamos_readiness"
+    },
+    "generated_at_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "evidence_class": {
+      "enum": [
+        "PLAN",
+        "SCHEMA_EXAMPLE",
+        "DEVICE_INVENTORY"
+      ]
+    },
+    "physical_test_status": {
+      "enum": [
+        "NOT_TESTED",
+        "OBSERVED_ON_DEVICE"
+      ]
+    },
+    "os_family": {
+      "enum": [
+        "STEAMOS",
+        "OTHER",
+        "UNKNOWN"
+      ]
+    },
+    "compatibility_claim": {
+      "enum": [
+        "NOT_ESTABLISHED",
+        "STEAMOS_VALIDATED"
+      ]
+    },
+    "npu_execution_claim": {
+      "const": "NOT_ATTESTED"
+    },
+    "hardware_execution_verified": {
+      "const": false
+    },
+    "read_only": {
+      "const": true
+    },
+    "inventory": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "os": {
+              "type": "object",
+              "properties": {
+                "read_status": {
+                  "enum": [
+                    "ok",
+                    "absent",
+                    "permission_denied",
+                    "error"
+                  ]
+                },
+                "fields": {
+                  "type": "object",
+                  "properties": {
+                    "ID": {
+                      "$ref": "#/$defs/token"
+                    },
+                    "VERSION_ID": {
+                      "$ref": "#/$defs/token"
+                    },
+                    "BUILD_ID": {
+                      "$ref": "#/$defs/token"
+                    },
+                    "VARIANT_ID": {
+                      "$ref": "#/$defs/token"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "read_status",
+                "fields"
+              ],
+              "additionalProperties": false
+            },
+            "cpu": {
+              "type": "object",
+              "properties": {
+                "vendor_id": {
+                  "$ref": "#/$defs/token"
+                },
+                "cpu family": {
+                  "$ref": "#/$defs/token"
+                },
+                "model": {
+                  "$ref": "#/$defs/token"
+                },
+                "stepping": {
+                  "$ref": "#/$defs/token"
+                }
+              },
+              "additionalProperties": false
+            },
+            "pci": {
+              "type": "array",
+              "maxItems": 512,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "address": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{4}:[0-9a-f]{2}:[0-9a-f]{2}\\.[0-7]$"
+                  },
+                  "vendor": {
+                    "enum": [
+                      "0x1022",
+                      "0x1002"
+                    ]
+                  },
+                  "device": {
+                    "$ref": "#/$defs/token"
+                  },
+                  "class": {
+                    "$ref": "#/$defs/token"
+                  },
+                  "driver": {
+                    "$ref": "#/$defs/token"
+                  }
+                },
+                "required": [
+                  "address",
+                  "vendor",
+                  "device",
+                  "class",
+                  "driver"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "nodes": {
+              "type": "array",
+              "maxItems": 2,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "enum": [
+                      "/dev/accel",
+                      "/dev/dri"
+                    ]
+                  },
+                  "status": {
+                    "enum": [
+                      "ok",
+                      "absent",
+                      "permission_denied",
+                      "error"
+                    ]
+                  },
+                  "nodes": {
+                    "type": "array",
+                    "maxItems": 256,
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "path",
+                        "status",
+                        "readable",
+                        "writable"
+                      ],
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "pattern": "^/dev/(accel/accel[0-9]+|dri/(card|renderD)[0-9]+)$"
+                        },
+                        "status": {
+                          "enum": [
+                            "present",
+                            "absent",
+                            "permission_denied",
+                            "error"
+                          ]
+                        },
+                        "node_type": {
+                          "enum": [
+                            "character",
+                            "directory",
+                            "other"
+                          ]
+                        },
+                        "mode": {
+                          "type": "string",
+                          "pattern": "^[0-7]{4}$"
+                        },
+                        "opened": {
+                          "const": false
+                        },
+                        "errno": {
+                          "anyOf": [
+                            {
+                              "type": "null"
+                            },
+                            {
+                              "type": "integer"
+                            }
+                          ]
+                        },
+                        "readable": {
+                          "type": "boolean"
+                        },
+                        "writable": {
+                          "type": "boolean"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "path",
+                  "status",
+                  "nodes"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "kernel_release": {
+              "$ref": "#/$defs/token"
+            },
+            "kernel_config": {
+              "type": "object",
+              "required": [
+                "status"
+              ],
+              "properties": {
+                "status": {
+                  "enum": [
+                    "ok",
+                    "unavailable"
+                  ]
+                },
+                "path": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "symbols": {
+                  "type": "object",
+                  "properties": {
+                    "CONFIG_DRM_ACCEL": {
+                      "anyOf": [
+                        {
+                          "type": "null"
+                        },
+                        {
+                          "enum": [
+                            "y",
+                            "m",
+                            "n"
+                          ]
+                        }
+                      ]
+                    },
+                    "CONFIG_DRM_ACCEL_AMDXDNA": {
+                      "anyOf": [
+                        {
+                          "type": "null"
+                        },
+                        {
+                          "enum": [
+                            "y",
+                            "m",
+                            "n"
+                          ]
+                        }
+                      ]
+                    },
+                    "CONFIG_AMD_IOMMU": {
+                      "anyOf": [
+                        {
+                          "type": "null"
+                        },
+                        {
+                          "enum": [
+                            "y",
+                            "m",
+                            "n"
+                          ]
+                        }
+                      ]
+                    },
+                    "CONFIG_IOMMU_SVA": {
+                      "anyOf": [
+                        {
+                          "type": "null"
+                        },
+                        {
+                          "enum": [
+                            "y",
+                            "m",
+                            "n"
+                          ]
+                        }
+                      ]
+                    },
+                    "CONFIG_FW_LOADER": {
+                      "anyOf": [
+                        {
+                          "type": "null"
+                        },
+                        {
+                          "enum": [
+                            "y",
+                            "m",
+                            "n"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "CONFIG_DRM_ACCEL",
+                    "CONFIG_DRM_ACCEL_AMDXDNA",
+                    "CONFIG_AMD_IOMMU",
+                    "CONFIG_IOMMU_SVA",
+                    "CONFIG_FW_LOADER"
+                  ],
+                  "additionalProperties": false
+                },
+                "note": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "reason": {
+                  "const": "NO_READABLE_BOUNDED_KERNEL_CONFIG"
+                },
+                "attempts": {
+                  "type": "array",
+                  "maxItems": 128,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 256
+                      },
+                      "status": {
+                        "enum": [
+                          "too_large",
+                          "unavailable"
+                        ]
+                      },
+                      "errno": {
+                        "anyOf": [
+                          {
+                            "type": "null"
+                          },
+                          {
+                            "type": "integer"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "path",
+                      "status"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "additionalProperties": false
+            },
+            "amdxdna": {
+              "type": "object",
+              "properties": {
+                "version": {
+                  "$ref": "#/$defs/token"
+                },
+                "srcversion": {
+                  "$ref": "#/$defs/token"
+                }
+              },
+              "required": [
+                "version",
+                "srcversion"
+              ],
+              "additionalProperties": false
+            },
+            "firmware_attributes": {
+              "type": "object",
+              "patternProperties": {
+                "^accel[0-9]+$": {
+                  "type": "object",
+                  "properties": {
+                    "firmware_version": {
+                      "$ref": "#/$defs/token"
+                    },
+                    "fw_version": {
+                      "$ref": "#/$defs/token"
+                    }
+                  },
+                  "required": [
+                    "firmware_version",
+                    "fw_version"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false,
+              "maxProperties": 128
+            },
+            "firmware_directory_status": {
+              "enum": [
+                "ok",
+                "absent",
+                "permission_denied",
+                "error"
+              ]
+            },
+            "memlock_bytes": {
+              "type": "object",
+              "properties": {
+                "soft": {
+                  "anyOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  ]
+                },
+                "hard": {
+                  "anyOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "soft",
+                "hard"
+              ],
+              "additionalProperties": false
+            },
+            "tools_available": {
+              "type": "object",
+              "properties": {
+                "xrt-smi": {
+                  "type": "boolean"
+                },
+                "python3": {
+                  "type": "boolean"
+                },
+                "lspci": {
+                  "type": "boolean"
+                },
+                "modinfo": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "xrt-smi",
+                "python3",
+                "lspci",
+                "modinfo"
+              ],
+              "additionalProperties": false
+            },
+            "runtime_packages": {
+              "type": "object",
+              "properties": {
+                "onnxruntime": {
+                  "$ref": "#/$defs/token"
+                },
+                "onnxruntime-vitisai": {
+                  "$ref": "#/$defs/token"
+                },
+                "onnxruntime-directml": {
+                  "$ref": "#/$defs/token"
+                }
+              },
+              "required": [
+                "onnxruntime",
+                "onnxruntime-vitisai",
+                "onnxruntime-directml"
+              ],
+              "additionalProperties": false
+            },
+            "provider_query_status": {
+              "const": "NOT_TESTED"
+            },
+            "commands": {
+              "type": "array",
+              "maxItems": 3,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "argv": {
+                    "enum": [
+                      [
+                        "uname",
+                        "-r"
+                      ],
+                      [
+                        "uname",
+                        "-m"
+                      ],
+                      [
+                        "lspci",
+                        "-n"
+                      ]
+                    ]
+                  },
+                  "status": {
+                    "enum": [
+                      "ok",
+                      "missing_tool",
+                      "permission_denied",
+                      "timeout",
+                      "error",
+                      "command_failed"
+                    ]
+                  },
+                  "exit_status": {
+                    "anyOf": [
+                      {
+                        "type": "null"
+                      },
+                      {
+                        "type": "integer"
+                      }
+                    ]
+                  },
+                  "observations": {
+                    "type": "array",
+                    "maxItems": 512,
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    }
+                  },
+                  "raw_output_retained": {
+                    "const": false
+                  }
+                },
+                "required": [
+                  "argv",
+                  "status",
+                  "exit_status",
+                  "observations",
+                  "raw_output_retained"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "os",
+            "cpu",
+            "pci",
+            "nodes",
+            "kernel_release",
+            "kernel_config",
+            "amdxdna",
+            "firmware_attributes",
+            "firmware_directory_status",
+            "memlock_bytes",
+            "tools_available",
+            "runtime_packages",
+            "provider_query_status",
+            "commands"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "evidence": {
+      "type": "array",
+      "maxItems": 128,
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/evidence_id"
+          },
+          "category": {
+            "enum": [
+              "PRIMARY_DOCUMENTATION",
+              "DEVICE_OBSERVATION"
+            ]
+          },
+          "kind": {
+            "enum": [
+              "HOST_IDENTITY",
+              "RUNTIME_IDENTITY",
+              "MODEL_IDENTITY",
+              "HARDWARE_RECORD",
+              "OPERATOR_ASSIGNMENT",
+              "ACTIVE_CONTEXT",
+              "CPU_REFERENCE",
+              "OUTPUT_COMPARISON",
+              "UPDATE_PAIR",
+              "REMOVAL_TEST",
+              "GPU_TIMING",
+              "INTEROP",
+              "OTHER"
+            ]
+          },
+          "artifact": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*(/[A-Za-z0-9][A-Za-z0-9_.-]*)*$",
+            "maxLength": 512
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "required": [
+          "id",
+          "category",
+          "kind",
+          "artifact",
+          "sha256"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "failures": {
+      "type": "array",
+      "maxItems": 128,
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "enum": [
+              "NPU_DEVICE_ABSENT",
+              "DRIVER_NOT_BOUND",
+              "FIRMWARE_MISSING_OR_MISMATCHED",
+              "XRT_KERNEL_PLUGIN_INCOMPATIBLE",
+              "MEMLOCK_INSUFFICIENT",
+              "PROVIDER_MISSING",
+              "NO_NPU_OPERATOR_ASSIGNMENT",
+              "ACTIVE_CONTEXT_MISSING",
+              "MODEL_OUTPUT_MISMATCH",
+              "INFERENCE_TIMEOUT",
+              "GPU_NPU_CONTENTION",
+              "IDLE_RESUME_INSTABILITY",
+              "STEAMOS_UPDATE_REGRESSION"
+            ]
+          },
+          "status": {
+            "enum": [
+              "SUSPECTED",
+              "CONFIRMED"
+            ]
+          },
+          "evidence_refs": {
+            "type": "array",
+            "maxItems": 128,
+            "items": {
+              "$ref": "#/$defs/evidence_id"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "code",
+          "status",
+          "evidence_refs"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "areas": {
+      "type": "object",
+      "properties": {
+        "device_identity": {
+          "$ref": "#/$defs/check"
+        },
+        "steamos_build": {
+          "$ref": "#/$defs/check"
+        },
+        "kernel": {
+          "$ref": "#/$defs/check"
+        },
+        "npu_driver": {
+          "$ref": "#/$defs/check"
+        },
+        "firmware": {
+          "$ref": "#/$defs/check"
+        },
+        "device_access": {
+          "$ref": "#/$defs/check"
+        },
+        "xrt": {
+          "$ref": "#/$defs/check"
+        },
+        "vitis_ep": {
+          "$ref": "#/$defs/check"
+        },
+        "model_execution": {
+          "$ref": "#/$defs/check"
+        },
+        "update_survival": {
+          "$ref": "#/$defs/check"
+        },
+        "reversibility": {
+          "$ref": "#/$defs/check"
+        },
+        "gaming_impact": {
+          "$ref": "#/$defs/check"
+        }
+      },
+      "required": [
+        "device_identity",
+        "steamos_build",
+        "kernel",
+        "npu_driver",
+        "firmware",
+        "device_access",
+        "xrt",
+        "vitis_ep",
+        "model_execution",
+        "update_survival",
+        "reversibility",
+        "gaming_impact"
+      ],
+      "additionalProperties": false
+    },
+    "gates": {
+      "type": "object",
+      "properties": {
+        "H0": {
+          "$ref": "#/$defs/check"
+        },
+        "H1": {
+          "$ref": "#/$defs/check"
+        },
+        "H2": {
+          "$ref": "#/$defs/check"
+        },
+        "H3": {
+          "$ref": "#/$defs/check"
+        }
+      },
+      "required": [
+        "H0",
+        "H1",
+        "H2",
+        "H3"
+      ],
+      "additionalProperties": false
+    },
+    "interop": {
+      "type": "object",
+      "properties": {
+        "HOST_STAGING": {
+          "$ref": "#/$defs/check"
+        },
+        "VULKAN_DMA_BUF_EXPORTED": {
+          "$ref": "#/$defs/check"
+        },
+        "XRT_BO_IMPORTED": {
+          "$ref": "#/$defs/check"
+        },
+        "ORT_IMPORTER_AVAILABLE": {
+          "$ref": "#/$defs/check"
+        },
+        "EXTERNAL_TENSOR_BOUND": {
+          "$ref": "#/$defs/check"
+        },
+        "ACTUAL_NPU_CONSUMPTION_VERIFIED": {
+          "$ref": "#/$defs/check"
+        },
+        "SHARED_SYNCHRONIZATION_VERIFIED": {
+          "$ref": "#/$defs/check"
+        },
+        "END_TO_END_PERFORMANCE_BENEFIT_VERIFIED": {
+          "$ref": "#/$defs/check"
+        }
+      },
+      "required": [
+        "HOST_STAGING",
+        "VULKAN_DMA_BUF_EXPORTED",
+        "XRT_BO_IMPORTED",
+        "ORT_IMPORTER_AVAILABLE",
+        "EXTERNAL_TENSOR_BOUND",
+        "ACTUAL_NPU_CONSUMPTION_VERIFIED",
+        "SHARED_SYNCHRONIZATION_VERIFIED",
+        "END_TO_END_PERFORMANCE_BENEFIT_VERIFIED"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema_version",
+    "document_type",
+    "generated_at_utc",
+    "evidence_class",
+    "physical_test_status",
+    "os_family",
+    "compatibility_claim",
+    "npu_execution_claim",
+    "hardware_execution_verified",
+    "read_only",
+    "inventory",
+    "evidence",
+    "failures",
+    "areas",
+    "gates",
+    "interop"
+  ],
+  "additionalProperties": false,
+  "$comment": "Use scripts/steamos_readiness.py --validate for cross-field gate and reference rules. This checklist cannot emit REAL_NPU; original hardware-evidence.schema.json remains required and artifacts require independent review. Fixture hashes are fictional.",
+  "$defs": {
+    "check": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "NOT_TESTED",
+            "SUPPORTED_BY_DOCUMENTATION",
+            "OBSERVED_ON_DEVICE",
+            "PASS",
+            "FAIL",
+            "BLOCKED",
+            "UNKNOWN",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.-]{1,64}$"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "status",
+        "evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "token": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.+-]{1,128}$"
+        }
+      ]
+    },
+    "evidence_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]{1,64}$"
+    }
+  }
+}

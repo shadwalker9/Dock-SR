@@ -1,6 +1,28 @@
 # Dock SR project state
 
-Updated 2026-10-21 America/Chicago. Read this and [DECISIONS.md](DECISIONS.md) before resuming. Latest completed assignment: **v2.1 DSR012-P checkpoints P-A/P-B, offline benchmark analysis and read-only Linux preflight/deployment mapping**. No AGENTS.md or docs/OWNER_UPDATES.md exists here; approved O-002 targets are recorded in DECISIONS.md.
+Updated 2026-10-21 America/Chicago. Read this and [DECISIONS.md](DECISIONS.md) before resuming. Latest assignment: **v2.2 DSR013-P, SteamOS-first readiness and R-009 integration**. Primary target is AMD Ryzen AI Z2 Extreme running SteamOS; other distributions are secondary diagnostics, not substitutes. No AGENTS.md or docs/OWNER_UPDATES.md exists here; approved O-002 targets are recorded in DECISIONS.md.
+
+## DSR013-P preparation
+
+[SteamOS readiness](steamos-first-readiness.md) provides a versioned machine
+checklist and passive, non-root preflight using existing private-output helpers.
+The [deployment decision](steamos-deployment-decision.md) provisionally chooses
+unprivileged user-space, [H0–H4](hardware-gates-steamos.md) separates visibility,
+genuine SESR/context proof, full-frame concurrency, GPU contention and eight
+memory-sharing stages. All twelve R-009 hypotheses remain NOT_TESTED in the
+[register](r009-hypotheses.json). [Update/recovery](steamos-update-recovery.md)
+requires before/after revalidation and demonstrated removal, not frozen updates.
+No physical worker startup guard, installer, new model or presentation integration
+was implemented. SteamOS compatibility and performance remain NOT_TESTED.
+
+Fresh DSR013-P regressions pass **39/39 SDK,34/34 preview,28/28 host and15/15
+library** CTest groups, zero failures/skips; configurations overlap. The final
+readiness group was rerun in each configuration after input/privacy hardening,
+with **19/19 methods** passing. A real passive cloud run records Debian13, no
+visible `/dev/accel` or `/dev/dri`, missing lspci, and no provider query; all target
+areas remain NOT_TESTED. Static reinspection of the unchanged model confirms
+halo11/core234/24 tiles without inference. Private logs/source/geometry/preflight
+evidence are under `/workspace/DockSR-planning/evidence/session-013-prep/`.
 
 ## Current laboratory checkpoint
 

@@ -1,6 +1,6 @@
 # Dock SR
 
-DockSR is an experimental Linux image reconstruction project targeting Ryzen AI Z2 Extreme first, with Bazzite and SteamOS as intended destinations. We are working toward a freely available, Decky-controlled scaler that improves image quality while costing less than an existing scaling solution at comparable quality. That advantage has **not** been demonstrated; this is a development prototype, not an installed gaming plugin.
+DockSR is an experimental Linux image reconstruction project. **Primary target: AMD Ryzen AI Z2 Extreme devices running SteamOS.** Other Linux distributions, including Bazzite and AMD's Ubuntu reference environment, are secondary development and troubleshooting environments; they do not substitute for SteamOS validation. We are working toward a freely available, Decky-controlled scaler that improves image quality while costing less than an existing scaling solution at comparable quality. That advantage has **not** been demonstrated; this is a development prototype, not an installed gaming plugin.
 
 ## Mission
 
@@ -9,6 +9,11 @@ DockSR is an experimental Linux image reconstruction project targeting Ryzen AI 
 Better software can help existing handhelds, laptops and compact gaming systems remain capable for longer. We are exploring GPU and NPU cooperation to improve visual quality while preserving the performance and power budget games need. This is about the useful performance life of devices; it is not a claim to extend the physical lifespan of silicon.
 
 We are building for the Linux gaming community with transparency, reproducible experiments, maintainability and collaboration in mind. We aim to reuse suitable existing standards, research and tooling, and document enough for others to study, improve and eventually carry the project forward. The current direction is **NPU-first**: test learned reconstruction on XDNA2 while the GPU retains preparation, composition and reliable fallback. Verified physical NPU contribution is required for the first usable NPU-targeted version; its efficiency still has to be measured.
+
+Our engineering approach is to measure actual gaming benefit, preserve GPU-only
+fallback, avoid fragile system changes and keep the work maintainable by the
+community. SteamOS updateability and ordinary gaming take priority over an
+experimental accelerator setup.
 
 ## AI-Assisted Development Disclosure
 
@@ -47,6 +52,14 @@ Maintainer decisions still pending:
 **DSR011 NPU-first host preparation** adds a [full-frame SESR reference](docs/fullframe-reference.md), an [owned exact3× ONNX contract](docs/espcn-contract.md), a [bounded inference-worker interface](docs/inference-worker.md) and [physical-probe preparation](docs/npu-device-probe.md). All neural execution here is CPU-only. The generated3× graph is an untrained FLOAT32 fixture; INT8 compilation, image-quality advantage, physical NPU contribution and presentation remain unverified. The existing Gamescope build-only experiment is preserved separately.
 
 **DSR012-P P-A/P-B laboratory preparation** adds [offline benchmark analysis](docs/benchmark-laboratory.md) through the existing hardware-evidence contract and an expanded [read-only preflight/Linux deployment map](docs/STEAMOS_INTEGRATION_MAP.md). Synthetic lifecycle, statistics and power guards are tested; physical H1/H2 execution harnesses, collectors and the complete device-day kit remain later checkpoints. No NPU or gaming performance is established.
+
+**DSR013-P SteamOS-first preparation** adds a [versioned readiness checklist and
+passive discovery](docs/steamos-first-readiness.md),
+[provisional deployment decision](docs/steamos-deployment-decision.md),
+[H0–H4 protocols/R-009 hypotheses](docs/hardware-gates-steamos.md) and
+[update/removal plan](docs/steamos-update-recovery.md). These are host-tested
+preparation tools and unexecuted device protocols. SteamOS compatibility, physical
+NPU acceleration, update survival and gaming benefit remain **NOT_TESTED**.
 
 **R005-G0B-1 host experiments** provide [deterministic scheduling](docs/scheduling.md) through the existing mock command and an exact [frame-payload calculator](docs/payload.md). Their virtual timing and logical byte counts are assumptions/calculations, not physical NPU throughput, game FPS or power measurements.
 

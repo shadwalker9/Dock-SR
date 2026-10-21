@@ -59,3 +59,32 @@ Mutable upstream documents retrieved and byte-identified this session:
 - [amd-modelrun](https://ryzenai.docs.amd.com/en/latest/modelrun.html): SHA256 `f9b0525a3f1eedbb7ebae63b20ce08a70afddfce717fba7f6e0d2245235d6126`, 80263 bytes.
 - [amd-xrt-smi](https://ryzenai.docs.amd.com/en/latest/xrt_smi.html): SHA256 `e0c767c30108c4e26b6d313768138d64290f2b5b6a3d35a8b95ad96ae5dc93c4`, 45166 bytes.
 - [amdgpu-hwmon](https://docs.kernel.org/gpu/amdgpu/thermal.html): SHA256 `586bb3c1db5c5b5633aafa15f027612eca0783fbef4737149eb0205943f059e2`, 38182 bytes.
+
+## DSR013-P / R-009 bounded source reconciliation — 2026-10-21
+
+Exact HEAD refs were independently queried and the following source bytes read;
+raw files/manifests remain outside Git. No upstream code, runtime, model, installer
+or report was copied into this change. Source facts are not target measurements.
+
+| Repository and exact source | Revision | Retrieved SHA256 / finding |
+| --- | --- | --- |
+| microsoft/onnxruntime, include/onnxruntime/core/session/onnxruntime_c_api.h | `a926b837fb8a39b0e4840fcb997ff1336cdf5db1` | `28b7bf042aec952a7e20769409f26d642b6e7a9eea04ad8cba4883123a4c727d`; OrtInteropApi since1.24, optional importer may return null successfully; Linux DMA-BUF TODO and separate opaque-FD enum |
+| openvinotoolkit/openvino, src/plugins/intel_npu/docs/inference-request.md | `5f6bbdfdf4667cc39415a469449343494dc986f2` | `9f5b6521e04eeda7134ed50984542443f8f58e3fc3b6a958f248b40f788dc774`; context-bound allocation tracking, reuse, shadow copies and Linux DMA-BUF remote tensors are Intel design references |
+| amd/xdna-driver, README.md | `bc5dd96b6a11fcdba0884c492f897c9e6ed5aa79` | `87565ad20ca0034bc4d82e072bfefe403d08c63234ebb079a48e13308045dd7c`; host kernel/config/firmware/XRT/memlock coupling and Arch/Fedora packaging are not SteamOS acceptance |
+| amd/RyzenAI-SW, CNN-examples/super-resolution/README.md | `43b2dabe4d1bf084d0421953b134707b8cb7275a` | `95c9ae379127ba47688175bd1783e6509b04fa2d8149d929118e787500d1e7cf`; fixed256/512 models separate; no Linux Vulkan-to-Vitis inference proof |
+
+The fetched ORT main header declares API_VERSION32. That development header is
+not proof of a released package or the installed AMD build; do not adopt R-009's
+"current release1.31" as a tested runtime requirement. Existing CPU ORT1.20.1
+cannot probe the newer API. Vitis external-resource importer availability remains
+UNKNOWN, not disproved by a missing Python interface. Exact handle types must be
+queried; do not relabel DMA_BUF as OPAQUE_FD.
+
+AMD1.8 model deployment/linux source and pins from DSR012-P remain applicable to
+the supported reference only. R-009's Ubuntu-first recommendation is superseded
+by the owner's v2.2 SteamOS-first direction, not by a newly verified Valve support
+claim. No new Valve recovery/SteamOS kernel assertion is made. Community Strix
+Halo/ROCm and idle/resume reports remain unreplicated on the target; no suggested
+host repair was applied. Intel source is studied conceptually, not added as an
+AMD dependency. Model/runtime/component licenses remain separate unresolved
+shipping reviews; no project license selected.

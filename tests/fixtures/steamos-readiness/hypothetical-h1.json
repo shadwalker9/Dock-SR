@@ -1,0 +1,203 @@
+{
+  "schema_version": "1.0.0",
+  "document_type": "docksr_steamos_readiness",
+  "generated_at_utc": "2026-10-21T00:00:00Z",
+  "evidence_class": "SCHEMA_EXAMPLE",
+  "physical_test_status": "NOT_TESTED",
+  "os_family": "STEAMOS",
+  "compatibility_claim": "NOT_ESTABLISHED",
+  "npu_execution_claim": "NOT_ATTESTED",
+  "hardware_execution_verified": false,
+  "read_only": true,
+  "inventory": null,
+  "evidence": [
+    {
+      "id": "host_identity",
+      "category": "DEVICE_OBSERVATION",
+      "kind": "HOST_IDENTITY",
+      "artifact": "fictional/host_identity.json",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "id": "runtime_identity",
+      "category": "DEVICE_OBSERVATION",
+      "kind": "RUNTIME_IDENTITY",
+      "artifact": "fictional/runtime_identity.json",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "id": "model_identity",
+      "category": "DEVICE_OBSERVATION",
+      "kind": "MODEL_IDENTITY",
+      "artifact": "fictional/model_identity.json",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "id": "hardware_record",
+      "category": "DEVICE_OBSERVATION",
+      "kind": "HARDWARE_RECORD",
+      "artifact": "fictional/hardware_record.json",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "id": "operator_assignment",
+      "category": "DEVICE_OBSERVATION",
+      "kind": "OPERATOR_ASSIGNMENT",
+      "artifact": "fictional/operator_assignment.json",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "id": "active_context",
+      "category": "DEVICE_OBSERVATION",
+      "kind": "ACTIVE_CONTEXT",
+      "artifact": "fictional/active_context.json",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "id": "cpu_reference",
+      "category": "DEVICE_OBSERVATION",
+      "kind": "CPU_REFERENCE",
+      "artifact": "fictional/cpu_reference.json",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "id": "output_comparison",
+      "category": "DEVICE_OBSERVATION",
+      "kind": "OUTPUT_COMPARISON",
+      "artifact": "fictional/output_comparison.json",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ],
+  "failures": [],
+  "areas": {
+    "device_identity": {
+      "status": "PASS",
+      "evidence_refs": [
+        "host_identity"
+      ]
+    },
+    "steamos_build": {
+      "status": "PASS",
+      "evidence_refs": [
+        "host_identity"
+      ]
+    },
+    "kernel": {
+      "status": "PASS",
+      "evidence_refs": [
+        "host_identity"
+      ]
+    },
+    "npu_driver": {
+      "status": "PASS",
+      "evidence_refs": [
+        "host_identity"
+      ]
+    },
+    "firmware": {
+      "status": "PASS",
+      "evidence_refs": [
+        "host_identity"
+      ]
+    },
+    "device_access": {
+      "status": "PASS",
+      "evidence_refs": [
+        "host_identity"
+      ]
+    },
+    "xrt": {
+      "status": "PASS",
+      "evidence_refs": [
+        "host_identity"
+      ]
+    },
+    "vitis_ep": {
+      "status": "PASS",
+      "evidence_refs": [
+        "runtime_identity"
+      ]
+    },
+    "model_execution": {
+      "status": "PASS",
+      "evidence_refs": [
+        "runtime_identity"
+      ]
+    },
+    "update_survival": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "reversibility": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "gaming_impact": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    }
+  },
+  "gates": {
+    "H0": {
+      "status": "PASS",
+      "evidence_refs": [
+        "host_identity"
+      ]
+    },
+    "H1": {
+      "status": "PASS",
+      "evidence_refs": [
+        "model_identity",
+        "hardware_record",
+        "operator_assignment",
+        "active_context",
+        "cpu_reference",
+        "output_comparison"
+      ]
+    },
+    "H2": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "H3": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    }
+  },
+  "interop": {
+    "HOST_STAGING": {
+      "status": "PASS",
+      "evidence_refs": [
+        "hardware_record"
+      ]
+    },
+    "VULKAN_DMA_BUF_EXPORTED": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "XRT_BO_IMPORTED": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "ORT_IMPORTER_AVAILABLE": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "EXTERNAL_TENSOR_BOUND": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "ACTUAL_NPU_CONSUMPTION_VERIFIED": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "SHARED_SYNCHRONIZATION_VERIFIED": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "END_TO_END_PERFORMANCE_BENEFIT_VERIFIED": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    }
+  }
+}

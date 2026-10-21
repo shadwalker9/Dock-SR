@@ -116,11 +116,11 @@ extends [read-only preflight and Linux mapping](STEAMOS_INTEGRATION_MAP.md).
 
 | Gate | Current command/interface | Actual status |
 | --- | --- | --- |
-| H0 | `scripts/npu_probe.py --model MODEL --inspect-ort --output NEW.json` | Inventory implemented; target compatibility/inference NOT_RUN |
+| H0 | `scripts/steamos_readiness.py --output NEW.json`; legacy model/opt-in queries in `npu_probe.py` separate | Passive inventory implemented; target compatibility/inference NOT_TESTED |
 | H1 | [Existing device-day procedure](npu-device-probe.md) | Physical SESR execution harness remains P-C work |
 | H2 | CPU `scripts/sesr_fullframe.py` | CPU-only reference; physical persistent-session runner remains P-C |
-| H3 | Matched GPU workload ± physical NPU | Protocol pending; no game launched |
-| H4 | Host-stage transport/synchronization | Protocol pending; no sharing proof |
+| H3 | Matched GPU workload ± physical NPU | [DSR013-P protocol](hardware-gates-steamos.md); collectors/measurements pending |
+| H4 | Eight-stage import/binding/synchronization ladder | [DSR013-P protocol](hardware-gates-steamos.md); implementation/measurements pending |
 | H5 | Neural frame-linked Gamescope presentation | Existing lab build-only, runtime blocked |
 | H6 | Matched quality/power user-value comparison | Protocol pending; no benefit established |
 

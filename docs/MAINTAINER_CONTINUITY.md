@@ -2,11 +2,21 @@
 
 Start with [PROJECT_STATE.md](PROJECT_STATE.md) and [DECISIONS.md](DECISIONS.md), then the current task's code and newest owner handoff. Do not re-ingest every historical research paper. Inspect the current branch, HEAD and dirty files; preserve unrelated work. Cloud tasks are isolated and do not need an extra worktree unless requested.
 
-The latest scope is v2.1 **DSR012-P**. Verified checkpoints P-A/P-B provide
+The latest scope is v2.2 **DSR013-P: SteamOS-first readiness and R-009**.
+Read [SteamOS readiness](steamos-first-readiness.md), [gate plan](hardware-gates-steamos.md),
+[deployment decision](steamos-deployment-decision.md) and [update/removal](steamos-update-recovery.md).
+The owner requires the primary-use Z2 Extreme to remain on SteamOS. R-009's
+Ubuntu-first suggestion is superseded. No OS/kernel/firmware/permission/install
+changes, root actions, reboot or suspend stress are implied. Discovery uses
+`steamos_readiness.py` with no provider/XRT/Vulkan loading. All physical results
+remain NOT_TESTED; the checklist never attests REAL_NPU.
+
+Previous v2.1 **DSR012-P** verified checkpoints P-A/P-B provide
 [offline benchmark analysis](benchmark-laboratory.md) and the
 [Linux/SteamOS integration map](STEAMOS_INTEGRATION_MAP.md). P-C physical H1/H2
 harnesses, P-D collectors and P-E full hardware-day kit remain pending; do not
-claim that the entire laboratory is ready. R-008 was missing from the supplied
+claim that the entire laboratory is ready. DSR013-P adds plans/contracts, not
+those physical runners/collectors. R-008 was missing from the supplied
 files; reconcile it before adopting its specific claims. The attachment named
 DSR012 was the preceding DSR011-R review, not a hardware result.
 

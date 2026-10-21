@@ -76,3 +76,15 @@ and statistical consistency do not attest execution or matched image quality.
 ORT module version; it continues to prohibit physical success. Missing devices,
 permissions/configuration, unsupported queries and unmeasured sensors retain
 meaningful unavailable states. No existing runtime activation API is changed.
+
+## DSR013-P SteamOS readiness
+
+`steamos-readiness.schema.json` v1.0.0 describes a checklist, not inference
+measurements. `scripts/steamos_readiness.py --validate FILE` additionally enforces
+reference/gate order, documentation versus device evidence, H1 proof categories,
+H4 prerequisites and SteamOS-only compatibility. Its fixed NOT_ATTESTED/false
+execution fields cannot claim REAL_NPU; use the existing canonical hardware
+record plus independent artifacts for actual execution. Artifact authenticity is
+not established by either schema. Initial hardware areas remain NOT_TESTED.
+See [SteamOS readiness](../docs/steamos-first-readiness.md) and explicitly fictional
+[fixtures](../tests/fixtures/steamos-readiness/README.md). No legacy schema changed.

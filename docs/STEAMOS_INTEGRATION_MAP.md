@@ -1,5 +1,11 @@
 # SteamOS, Bazzite and Linux integration map
 
+**DSR013-P / handoff v2.2 superseding direction:** SteamOS is the primary target.
+Use the [SteamOS-first readiness contract](steamos-first-readiness.md) for initial
+passive discovery and [H0–H4](hardware-gates-steamos.md) for acceptance. AMD's
+Ubuntu reference is documentation and separately approved diagnostics, not a
+required first installation. The historical P-B comparison below is retained.
+
 DSR012-P checkpoint P-B, reviewed2026-10-21. This is source-backed architecture
 research and a read-only inventory interface, not target compatibility or an
 installation procedure. No device, daemon, service, driver, firmware or shipping
@@ -135,11 +141,11 @@ comparison. Vulkan DMA-BUF support does not prove Vitis tensor binding.
 | Reversible installation | PLAUSIBLE_UNVERIFIED: user tree; host changes separate | DOCUMENTED: deployment rollback; user tree proposed | PLAUSIBLE_UNVERIFIED: user tree; official recovery links only |
 | Unprivileged workflow | DOCUMENTED: inference after host setup/ACLs; target NOT_RUN | PLAUSIBLE_UNVERIFIED: ACL/runtime limits | PLAUSIBLE_UNVERIFIED: ACL/runtime limits |
 
-Bazzite is a reasonable **intermediate research target**, not a verified NPU
-platform: it offers an Atomic rollback path, a documented gaming session and
-container workflows, while its Fedora/userspace stack differs from the vendor
-Ubuntu reference. Establish H1 on the supported reference before attributing a
-later distro failure to DockSR's model or architecture.
+Bazzite remains a **secondary research environment**, not a verified NPU
+platform. Its Atomic deployment and Fedora/userspace stack differ from the vendor
+Ubuntu reference. Neither is a prerequisite for SteamOS H1. Diagnose SteamOS at
+the exact affected layer; any separate reference-environment experiment requires
+explicit authorization and cannot establish SteamOS compatibility.
 
 ## Preliminary native-worker lifecycle decision
 

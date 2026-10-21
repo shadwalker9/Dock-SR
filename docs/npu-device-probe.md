@@ -1,5 +1,13 @@
 # DSR011 physical NPU probe preparation
 
+**DSR013-P update:** primary acceptance is now **Z2 Extreme on SteamOS**.
+Use [passive SteamOS discovery](steamos-first-readiness.md) first; the legacy
+command below includes additional opt-in queries and is not the new minimal
+discovery phase. [H0–H4](hardware-gates-steamos.md) adds active-XRT-context proof,
+persistent-session concurrency and staged H4 requirements. An Ubuntu reference
+installation is not a prerequisite or authorized device change. No target tests
+have been run.
+
 The first physical target test uses the **unchanged AMD SESR-M7 tile**, before
 custom exact3× models or full-frame throughput. This document prepares that
 experiment; no XDNA2 inference, operator placement, graphics sharing or game

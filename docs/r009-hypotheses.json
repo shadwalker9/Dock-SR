@@ -1,0 +1,243 @@
+{
+  "schema_version": "1.0.0",
+  "document_type": "docksr_research_hypotheses",
+  "source": "R-009, interpreted under owner handoff v2.2 SteamOS-first direction",
+  "hypotheses": [
+    {
+      "id": "HYP-001",
+      "description": "Persistent Vitis AI sessions reduce per-frame overhead.",
+      "evidence_category": "VERIFIED_PRIMARY_SOURCE",
+      "baseline": "session creation excluded from steady-state CPU reference",
+      "required_capability": [
+        "ONNXRuntime InferenceSession",
+        "VitisAIExecutionProvider"
+      ],
+      "measurement": [
+        "cold_init_ms",
+        "warm_frame_ms",
+        "compile_cache_hit"
+      ],
+      "falsification": "persistent reuse produces no repeatable reduction in non-inference overhead",
+      "stop_go": "GO by default; persistent session is baseline",
+      "hardware_dependency": "Physical Ryzen AI Z2 Extreme/XDNA2; exact SteamOS/driver/firmware/runtime compatibility before activation. Host contracts are not performance proof.",
+      "steamos_host_prerequisite": true,
+      "current_state": "NOT_TESTED"
+    },
+    {
+      "id": "HYP-002",
+      "description": "Reusable input/output buffers reduce allocation and copy overhead.",
+      "evidence_category": "VERIFIED_PRIMARY_SOURCE_INTEL; INFERRED_AMD",
+      "baseline": "host-staged reusable DockSR buffers",
+      "required_capability": [
+        "ORT tensor reuse"
+      ],
+      "measurement": [
+        "allocation_count",
+        "copy_bytes",
+        "frame_p95_ms"
+      ],
+      "falsification": "reused buffers do not reduce allocations/copies or frame cost",
+      "stop_go": "GO before exotic memory interop",
+      "hardware_dependency": "Physical Ryzen AI Z2 Extreme/XDNA2; exact SteamOS/driver/firmware/runtime compatibility before activation. Host contracts are not performance proof.",
+      "steamos_host_prerequisite": true,
+      "current_state": "NOT_TESTED"
+    },
+    {
+      "id": "HYP-003",
+      "description": "Compiler-aware tile shape can improve XDNA2 activation residency and fusion.",
+      "evidence_category": "VERIFIED_PRIMARY_SOURCE_AMD",
+      "baseline": "256x256 SESR, 24 calls/frame",
+      "required_capability": [
+        "separately validated fixed-shape model"
+      ],
+      "measurement": [
+        "full_frame_ms",
+        "tile_rate",
+        "memory_activity"
+      ],
+      "falsification": "alternative model shape is no faster or worsens correctness/quality",
+      "stop_go": "DEFER until 256 baseline; then compare AMD 512 artifact",
+      "hardware_dependency": "Physical Ryzen AI Z2 Extreme/XDNA2; exact SteamOS/driver/firmware/runtime compatibility before activation. Host contracts are not performance proof.",
+      "steamos_host_prerequisite": true,
+      "current_state": "NOT_TESTED"
+    },
+    {
+      "id": "HYP-004",
+      "description": "Stride-aware subviews can remove per-tile packing.",
+      "evidence_category": "VERIFIED_PRIMARY_SOURCE_AMD_LOW_LEVEL",
+      "baseline": "packed host-staged tiles",
+      "required_capability": [
+        "XRT sub-BO",
+        "stride-aware inference runner"
+      ],
+      "measurement": [
+        "tile_pack_ms",
+        "copy_bytes",
+        "full_frame_ms"
+      ],
+      "falsification": "Vitis path cannot consume strided view or copies remain",
+      "stop_go": "CONDITIONAL",
+      "hardware_dependency": "Physical Ryzen AI Z2 Extreme/XDNA2; exact SteamOS/driver/firmware/runtime compatibility before activation. Host contracts are not performance proof.",
+      "steamos_host_prerequisite": true,
+      "current_state": "NOT_TESTED"
+    },
+    {
+      "id": "HYP-005",
+      "description": "GPU/NPU shared memory can lower frame transport cost.",
+      "evidence_category": "UNKNOWN_FOR_VITIS_AI",
+      "baseline": "host-staged GPU-to-NPU-to-GPU",
+      "required_capability": [
+        "Vulkan external memory",
+        "XRT BO import",
+        "Vitis/ORT external tensor importer"
+      ],
+      "measurement": [
+        "copies",
+        "transport_ms",
+        "full_frame_ms"
+      ],
+      "falsification": "no supported tensor importer, hidden copy remains, or total frame time does not improve",
+      "stop_go": "DEFER until H4 baseline proves transport is material",
+      "hardware_dependency": "Physical Ryzen AI Z2 Extreme/XDNA2; exact SteamOS/driver/firmware/runtime compatibility before activation. Host contracts are not performance proof.",
+      "steamos_host_prerequisite": true,
+      "current_state": "NOT_TESTED"
+    },
+    {
+      "id": "HYP-006",
+      "description": "Two inference requests in flight improve sustained full-frame throughput.",
+      "evidence_category": "HYPOTHESIS; CROSS_VENDOR_SUPPORT_INTEL",
+      "baseline": "max_inflight=1",
+      "required_capability": [
+        "supported concurrent/asynchronous Vitis execution"
+      ],
+      "measurement": [
+        "frame_fps",
+        "p95_frame_age_ms",
+        "queue_depth",
+        "memory_peak"
+      ],
+      "falsification": "throughput does not improve outside variance or frame age/queue growth worsens",
+      "stop_go": "HIGH_PRIORITY_H2_TEST",
+      "hardware_dependency": "Physical Ryzen AI Z2 Extreme/XDNA2; exact SteamOS/driver/firmware/runtime compatibility before activation. Host contracts are not performance proof.",
+      "steamos_host_prerequisite": true,
+      "current_state": "NOT_TESTED"
+    },
+    {
+      "id": "HYP-007",
+      "description": "Three in-flight requests outperform two.",
+      "evidence_category": "HYPOTHESIS",
+      "baseline": "best of max_inflight=1,2",
+      "required_capability": [
+        "supported concurrent/asynchronous Vitis execution"
+      ],
+      "measurement": [
+        "same metrics as HYP-006"
+      ],
+      "falsification": "no incremental throughput or materially worse latency/memory",
+      "stop_go": "TEST only after two is stable",
+      "hardware_dependency": "Physical Ryzen AI Z2 Extreme/XDNA2; exact SteamOS/driver/firmware/runtime compatibility before activation. Host contracts are not performance proof.",
+      "steamos_host_prerequisite": true,
+      "current_state": "NOT_TESTED"
+    },
+    {
+      "id": "HYP-008",
+      "description": "Reusable placement/cropping buffers reduce output assembly overhead.",
+      "evidence_category": "INFERRED",
+      "baseline": "DSR011 full-frame assembler",
+      "required_capability": [
+        "existing DockSR buffers"
+      ],
+      "measurement": [
+        "assembly_ms",
+        "copy_bytes",
+        "allocations"
+      ],
+      "falsification": "assembly is negligible or optimization has no measurable effect",
+      "stop_go": "MEASURE_FIRST",
+      "hardware_dependency": "Physical Ryzen AI Z2 Extreme/XDNA2; exact SteamOS/driver/firmware/runtime compatibility before activation. Host contracts are not performance proof.",
+      "steamos_host_prerequisite": true,
+      "current_state": "NOT_TESTED"
+    },
+    {
+      "id": "HYP-009",
+      "description": "A low-resolution native-3x ESPCN-class model is a better production workload.",
+      "evidence_category": "PROJECT_RESEARCH_R007",
+      "baseline": "SESR 2x validation workload",
+      "required_capability": [
+        "Conv",
+        "activation",
+        "DepthToSpace(3)",
+        "INT8 compilation"
+      ],
+      "measurement": [
+        "quality",
+        "full_frame_ms",
+        "energy_per_presented_frame"
+      ],
+      "falsification": "compiler/operator support or quality-throughput tradeoff is unacceptable",
+      "stop_go": "DEFER until SESR hardware characterization",
+      "hardware_dependency": "Physical Ryzen AI Z2 Extreme/XDNA2; exact SteamOS/driver/firmware/runtime compatibility before activation. Host contracts are not performance proof.",
+      "steamos_host_prerequisite": true,
+      "current_state": "NOT_TESTED"
+    },
+    {
+      "id": "HYP-010",
+      "description": "Compiled-model caching substantially reduces startup cost.",
+      "evidence_category": "VERIFIED_PRIMARY_SOURCE_AMD",
+      "baseline": "uncached first session",
+      "required_capability": [
+        "VitisAI cache or ORT EP Context"
+      ],
+      "measurement": [
+        "cold_session_ms",
+        "cached_session_ms",
+        "cache_identity"
+      ],
+      "falsification": "cache is incompatible/unreliable or provides no startup benefit",
+      "stop_go": "GO",
+      "hardware_dependency": "Physical Ryzen AI Z2 Extreme/XDNA2; exact SteamOS/driver/firmware/runtime compatibility before activation. Host contracts are not performance proof.",
+      "steamos_host_prerequisite": true,
+      "current_state": "NOT_TESTED"
+    },
+    {
+      "id": "HYP-011",
+      "description": "A lower-level XRT/xmodel/IRON backend can enable memory binding unavailable through Vitis AI.",
+      "evidence_category": "VERIFIED_LOW_LEVEL_CAPABILITIES; COMMUNITY_REPORTED_LINUX",
+      "baseline": "VitisAIExecutionProvider",
+      "required_capability": [
+        "XRT",
+        "AIE/IRON or xmodel runtime"
+      ],
+      "measurement": [
+        "transport_ms",
+        "dispatch_ms",
+        "maintenance_complexity"
+      ],
+      "falsification": "Vitis already meets requirements or lower-level path gives no whole-frame benefit",
+      "stop_go": "DEFER",
+      "hardware_dependency": "Physical Ryzen AI Z2 Extreme/XDNA2; exact SteamOS/driver/firmware/runtime compatibility before activation. Host contracts are not performance proof.",
+      "steamos_host_prerequisite": true,
+      "current_state": "NOT_TESTED"
+    },
+    {
+      "id": "HYP-012",
+      "description": "Power/deadline-aware inference admission can preserve GPU performance.",
+      "evidence_category": "HYPOTHESIS",
+      "baseline": "submit every unique frame",
+      "required_capability": [
+        "DockSR scheduler",
+        "valid GPU/NPU telemetry"
+      ],
+      "measurement": [
+        "gpu_frametime",
+        "deadline_misses",
+        "energy_per_presented_frame"
+      ],
+      "falsification": "admission changes do not improve gaming performance/energy or degrade image continuity excessively",
+      "stop_go": "DEFER until H3 contention is measured",
+      "hardware_dependency": "Physical Ryzen AI Z2 Extreme/XDNA2; exact SteamOS/driver/firmware/runtime compatibility before activation. Host contracts are not performance proof.",
+      "steamos_host_prerequisite": true,
+      "current_state": "NOT_TESTED"
+    }
+  ]
+}

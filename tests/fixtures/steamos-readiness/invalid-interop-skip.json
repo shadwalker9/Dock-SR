@@ -1,0 +1,117 @@
+{
+  "schema_version": "1.0.0",
+  "document_type": "docksr_steamos_readiness",
+  "generated_at_utc": "2026-10-21T00:00:00Z",
+  "evidence_class": "PLAN",
+  "physical_test_status": "NOT_TESTED",
+  "os_family": "UNKNOWN",
+  "compatibility_claim": "NOT_ESTABLISHED",
+  "npu_execution_claim": "NOT_ATTESTED",
+  "hardware_execution_verified": false,
+  "read_only": true,
+  "inventory": null,
+  "evidence": [],
+  "failures": [],
+  "areas": {
+    "device_identity": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "steamos_build": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "kernel": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "npu_driver": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "firmware": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "device_access": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "xrt": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "vitis_ep": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "model_execution": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "update_survival": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "reversibility": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "gaming_impact": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    }
+  },
+  "gates": {
+    "H0": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "H1": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "H2": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "H3": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    }
+  },
+  "interop": {
+    "HOST_STAGING": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "VULKAN_DMA_BUF_EXPORTED": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "XRT_BO_IMPORTED": {
+      "status": "PASS",
+      "evidence_refs": []
+    },
+    "ORT_IMPORTER_AVAILABLE": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "EXTERNAL_TENSOR_BOUND": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "ACTUAL_NPU_CONSUMPTION_VERIFIED": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "SHARED_SYNCHRONIZATION_VERIFIED": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    },
+    "END_TO_END_PERFORMANCE_BENEFIT_VERIFIED": {
+      "status": "NOT_TESTED",
+      "evidence_refs": []
+    }
+  }
+}

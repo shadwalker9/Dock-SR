@@ -1,8 +1,8 @@
 # Current owner decisions
 
-Updated 2026-10-20. This is the implementation decision record; it does not replace private session reports.
+Updated 2026-10-21. This is the implementation decision record; it does not replace private session reports.
 
-Current directive: **v1.9 DSR011, NPU-first full-frame reference, exact3× model contract and worker readiness**. The appended v1.9 entry governs this pre-hardware work. The DSR010 Gamescope experiment is retained separately.
+Current directive: **v2.2 DSR013-P, SteamOS-first XDNA2 readiness and R-009 integration**. Latest appended decisions supersede conflicting earlier deployment order. The DSR010 Gamescope experiment and DSR011/012 host infrastructure are retained.
 
 ## Reading order and authority
 
@@ -171,3 +171,32 @@ worker, without authorizing a physical backend, training or new graphics work.
   pins are in notes/UPSTREAM.md; exact shipping SteamOS layout and compatibility
   remain on-device unknowns. Existing reviewed-source backup authorization and
   private-report/model exclusions remain in force.
+
+## v2.2 — DSR013-P SteamOS-first readiness (2026-10-21)
+
+The owner requires **Ryzen AI Z2 Extreme on SteamOS** as primary acceptance;
+R-009's Ubuntu→Bazzite→SteamOS recommendation is explicitly superseded. Other
+Linux environments remain secondary, separately approved diagnostics. Never
+replace/repartition/reimage, install packages as root, change kernel/firmware/
+security/update configuration, reboot or induce suspend stress by assumption.
+
+- Separate SteamOS host A, user inference B, reconstruction/scheduling C and future
+  presentation D. Provisionally prefer an unprivileged relocatable persistent
+  worker, contingent on the actual host prerequisites. No installer/backend added.
+- Preserve unchanged fixed256 INT8 SESR2×,11-pixel halo/core234 and24 calls/frame;
+  persistent host staging/buffer/cache reuse first. Native3× models later.
+- H1 requires original-model/operator-placement/active-XRT-context/CPU-agreement
+  evidence. H2 compares bounded1/2/3 tile requests with whole-frame age, queue and
+  memory; H3 measures identical GPU workload ± genuine NPU. H4 has eight distinct
+  stages, never a zero-copy boolean inferred from import alone.
+- Machine readiness is a versioned reference ledger, not another hardware record.
+  It cannot emit REAL_NPU. Legacy canonical measurement and offline analysis stay
+  unchanged. All12 R-009 hypotheses are registered and physically NOT_TESTED.
+- Require explicit update and disable/removal revalidation; fail closed for future
+  NPU activation while ordinary gaming remains independent. Startup guard and
+  actual rollback remain future work, not host-tested product claims.
+
+See [readiness](steamos-first-readiness.md), [deployment decision](steamos-deployment-decision.md),
+[gate plan](hardware-gates-steamos.md) and [update/removal](steamos-update-recovery.md).
+Reviewed source backup to existing origin/main remains authorized without changing
+visibility; no new publication/release/deployment/license selection is authorized.
