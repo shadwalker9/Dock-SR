@@ -9,7 +9,9 @@
 
 namespace docksr::core {
 
-using Tick = std::uint64_t;  // Virtual simulation units; never physical timing.
+// Caller-defined monotonic units: virtual ticks in simulations, or explicit
+// monotonic nanoseconds supplied by a real host adapter. No clock is read here.
+using Tick = std::uint64_t;
 
 struct FrameTicket {
   std::size_t slot{};
@@ -70,7 +72,7 @@ class FrameScheduler {
   // Called only once the GPU consumer has finished ALL access, or the adapter
   // has established that ready output will never be submitted to a consumer.
   FrameDecision release_output(FrameTicket ticket, Tick now);
-  // Trusted simulation-driver acknowledgement: no producer ever started this
+  // Trusted owner acknowledgement: no producer ever started this
   // queued ticket and no consumer can access it. Never a timeout-based cancel.
   FrameDecision acknowledge_unstarted_cancel(FrameTicket ticket, Tick now);
   void advance_to(Tick now);

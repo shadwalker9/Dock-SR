@@ -129,3 +129,13 @@ Read actual signatures, domains, quantization and preprocessing evidence before 
 - DIV2K training is disclosed by the model card. Model-weight rights do not grant rights to redistribute its training images; dataset rights remain a separate unresolved scope. No dataset or natural-image samples were downloaded for this implementation.
 
 Read-only source metadata/text evidence is cached outside Git under `/workspace/DockSR-model-cache/acquisition/sesr-m7-256/`; DSR010 also read exact-revision source objects from the existing official Git cache. The public manifest records pinned URLs, dates and hashes without copying weights, signed URLs or private reports. Missing guessed LICENSE paths were ordinary 404 path errors; the actual LICENSE and LICENSE.txt files above were found and read. Source-license observations do not establish runtime installation, driver action or redistribution clearance. The separately recorded model inference above is REAL_CPU only.
+
+## DSR011 reuse of the unchanged artifact
+
+The same verified bytes now support the complete synthetic720p→1440p
+[CPU reference](fullframe-reference.md) and a real
+[native worker bridge](inference-worker.md) execution. No replacement model,
+conversion or new CDN acquisition was needed. These are REAL_CPU host gates;
+physical XDNA2, quality, model/runtime redistribution and licensing remain
+separate. The [prepared physical probe](npu-device-probe.md) starts with this
+unchanged model before any owned exact3× fixture compilation.

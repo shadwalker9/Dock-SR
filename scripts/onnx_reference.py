@@ -104,6 +104,130 @@ def _write(path, writer):
         writer(stream)
 
 
+class CpuReferenceSession:
+    """Reuse the existing bounded CPU-only inspector/runtime policy across jobs.
+
+    The default initializes once. ``initialize=False`` lets the CLI validate an
+    NPY header before creating a runtime session, preserving its prior gates.
+    Explicit output buffers use CPU I/O binding; internal ORT allocations and
+    copies remain unobserved, not zero-copy claims.
+    """
+    def __init__(self, model, *, layout="UNSPECIFIED", shape=None,
+                 output_shape=None, initialize=True):
+        model = Path(model)
+        if layout not in {"NCHW", "NHWC", "UNSPECIFIED"}:
+            raise ReferenceError("INVALID_LAYOUT", "Layout is limited to NCHW, NHWC or UNSPECIFIED")
+        if not model.exists():
+            raise ReferenceError("MODEL_MISSING", "No model artifact was available to execute", not_run=True)
+        np, ort, onnx, inspector = dependencies()
+        try:
+            model_bytes = inspector.read_model_bytes(model)
+            inspection = inspector.inspect_bytes(model_bytes, filename=model.name)
+        except Exception as error:
+            raise ReferenceError("MODEL_INSPECTION_FAILED", "Model could not be safely inspected before execution") from error
+        graph = inspection["graph"]
+        if inspection["external_data"] or inspection["custom_domains"] or graph["subgraph_count"] or graph["function_count"]:
+            raise ReferenceError("UNSUPPORTED_MODEL_FEATURE", "External data, custom domains, subgraphs and local functions are rejected before runtime loading", not_run=True)
+        # Reject training graphs and sparse initializers too; this bounded first
+        # runner does not need their extra signatures or execution semantics.
+        proto = onnx.load_model_from_string(model_bytes)
+        if proto.training_info or proto.graph.sparse_initializer:
+            raise ReferenceError("UNSUPPORTED_MODEL_FEATURE", "Training information and sparse initializers are outside this runner's scope", not_run=True)
+        initializer_names = {tensor.name for tensor in proto.graph.initializer}
+        inputs = [value for value in graph["inputs"] if value["name"] not in initializer_names]
+        outputs = graph["outputs"]
+        if len(inputs) != 1 or len(outputs) != 1:
+            raise ReferenceError("SINGLE_IO_REQUIRED", "This reference tool supports exactly one runtime input and one output", not_run=True)
+        for value in (inputs[0], outputs[0]):
+            if value["kind"] != "tensor" or value.get("dtype_code") not in NUMERIC_TYPES:
+                raise ReferenceError("UNSUPPORTED_TENSOR_TYPE", "Only ordinary numeric tensor I/O is supported", not_run=True)
+        input_dtype, output_dtype = (np.dtype(NUMERIC_TYPES[value["dtype_code"]]) for value in (inputs[0], outputs[0]))
+        input_shape = bounded_shape(inputs[0]["dimensions"], input_dtype, shape, "Input")
+        expected_output = bounded_shape(outputs[0]["dimensions"], output_dtype, output_shape, "Output")
+        if layout != "UNSPECIFIED" and len(input_shape) != 4:
+            raise ReferenceError("LAYOUT_RANK_MISMATCH", "NCHW/NHWC declarations require a rank-four input; no transpose is performed")
+        self.np, self.ort, self.onnx = np, ort, onnx
+        self.inspection, self.model_bytes, self.proto = inspection, model_bytes, proto
+        self.inputs, self.outputs, self.layout = inputs, outputs, layout
+        self.input_shape, self.output_shape = input_shape, expected_output
+        self.input_dtype, self.output_dtype = input_dtype, output_dtype
+        self.session = None
+        self.initialization_ms = None
+        self.deterministic_option = False
+        self.successful_runs = 0
+        self.last_inference_ms = None
+        if initialize:
+            self.initialize()
+
+    def initialize(self):
+        if self.session is not None:
+            return self
+        ort = self.ort
+        model_bytes, inputs, outputs = self.model_bytes, self.inputs, self.outputs
+        options = ort.SessionOptions()
+        options.intra_op_num_threads = options.inter_op_num_threads = 1
+        options.execution_mode = ort.ExecutionMode.ORT_SEQUENTIAL
+        options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_DISABLE_ALL
+        options.enable_cpu_mem_arena = False
+        deterministic_option = hasattr(options, "use_deterministic_compute")
+        if deterministic_option:
+            options.use_deterministic_compute = True
+        initialized = time.perf_counter_ns()
+        try:
+            session = ort.InferenceSession(model_bytes, sess_options=options, providers=["CPUExecutionProvider"])
+            session.disable_fallback()
+        except Exception as error:
+            raise ReferenceError("CPU_SESSION_UNAVAILABLE", "CPU ONNX Runtime could not initialize this graph; model-specific reference was not run", not_run=True) from error
+        initialization_ms = (time.perf_counter_ns() - initialized) / 1_000_000
+        if session.get_providers() != ["CPUExecutionProvider"]:
+            raise ReferenceError("PROVIDER_CONFIGURATION_MISMATCH", "CPU must be the only enabled execution provider")
+        if len(session.get_inputs()) != 1 or len(session.get_outputs()) != 1 or session.get_inputs()[0].name != inputs[0]["name"] or session.get_outputs()[0].name != outputs[0]["name"]:
+            raise ReferenceError("RUNTIME_SIGNATURE_MISMATCH", "Runtime I/O names/count differ from the inspected graph")
+        self.session = session
+        self.initialization_ms = initialization_ms
+        self.deterministic_option = deterministic_option
+        return self
+
+    def run(self, tensor, output_buffer=None):
+        np = self.np
+        _validate_array(np, tensor, self.input_shape, self.input_dtype, "Input")
+        if not tensor.flags.c_contiguous:
+            raise ReferenceError("NONCONTIGUOUS_TENSOR", "Input must be C-contiguous; no implicit layout copy")
+        if output_buffer is not None:
+            if (not isinstance(output_buffer, np.ndarray) or output_buffer.shape != self.output_shape or
+                    output_buffer.dtype != self.output_dtype or output_buffer.nbytes > MAX_TENSOR_BYTES):
+                raise ReferenceError("TENSOR_SIGNATURE_MISMATCH", "Output buffer shape/dtype differs from the graph")
+            # Storage is about to be overwritten: do not read uninitialized output.
+            if not output_buffer.flags.c_contiguous or not output_buffer.flags.writeable:
+                raise ReferenceError("INVALID_OUTPUT_BUFFER", "Output buffer must be writable C-contiguous storage")
+            if np.may_share_memory(tensor, output_buffer):
+                raise ReferenceError("ALIASED_OUTPUT_BUFFER", "Input and output buffers must not alias")
+        self.initialize()
+        started = time.perf_counter_ns()
+        try:
+            if output_buffer is None:
+                result = self.session.run([self.outputs[0]["name"]], {self.inputs[0]["name"]: tensor})[0]
+            else:
+                binding = self.session.io_binding()
+                binding.bind_cpu_input(self.inputs[0]["name"], tensor)
+                binding.bind_output(self.outputs[0]["name"], device_type="cpu", device_id=0,
+                                    element_type=self.output_dtype.type, shape=self.output_shape,
+                                    buffer_ptr=output_buffer.ctypes.data)
+                self.session.run_with_iobinding(binding)
+                result = output_buffer
+        except Exception as error:
+            raise ReferenceError("CPU_INFERENCE_FAILED", "The configured CPU provider failed to produce output",
+                                 completed_cpu_run=self.successful_runs > 0) from error
+        self.last_inference_ms = (time.perf_counter_ns() - started) / 1_000_000
+        self.successful_runs += 1
+        try:
+            _validate_array(np, result, self.output_shape, self.output_dtype, "Output")
+        except ReferenceError as error:
+            error.completed_cpu_run = True
+            raise
+        return result
+
+
 def run_reference(model, output_dir, *, input_path=None, layout="UNSPECIFIED", shape=None,
                   output_shape=None, warmup=2, samples=3, atol=1e-6, rtol=1e-5,
                   require_nonidentity=True):
@@ -120,33 +244,12 @@ def run_reference(model, output_dir, *, input_path=None, layout="UNSPECIFIED", s
         raise ReferenceError("INVALID_TOLERANCE", "Comparison tolerances must be finite and nonnegative")
     if not model.exists():
         raise ReferenceError("MODEL_MISSING", "No model artifact was available to execute", not_run=True)
-    np, ort, onnx, inspector = dependencies()
-    try:
-        model_bytes = inspector.read_model_bytes(model)
-        inspection = inspector.inspect_bytes(model_bytes, filename=model.name)
-    except Exception as error:
-        raise ReferenceError("MODEL_INSPECTION_FAILED", "Model could not be safely inspected before execution") from error
-    graph = inspection["graph"]
-    if inspection["external_data"] or inspection["custom_domains"] or graph["subgraph_count"] or graph["function_count"]:
-        raise ReferenceError("UNSUPPORTED_MODEL_FEATURE", "External data, custom domains, subgraphs and local functions are rejected before runtime loading", not_run=True)
-    # Reject training graphs and sparse initializers too; this bounded first
-    # runner does not need their extra signatures or execution semantics.
-    proto = onnx.load_model_from_string(model_bytes)
-    if proto.training_info or proto.graph.sparse_initializer:
-        raise ReferenceError("UNSUPPORTED_MODEL_FEATURE", "Training information and sparse initializers are outside this runner's scope", not_run=True)
-    initializer_names = {tensor.name for tensor in proto.graph.initializer}
-    inputs = [value for value in graph["inputs"] if value["name"] not in initializer_names]
-    outputs = graph["outputs"]
-    if len(inputs) != 1 or len(outputs) != 1:
-        raise ReferenceError("SINGLE_IO_REQUIRED", "This reference tool supports exactly one runtime input and one output", not_run=True)
-    for value in (inputs[0], outputs[0]):
-        if value["kind"] != "tensor" or value.get("dtype_code") not in NUMERIC_TYPES:
-            raise ReferenceError("UNSUPPORTED_TENSOR_TYPE", "Only ordinary numeric tensor I/O is supported", not_run=True)
-    input_dtype, output_dtype = (np.dtype(NUMERIC_TYPES[value["dtype_code"]]) for value in (inputs[0], outputs[0]))
-    input_shape = bounded_shape(inputs[0]["dimensions"], input_dtype, shape, "Input")
-    expected_output = bounded_shape(outputs[0]["dimensions"], output_dtype, output_shape, "Output")
-    if layout != "UNSPECIFIED" and len(input_shape) != 4:
-        raise ReferenceError("LAYOUT_RANK_MISMATCH", "NCHW/NHWC declarations require a rank-four input; no transpose is performed")
+    reference = CpuReferenceSession(model, layout=layout, shape=shape,
+                                    output_shape=output_shape, initialize=False)
+    np, ort, onnx = reference.np, reference.ort, reference.onnx
+    inspection, inputs, outputs = reference.inspection, reference.inputs, reference.outputs
+    input_shape, expected_output = reference.input_shape, reference.output_shape
+    input_dtype, output_dtype = reference.input_dtype, reference.output_dtype
     if input_path is None:
         tensor = synthetic_input(np, input_shape, input_dtype)
         source = {"kind": "synthetic", "pattern": "flat_arange_mod251; float:/250, unsigned:mod-range, signed:minus125-clipped", "file_sha256": None}
@@ -181,35 +284,17 @@ def run_reference(model, output_dir, *, input_path=None, layout="UNSPECIFIED", s
     _validate_array(np, tensor, input_shape, input_dtype, "Input")
     tensor = np.ascontiguousarray(tensor)
     original_input_hash = hashlib.sha256(tensor.tobytes(order="C")).hexdigest()
-    options = ort.SessionOptions()
-    options.intra_op_num_threads = options.inter_op_num_threads = 1
-    options.execution_mode = ort.ExecutionMode.ORT_SEQUENTIAL
-    options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_DISABLE_ALL
-    options.enable_cpu_mem_arena = False
-    deterministic_option = hasattr(options, "use_deterministic_compute")
-    if deterministic_option:
-        options.use_deterministic_compute = True
-    initialized = time.perf_counter_ns()
-    try:
-        session = ort.InferenceSession(model_bytes, sess_options=options, providers=["CPUExecutionProvider"])
-        session.disable_fallback()
-    except Exception as error:
-        raise ReferenceError("CPU_SESSION_UNAVAILABLE", "CPU ONNX Runtime could not initialize this graph; model-specific reference was not run", not_run=True) from error
-    initialization_ms = (time.perf_counter_ns() - initialized) / 1_000_000
-    if session.get_providers() != ["CPUExecutionProvider"]:
-        raise ReferenceError("PROVIDER_CONFIGURATION_MISMATCH", "CPU must be the only enabled execution provider")
-    if len(session.get_inputs()) != 1 or len(session.get_outputs()) != 1 or session.get_inputs()[0].name != inputs[0]["name"] or session.get_outputs()[0].name != outputs[0]["name"]:
-        raise ReferenceError("RUNTIME_SIGNATURE_MISMATCH", "Runtime I/O names/count differ from the inspected graph")
+    reference.initialize()
+    session = reference.session
+    initialization_ms = reference.initialization_ms
+    deterministic_option = reference.deterministic_option
     baseline = None
     sample_times = []
     successful = 0
     for index in range(warmup + samples):
         started = time.perf_counter_ns()
-        try:
-            result = session.run([outputs[0]["name"]], {inputs[0]["name"]: tensor})[0]
-        except Exception as error:
-            raise ReferenceError("CPU_INFERENCE_FAILED", "The configured CPU provider failed to produce output", completed_cpu_run=successful > 0) from error
-        duration = (time.perf_counter_ns() - started) / 1_000_000
+        result = reference.run(tensor)
+        duration = reference.last_inference_ms
         successful += 1
         try:
             _validate_array(np, result, expected_output, output_dtype, "Output")

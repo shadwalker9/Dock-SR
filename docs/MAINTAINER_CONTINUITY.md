@@ -2,16 +2,32 @@
 
 Start with [PROJECT_STATE.md](PROJECT_STATE.md) and [DECISIONS.md](DECISIONS.md), then the current task's code and newest owner handoff. Do not re-ingest every historical research paper. Inspect the current branch, HEAD and dirty files; preserve unrelated work. Cloud tasks are isolated and do not need an extra worktree unless requested.
 
-The latest scope is v1.8 **DSR010 / R006-M1**, the primary Gamescope exact3× seam/live-switch lab plus bounded owner-model validation. Read [the lab](../experiments/gamescope/README.md) before reproducing the isolated patched binary; the complete upstream/build trees remain outside this repository. The source revision is verified; build and runtime evidence must be checked separately in PROJECT_STATE. Never replace system Gamescope or waive native required Vulkan/WSI checks to obtain a pass.
+The latest scope is v1.9 **DSR011**, NPU-first full-frame CPU reference,
+owned exact3× model contract, replaceable worker and efficiency/probe preparation.
+Read [full-frame reference](fullframe-reference.md), [exact3× contract](espcn-contract.md),
+[inference worker](inference-worker.md) and [device-day preparation](npu-device-probe.md).
+Do not replace these with another inspector, reference runner or parallel scheduler.
+The shared `CpuReferenceSession` preserves the original Gate-0 safety policy.
 
-The actual SESR upload now matches the fixed hash and passes existing graph inspection and deterministic CPU reference. See [model intake](model-acquisition.md), [provenance](../models/sesr-m7-256.provenance.json) and [Gate-0](gate0.md). The graph is fixed2× INT8 NHWC, not the exact3× lab filter. Do not repeat superseded CDN retries or label this CPU run NPU support. Owner acceptance by December31,2026 still requires verified physical NPU assistance; GPU-only proof/fallback does not waive that requirement.
+The unchanged SESR upload and actual graph/reference are verified; full-frame
+execution remains REAL_CPU. Generated exact3× FLOAT32 weights are untrained
+fixtures outside Git, not a production model or quantization proof. Physical
+XDNA2 inference/placement and imported-memory binding remain NOT_RUN/UNKNOWN.
+Target hardware is forthcoming; do not repeat answered availability questions.
+
+The [Gamescope lab](../experiments/gamescope/README.md) remains DSR010 build-only.
+Do not repeat its understood cloud failure, remove Vulkan requirements, modify
+system Gamescope or pivot to another graphics stack within DSR011. GPU fallback
+is essential but does not waive the owner's verified-NPU requirement for the
+first usable version targeted December31,2026.
 
 The project owner approves priorities and external publication. The earlier v1.4 assignment authorized S005-PRE pre-hardware packaging without declaring S004 physically validated. The owner's accompanying chat explicitly authorizes backing up reviewed source changes to the existing GitHub repository; v1.6 preserves that authorization. Preserve visibility; no release, deployment or driver installation was requested. Private progress reports remain outside every checkout and must never enter Git, bundles, PRs or releases.
 
 ## What exists
 
 - `src/image`: CPU nearest/bilinear, bounded P6 input, protected image publication, four real full-size self-test cases.
-- `src/core`: typed status/schema, guarded profiles and simulated scheduler. No hardware NPU state can be activated by this build.
+- `src/core`: typed status/schema, guarded profiles and scheduler ownership; the new inference worker reuses that ownership without presenting frames. No physical NPU backend exists.
+- `scripts/sesr_fullframe.py`, `espcn_fixture.py`, `cpu_worker_executor.py`: CPU neural/reference and prototype bridge tools using the optional Gate-0 SDK; generated tensors/model bytes stay outside Git.
 - `src/vulkan`: shared packed-buffer compute reference for preview/benchmark; actual evidence is classified from the selected device. Bundled SPIR-V is resolved relative to the executable. X11 display currently needs CPU readback.
 - `src/preview`: own X11 window, unchanged-source matched A/B, CPU/Vulkan selection, truthful HUD and cached redraws. It is not game integration.
 - `experiments/gamescope`: pinned native lab patch, scoped control contract and owned synthetic fixture/probe. Synthetic fixtures are not games; contract callbacks are not GPU/presentation evidence.

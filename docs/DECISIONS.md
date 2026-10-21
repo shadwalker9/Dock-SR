@@ -2,7 +2,7 @@
 
 Updated 2026-10-20. This is the implementation decision record; it does not replace private session reports.
 
-Current directive: **v1.8 DSR010 / R006-M1, Gamescope exact3× seam/live-switch experiment; bounded SESR host intake secondary**. The appended v1.8 entry governs this lab; earlier restrictions describe their original milestones.
+Current directive: **v1.9 DSR011, NPU-first full-frame reference, exact3× model contract and worker readiness**. The appended v1.9 entry governs this pre-hardware work. The DSR010 Gamescope experiment is retained separately.
 
 ## Reading order and authority
 
@@ -100,3 +100,49 @@ The owner explicitly invoked the complete v1.8 handoff and R-006, with the actua
 - Owner-supplied SESR bytes match the independently computed expected hash/size. Graph inspection and unchanged deterministic CPU reference now pass, with known RGB-minus128 encoding. The actual graph is **2×**, so do not force it into the exact3× lab. This does not prove XDNA operator support, NPU execution, full-image tiling/quality or redistribution clearance.
 - Build, software Vulkan, virtual window, live game and physical GPU/NPU evidence remain separate. All Gamescope-lab NPU fields are false. GPU-only remains internal proof/fallback; verified NPU acceleration is still mandatory for the first usable version targeted December31,2026. Matched-quality whole-device cost remains unmeasured.
 - Reviewed source/docs/patch backups to the existing origin/main remain authorized. No release, upstream PR/new public fork, deployment, store submission, visibility change, final license selection, driver installation or model redistribution is authorized. Private reports/attachments/captures/build outputs remain outside source publication.
+
+
+## v1.9 — DSR011 NPU-first preparation (2026-10-20 America/Chicago)
+
+The owner adopted R-007 and the controlling v1.9 handoff, then explicitly asked
+that interrupted work be completed. Priority is A→B→C/D→E: unchanged SESR full-frame
+CPU reconstruction; an owned exact3× ONNX fixture; bounded worker/efficiency
+contracts; physical-probe preparation. This supersedes earlier deferral of a
+worker, without authorizing a physical backend, training or new graphics work.
+
+- Use unchanged verified SESR-M7 first for physical runtime bring-up. Its actual
+  graph is fixed2× INT8 NHWC. Structural dependency analysis gives an11-pixel
+  input halo/23-pixel receptive-field bound, with234-pixel cores and24 fixed
+  256² calls for complete720p. Global reflection is an explicit reference policy,
+  not an equivalence claim for a hypothetical variable-size zero-padded model.
+- Primary exact3× research remains low-resolution convolution plus final
+  DepthToSpace3. The owned minimal FLOAT32 contract validates layouts/subpixels,
+  not trained quality or A8W8/XINT8 compilation. R-007's `3×3×r²` channel notation
+  is a typo: RGB requires `C×r²=27`, as the handoff correctly states.
+- Correct the handoff's logical payload arithmetic:27,648,000 B/frame gives
+  1,105,920,000/1,244,160,000/1,658,880,000 B/s at40/45/60 FPS. No physical
+  bandwidth is measured. Copy/gather/preparation categories may overlap and
+  cannot simply be summed; discarded crop capacity is not copied traffic.
+- Reuse FrameScheduler producer/consumer ownership in a model-independent native
+  worker. Explicit caller monotonic nanoseconds are distinct from simulated
+  timing. Deadlines do not release running/consumer buffers; require completion,
+  release or trusted quiescence. Exact session/frame/generation/model identity
+  is mandatory. Completion and consumption are not presentation.
+- CPU_REFERENCE, unavailable and deterministic mock backends are separate;
+  physical VitisAI/XRT backends remain NOT_RUN contracts. Prototype CPU execution
+  may use a bounded private child process around the existing CPU tooling.
+  Per-job process/session startup and host staging are explicit laboratory
+  costs, not the finished native NPU transport design.
+- Current AMD model deployment documentation identifies Ryzen AI1.8.0, recommends
+  opset17 and documents target=X2 for supported families. Historical1.5 operator
+  coverage is not proof for our graph/runtime. ImageTilingNPU's current reference
+  is Windows-oriented, not Linux Vulkan→Vitis binding proof. Host CPU ORT1.20.1
+  predates OrtInteropApi; optional provider importer and actual binding remain
+  unknown/unrun, with no stack rebuild to obtain an optional API.
+- Preserve the Gamescope patch and required Vulkan checks. Do not repeat the
+  understood failing cloud runtime probe. No Decky, training, FSR extraction,
+  direct AIE kernels, new compositor patch or zero-copy integration is included.
+- Reviewed source backup to existing origin/main remains authorized; preserve
+  visibility, model/private-report boundaries and licensing-pending disclosure.
+  Verified NPU contribution and matched-quality lower whole-device cost remain
+  mandatory product gates. December31 is aspirational, not guaranteed.

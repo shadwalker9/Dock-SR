@@ -11,6 +11,7 @@ python3 scripts/frame_payload.py --format text
 python3 scripts/frame_payload.py --preset guide-int8 4k-rgb8 --fps 40 45 60
 python3 scripts/frame_payload.py --width 1280 --height 720 --channels 3 --bytes-per-element 1 --fps 60
 python3 tests/test_frame_payload.py -v
+python3 scripts/frame_payload.py --reconstruction-budget
 ```
 
 JSON is the default. It contains `evidence: CALCULATED` and
@@ -44,3 +45,26 @@ requiring producer writes and consumer reads. The guide shape is hypothetical;
 its smaller payload proves neither useful reconstruction quality nor lower
 whole-device power/latency. These calculations isolate one systems question
 without substituting for the physical evidence gates.
+
+## Exact-3× image budget and v1.9 arithmetic correction
+
+The new `--reconstruction-budget` mode reuses the same checked arithmetic for
+one 720p RGB8 image read plus one 4K RGB8 image write. The exact sum is
+**2,764,800 + 24,883,200 = 27,648,000 bytes/frame**. At 40/45/60 FPS this is
+**1,105,920,000 / 1,244,160,000 / 1,658,880,000 bytes/second**. The v1.9
+handoff's corresponding table adds an unexplained 9,600 bytes/frame; the code
+uses the corrected arithmetic rather than reproducing that table.
+
+The report preserves frame periods as exact rational nanoseconds (for example,
+1,000,000,000/45). It also reports 196,608 input and 1,769,472 output bytes for
+an INT8/RGB8 256²→768² tile. Geometric no-overlap tile lower bounds are 15 for
+256² input tiles and six for 512²; actual receptive-field halos and fixed edge
+tiles increase work. These are ideal uncompressed logical image payloads,
+not measured DDR traffic, model execution times or total transaction cost.
+
+Actual host-reference and worker transactions separately account for tensor
+preparation, caller-visible copies, inference payloads, stitch/crop bytes,
+owned-array allocations and observed host timing. Runtime-internal allocations
+and copies remain unknown; CPU-only jobs do not measure GPU upload or NPU
+transfers. FLOAT32 contract fixtures require four bytes per element rather
+than the one-byte INT8 figures above.

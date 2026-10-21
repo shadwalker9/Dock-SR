@@ -18,7 +18,7 @@
   },
   "acquisition": {
     "status": "ACQUIRED",
-    "reason": "DSR010 (2026-10-20): owner attachment imported into a new private cache using the existing exact-identity importer; independently measured 107131 bytes and SHA256 match the pinned publisher identity. Unchanged graph inspected: IR9, standard opset19, INT8 NHWC [1,256,256,3] to [1,512,512,3], 60 nodes, no custom domains/external data. Pinned AMD runner source establishes RGB pixel-minus-128 input/output centering; existing CPU-only reference passed two warmups and three bitwise-equal measured repeats on one owned composite tile. MODEL_VALIDATED is bounded REAL_CPU artifact validation, not NPU compatibility, quality, 3x production scaling or redistribution clearance. Private receipts/inspection/preprocessing/reference evidence retained outside Git at /workspace/DockSR-model-cache/manual-sesr-010/. No CDN retry."
+    "reason": "DSR010 (2026-10-20): owner attachment imported into a new private cache using the existing exact-identity importer; independently measured 107131 bytes and SHA256 match the pinned publisher identity. Unchanged graph inspected: IR9, standard opset19, INT8 NHWC [1,256,256,3] to [1,512,512,3], 60 nodes, no custom domains/external data. Pinned AMD runner source establishes RGB pixel-minus-128 input/output centering; existing CPU-only reference passed two warmups and three bitwise-equal measured repeats on one owned composite tile. MODEL_VALIDATED is bounded REAL_CPU artifact validation, not NPU compatibility, quality, 3x production scaling or redistribution clearance. Private receipts/inspection/preprocessing/reference evidence retained outside Git at /workspace/DockSR-model-cache/manual-sesr-010/. No CDN retry. DSR011 extends the unchanged CPU reference to complete1280x720\u21922560x1440 with derived11-pixel halo/234-pixel cores/24 tiles and explicit reflection/crop accounting; this is separate host evidence, not native3x or physical NPU proof."
   },
   "licenses": {
     "model_weights": {
@@ -179,12 +179,12 @@
       "retrieved_date": "2026-10-20",
       "sha256": "19a88971827e95edcd15abead29cc844c1280c1a3e64b678257d705b7fcbf7ab",
       "status": "OBSERVED",
-      "notes": "Read from the already fetched exact-revision official Git object; inspected as text, never executed. Publisher entry point declares sr_scale2 and tile_overlap16. Full-image tiling was not exercised by the bounded single-tile reference."
+      "notes": "Read from the already fetched exact-revision official Git object; inspected as text, never executed. Publisher entry point declares sr_scale2 and tile_overlap16. Full-image tiling was not exercised by the bounded single-tile reference. DSR011 independently derives a sufficient11-pixel halo for this actual graph instead of assuming the publisher16; its separately tested host assembly uses an explicit reference boundary policy."
     }
   ],
   "outstanding_questions": [
     "Review associated model notices and asset-specific redistribution scope before bundling any weights or publisher source.",
-    "Validate natural-image quality, full-image overlap/merge behavior and target suitability separately; the verified graph is a fixed2x tile probe, not an exact3x production candidate.",
+    "Natural-image quality and target suitability remain unvalidated; DSR011 tests full-frame reflection/halo/assembly on owned synthetic inputs only; the verified graph is a fixed2x tile probe, not an exact3x production candidate.",
     "Verify exact AMD runtime/operator placement, CPU fallback partitioning and all hardware/copy/sync/power results on the target; no such evidence exists here.",
     "Reproduce the retained CPU input/output comparison on any future provider with documented tolerances; cross-provider determinism is not tested."
   ]

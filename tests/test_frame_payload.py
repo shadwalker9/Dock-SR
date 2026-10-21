@@ -7,10 +7,44 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
-from frame_payload import UINT64_MAX, build_report, calculate_payload, text_summary
+from frame_payload import UINT64_MAX, build_report, calculate_payload, reconstruction_budget, text_summary
 
 
 class FramePayloadTests(unittest.TestCase):
+    def test_exact3_pipeline_budget_corrects_handoff_arithmetic(self):
+        report = reconstruction_budget()
+        self.assertEqual(report["source_logical_bytes"], 2764800)
+        self.assertEqual(report["output_logical_bytes"], 24883200)
+        self.assertEqual(report["minimum_read_plus_write_bytes_per_frame"], 27648000)
+        # Explicit goldens: the v1.9 table incorrectly adds 9600 bytes/frame.
+        self.assertEqual([r["minimum_read_plus_write_bytes_per_second"] for r in report["rates"]],
+                         [1105920000, 1244160000, 1658880000])
+        self.assertEqual(report["tile_input_logical_bytes"], 196608)
+        self.assertEqual(report["tile_output_logical_bytes"], 1769472)
+        self.assertEqual(report["no_overlap_tile_lower_bound"], 15)
+        self.assertEqual(reconstruction_budget(tile=512)["no_overlap_tile_lower_bound"], 6)
+        self.assertEqual(report["rates"][1]["delivery_period_ns"],
+                         {"numerator": 1000000000, "denominator": 45})
+        self.assertFalse(report["hardware_measured"])
+
+    def test_pipeline_bounds_and_fractional_edge_tiles(self):
+        report = reconstruction_budget(257, 257, scale=3, tile=256, fps=(40,))
+        self.assertEqual(report["no_overlap_tile_lower_bound"], 4)
+        self.assertEqual(report["output_logical_bytes"], 1783323)
+        for kwargs in ({"scale": 0}, {"scale": True}, {"tile": 0},
+                       {"tile": UINT64_MAX}, {"scale": UINT64_MAX}):
+            with self.subTest(kwargs=kwargs), self.assertRaises(ValueError):
+                reconstruction_budget(**kwargs)
+
+    def test_pipeline_cli_separates_calculation_from_measurement(self):
+        result = self.run_cli("--reconstruction-budget")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        report = json.loads(result.stdout)
+        self.assertEqual(report["evidence"], "CALCULATED")
+        self.assertEqual(report["document_type"], "docksr_reconstruction_budget")
+        for extra in (("--preset", "720p-rgb8"), ("--format", "text")):
+            self.assertNotEqual(self.run_cli("--reconstruction-budget", *extra).returncode, 0)
+
     def test_all_required_preset_sizes_and_rates(self):
         # Explicit byte goldens avoid deriving expected values from the utility.
         expected = {

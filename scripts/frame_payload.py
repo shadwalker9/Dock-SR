@@ -57,6 +57,42 @@ def calculate_payload(width, height, channels, bytes_per_element, *, fps=FRAME_R
     return {**dimensions, "logical_payload_bytes": payload, "rates": rates}
 
 
+def reconstruction_budget(width=1280, height=720, *, scale=3, tile=256,
+                          channels=3, bytes_per_element=1, fps=FRAME_RATES):
+    """Ideal read+write budget and geometric tile lower bound, without halo.
+
+    This is independent of model execution. Fixed-size edge padding, receptive
+    fields, copies and intermediate activations can all increase actual work.
+    """
+    _positive_u64(scale, "Scale")
+    _positive_u64(tile, "Tile size")
+    source = calculate_payload(width, height, channels, bytes_per_element, fps=fps)
+    output = calculate_payload(_multiply(width, scale, "Output width"),
+                               _multiply(height, scale, "Output height"),
+                               channels, bytes_per_element, fps=fps)
+    input_bytes, output_bytes = source["logical_payload_bytes"], output["logical_payload_bytes"]
+    if input_bytes > UINT64_MAX - output_bytes:
+        raise ValueError("Read-plus-write payload exceeds unsigned 64-bit limit")
+    minimum = input_bytes + output_bytes
+    columns, rows = (width - 1) // tile + 1, (height - 1) // tile + 1
+    return {
+        "schema_version": "1.0.0", "document_type": "docksr_reconstruction_budget",
+        "evidence": "CALCULATED", "hardware_measured": False,
+        "source_logical_bytes": input_bytes, "output_logical_bytes": output_bytes,
+        "minimum_read_plus_write_bytes_per_frame": minimum,
+        "no_overlap_tile_lower_bound": _multiply(columns, rows, "Tile count"),
+        "tile_input_logical_bytes": calculate_payload(tile, tile, channels, bytes_per_element, fps=fps)["logical_payload_bytes"],
+        "tile_output_logical_bytes": calculate_payload(_multiply(tile, scale, "Output tile"),
+            _multiply(tile, scale, "Output tile"), channels, bytes_per_element, fps=fps)["logical_payload_bytes"],
+        "rates": [{"fps": rate,
+                   "minimum_read_plus_write_bytes_per_second": _multiply(minimum, rate, "Pipeline byte rate"),
+                   "delivery_period_ns": {"numerator": 1_000_000_000, "denominator": rate}}
+                  for rate in fps],
+        "excludes": ["halo", "edge padding", "tensor conversion", "copies", "activations",
+                     "GPU upload", "composition", "physical DDR traffic"],
+    }
+
+
 def build_report(*, presets=None, custom=None, fps=FRAME_RATES):
     if custom is not None and presets is not None:
         raise ValueError("Choose presets or custom dimensions, not both")
@@ -120,6 +156,8 @@ def main(argv=None):
     parser.add_argument("--bytes-per-element", type=_cli_integer)
     parser.add_argument("--fps", nargs="+", type=int, choices=FRAME_RATES, default=FRAME_RATES)
     parser.add_argument("--format", choices=("json", "text"), default="json")
+    parser.add_argument("--reconstruction-budget", action="store_true",
+                        help="Calculate the fixed 720p-to-4K RGB8 ideal pipeline budget")
     args = parser.parse_args(argv)
     custom = (args.width, args.height, args.channels, args.bytes_per_element)
     if any(value is not None for value in custom):
@@ -129,6 +167,11 @@ def main(argv=None):
             parser.error("--preset cannot be combined with custom dimensions")
     else:
         custom = None
+    if args.reconstruction_budget:
+        if custom is not None or args.presets is not None or args.format != "json":
+            parser.error("--reconstruction-budget uses fixed geometry and JSON; do not combine custom/preset/text options")
+        print(json.dumps(reconstruction_budget(fps=args.fps), allow_nan=False))
+        return 0
     try:
         report = build_report(presets=args.presets, custom=custom, fps=args.fps)
     except ValueError as error:

@@ -8,7 +8,7 @@ DockSR is an experimental Linux image reconstruction project targeting Ryzen AI 
 
 Better software can help existing handhelds, laptops and compact gaming systems remain capable for longer. We are exploring GPU and NPU cooperation to improve visual quality while preserving the performance and power budget games need. This is about the useful performance life of devices; it is not a claim to extend the physical lifespan of silicon.
 
-We are building for the Linux gaming community with transparency, reproducible experiments, maintainability and collaboration in mind. We aim to reuse suitable existing standards, research and tooling, and document enough for others to study, improve and eventually carry the project forward. A useful GPU-only path remains part of the goal; an NPU earns its place through measured benefit.
+We are building for the Linux gaming community with transparency, reproducible experiments, maintainability and collaboration in mind. We aim to reuse suitable existing standards, research and tooling, and document enough for others to study, improve and eventually carry the project forward. The current direction is **NPU-first**: test learned reconstruction on XDNA2 while the GPU retains preparation, composition and reliable fallback. Verified physical NPU contribution is required for the first usable NPU-targeted version; its efficiency still has to be measured.
 
 ## AI-Assisted Development Disclosure
 
@@ -38,11 +38,13 @@ Maintainer decisions still pending:
 
 ## What works today
 
-**S004 standalone preview** adds a real window, matched CPU/Vulkan A/B and truthful diagnostics to the S003 scaling foundation. Read [preview commands and evidence limits](docs/preview.md), [project state](docs/PROJECT_STATE.md) and [current owner decisions](docs/DECISIONS.md) before resuming. Neural inference, game integration and Decky follow this pre-hardware work.
+**S004 standalone preview** adds a real window, matched CPU/Vulkan A/B and truthful diagnostics to the S003 scaling foundation. Read [preview commands and evidence limits](docs/preview.md), [project state](docs/PROJECT_STATE.md) and [current owner decisions](docs/DECISIONS.md) before resuming. CPU neural references now exist; physical NPU execution, game integration and Decky remain separate gates.
 
 **S005-PRE smoke preparation** packages the existing tools for non-root, relocatable Linux x86_64 checks. See [device-day instructions](docs/device-day.md) and [maintainer continuity](docs/MAINTAINER_CONTINUITY.md). This does not establish physical-display or SteamOS/Bazzite acceptance. Source checkpoints are backed up to this repository; private progress reports and generated device artifacts are excluded.
 
-**R005-G0A evidence tooling** adds optional [ONNX inspection and CPU references](docs/gate0.md), pinned model provenance and future hardware-evidence validation. The SESR artifact download is blocked at its CDN; model-specific inspection/inference is unrun. These tools do not activate an NPU or change ordinary application dependencies.
+**R005-G0A evidence tooling** adds optional [ONNX inspection and CPU references](docs/gate0.md), pinned model provenance and future hardware-evidence validation. The owner-provided SESR artifact is independently verified and executes on CPU; the unchanged model is fixed2×, not a production3× model. These tools do not activate an NPU or change ordinary application dependencies.
+
+**DSR011 NPU-first host preparation** adds a [full-frame SESR reference](docs/fullframe-reference.md), an [owned exact3× ONNX contract](docs/espcn-contract.md), a [bounded inference-worker interface](docs/inference-worker.md) and [physical-probe preparation](docs/npu-device-probe.md). All neural execution here is CPU-only. The generated3× graph is an untrained FLOAT32 fixture; INT8 compilation, image-quality advantage, physical NPU contribution and presentation remain unverified. The existing Gamescope build-only experiment is preserved separately.
 
 **R005-G0B-1 host experiments** provide [deterministic scheduling](docs/scheduling.md) through the existing mock command and an exact [frame-payload calculator](docs/payload.md). Their virtual timing and logical byte counts are assumptions/calculations, not physical NPU throughput, game FPS or power measurements.
 
@@ -57,7 +59,7 @@ The current code includes:
 - Read-only host diagnostics and schemas that keep simulation, software Vulkan and physical GPU observations distinct.
 - Host tests, independent shader-correctness checks and CI definitions for host and software-Vulkan modes.
 
-There is no NPU model execution, game interception, installed Decky plugin or target-handheld validation yet. The mock's virtual ticks are not measurements. Mesa lavapipe results are CPU software-rendering evidence, not AMD graphics performance. The storage-buffer shader is a reference control, not an optimized Gamescope texture scaler.
+There is no physical NPU model execution, live game-frame processing, installed Decky plugin or target-handheld validation yet. The mock's virtual ticks are not measurements. Mesa lavapipe results are CPU software-rendering evidence, not AMD graphics performance. The storage-buffer shader is a reference control, not an optimized Gamescope texture scaler.
 
 ## Build and run
 

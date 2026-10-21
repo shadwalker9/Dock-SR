@@ -1,0 +1,905 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docksr.invalid/schemas/inference-worker.schema.json",
+  "title": "DockSR bounded host inference worker contract",
+  "description": "Structure/consistency only, not execution attestation. Native byte buffers are out of band. No presentation or physical accelerator success exists in this contract. Durations are monotonic nanoseconds; logical payload and caller-visible copies are not physical DDR measurements.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/request"
+    },
+    {
+      "$ref": "#/$defs/result"
+    },
+    {
+      "$ref": "#/$defs/future_backends"
+    },
+    {
+      "$ref": "#/$defs/ledger"
+    }
+  ],
+  "$defs": {
+    "extent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "width",
+        "height"
+      ],
+      "properties": {
+        "width": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8192
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8192
+        }
+      }
+    },
+    "tile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_x",
+        "source_y",
+        "core_width",
+        "core_height",
+        "halo_left",
+        "halo_top",
+        "halo_right",
+        "halo_bottom",
+        "output_x",
+        "output_y",
+        "output_width",
+        "output_height"
+      ],
+      "properties": {
+        "source_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8192
+        },
+        "source_y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8192
+        },
+        "core_width": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8192
+        },
+        "core_height": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8192
+        },
+        "halo_left": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8192
+        },
+        "halo_top": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8192
+        },
+        "halo_right": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8192
+        },
+        "halo_bottom": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8192
+        },
+        "output_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8192
+        },
+        "output_y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8192
+        },
+        "output_width": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8192
+        },
+        "output_height": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8192
+        }
+      }
+    },
+    "ledger": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_logical_bytes",
+        "tensor_preparation_read_bytes",
+        "tensor_preparation_write_bytes",
+        "host_copy_bytes",
+        "host_copy_count",
+        "inference_input_logical_bytes",
+        "inference_output_logical_bytes",
+        "tile_count",
+        "tile_overlap_pixels",
+        "stitched_output_bytes",
+        "crop_bytes",
+        "allocation_high_water_bytes",
+        "host_copy_direction",
+        "host_copy_scope",
+        "gpu_upload_bytes",
+        "submit_to_complete_duration",
+        "complete_to_consume_duration",
+        "deadline_missed",
+        "duration_unit",
+        "timing_class",
+        "runtime_internal_allocation_status",
+        "runtime_internal_copy_status",
+        "physical_ddr_traffic"
+      ],
+      "properties": {
+        "source_logical_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "tensor_preparation_read_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "tensor_preparation_write_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "host_copy_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "host_copy_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "inference_input_logical_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "inference_output_logical_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "tile_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "tile_overlap_pixels": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "stitched_output_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "crop_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "allocation_high_water_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "host_copy_direction": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9_.:-]+$"
+        },
+        "host_copy_scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9_.:-]+$"
+        },
+        "gpu_upload_bytes": {
+          "type": "null"
+        },
+        "submit_to_complete_duration": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "complete_to_consume_duration": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "deadline_missed": {
+          "type": "boolean"
+        },
+        "duration_unit": {
+          "const": "nanoseconds"
+        },
+        "timing_class": {
+          "enum": [
+            "NOT_RUN",
+            "SIMULATED",
+            "OBSERVED_HOST_CPU"
+          ]
+        },
+        "runtime_internal_allocation_status": {
+          "const": "UNKNOWN"
+        },
+        "runtime_internal_copy_status": {
+          "const": "UNKNOWN"
+        },
+        "physical_ddr_traffic": {
+          "type": "null"
+        }
+      }
+    },
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "document_type",
+        "session_id",
+        "frame_id",
+        "configuration_generation",
+        "model_id",
+        "model_sha256",
+        "source_extent",
+        "source_format",
+        "tensor_shape",
+        "tensor_dtype",
+        "tensor_layout",
+        "buffer_size",
+        "buffer_stride",
+        "buffer_ownership",
+        "submit_timestamp",
+        "deadline",
+        "clock_domain",
+        "trace_id",
+        "expected_output_extent",
+        "expected_output_format",
+        "expected_output_shape",
+        "expected_output_dtype",
+        "expected_output_layout",
+        "tile"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "1.0.0"
+        },
+        "document_type": {
+          "const": "docksr_inference_request"
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9_.:-]+$"
+        },
+        "frame_id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 18446744073709551615
+        },
+        "configuration_generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 18446744073709551615
+        },
+        "model_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9_.:-]+$"
+        },
+        "model_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "source_extent": {
+          "$ref": "#/$defs/extent"
+        },
+        "source_format": {
+          "enum": [
+            "RGB8",
+            "RGBA8",
+            "RGB_INT8",
+            "RGBA_INT8",
+            "RGB_FLOAT32",
+            "RGBA_FLOAT32"
+          ]
+        },
+        "tensor_shape": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "prefixItems": [
+            {
+              "const": 1
+            }
+          ],
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 8192
+          }
+        },
+        "tensor_dtype": {
+          "enum": [
+            "int8",
+            "uint8",
+            "float32"
+          ]
+        },
+        "tensor_layout": {
+          "enum": [
+            "NCHW",
+            "NHWC"
+          ]
+        },
+        "buffer_size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 67108864
+        },
+        "buffer_stride": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 18446744073709551615
+          }
+        },
+        "buffer_ownership": {
+          "const": "TRANSFERRED_HOST"
+        },
+        "submit_timestamp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "deadline": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 18446744073709551615
+        },
+        "clock_domain": {
+          "const": "shared_monotonic_nanoseconds"
+        },
+        "trace_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9_.:-]+$"
+        },
+        "expected_output_extent": {
+          "$ref": "#/$defs/extent"
+        },
+        "expected_output_format": {
+          "enum": [
+            "RGB8",
+            "RGBA8",
+            "RGB_INT8",
+            "RGBA_INT8",
+            "RGB_FLOAT32",
+            "RGBA_FLOAT32"
+          ]
+        },
+        "expected_output_shape": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "prefixItems": [
+            {
+              "const": 1
+            }
+          ],
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 8192
+          }
+        },
+        "expected_output_dtype": {
+          "enum": [
+            "int8",
+            "uint8",
+            "float32"
+          ]
+        },
+        "expected_output_layout": {
+          "enum": [
+            "NCHW",
+            "NHWC"
+          ]
+        },
+        "tile": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/tile"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "document_type",
+        "session_id",
+        "frame_id",
+        "configuration_generation",
+        "model_id",
+        "model_sha256",
+        "trace_id",
+        "output_extent",
+        "output_format",
+        "output_dtype",
+        "output_layout",
+        "output_shape",
+        "backend_kind",
+        "evidence_class",
+        "valid",
+        "completion_timestamp",
+        "copy_count",
+        "logical_bytes",
+        "inference_duration",
+        "duration_unit",
+        "output_buffer_size",
+        "fallback_reason",
+        "ledger",
+        "presented",
+        "npu_device_detected",
+        "npu_runtime_ready",
+        "npu_inference_verified",
+        "npu_game_frames_consumed"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "1.0.0"
+        },
+        "document_type": {
+          "const": "docksr_inference_result"
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9_.:-]+$"
+        },
+        "frame_id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 18446744073709551615
+        },
+        "configuration_generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 18446744073709551615
+        },
+        "model_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9_.:-]+$"
+        },
+        "model_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "trace_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9_.:-]+$"
+        },
+        "output_extent": {
+          "$ref": "#/$defs/extent"
+        },
+        "output_format": {
+          "enum": [
+            "RGB8",
+            "RGBA8",
+            "RGB_INT8",
+            "RGBA_INT8",
+            "RGB_FLOAT32",
+            "RGBA_FLOAT32"
+          ]
+        },
+        "output_dtype": {
+          "enum": [
+            "int8",
+            "uint8",
+            "float32"
+          ]
+        },
+        "output_layout": {
+          "enum": [
+            "NCHW",
+            "NHWC"
+          ]
+        },
+        "output_shape": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "prefixItems": [
+            {
+              "const": 1
+            }
+          ],
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 8192
+          }
+        },
+        "backend_kind": {
+          "enum": [
+            "CPU_REFERENCE",
+            "DETERMINISTIC_MOCK",
+            "UNAVAILABLE"
+          ]
+        },
+        "evidence_class": {
+          "enum": [
+            "REAL_CPU",
+            "SIMULATED",
+            "NOT_RUN"
+          ]
+        },
+        "valid": {
+          "type": "boolean"
+        },
+        "completion_timestamp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "copy_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "logical_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "inference_duration": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "duration_unit": {
+          "const": "nanoseconds"
+        },
+        "output_buffer_size": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 67108864
+        },
+        "fallback_reason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ledger": {
+          "$ref": "#/$defs/ledger"
+        },
+        "presented": {
+          "const": false
+        },
+        "npu_device_detected": {
+          "const": false
+        },
+        "npu_runtime_ready": {
+          "const": false
+        },
+        "npu_inference_verified": {
+          "const": false
+        },
+        "npu_game_frames_consumed": {
+          "const": false
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "backend_kind": {
+                "const": "UNAVAILABLE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "valid": {
+                "const": false
+              },
+              "evidence_class": {
+                "const": "NOT_RUN"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "backend_kind": {
+                "const": "DETERMINISTIC_MOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "evidence_class": {
+                "const": "SIMULATED"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "backend_kind": {
+                "const": "CPU_REFERENCE"
+              },
+              "valid": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "evidence_class": {
+                "const": "REAL_CPU"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "backend_kind": {
+                "const": "CPU_REFERENCE"
+              },
+              "valid": {
+                "const": false
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "evidence_class": {
+                "enum": [
+                  "REAL_CPU",
+                  "NOT_RUN"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "valid": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "output_buffer_size": {
+                "minimum": 1
+              },
+              "fallback_reason": {
+                "type": "null"
+              },
+              "inference_duration": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 18446744073709551615
+              },
+              "ledger": {
+                "properties": {
+                  "deadline_missed": {
+                    "const": false
+                  }
+                }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "fallback_reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9_.:-]+$"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "valid": {
+                "const": true
+              },
+              "backend_kind": {
+                "const": "DETERMINISTIC_MOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "ledger": {
+                "properties": {
+                  "timing_class": {
+                    "const": "SIMULATED"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "valid": {
+                "const": true
+              },
+              "backend_kind": {
+                "const": "CPU_REFERENCE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "ledger": {
+                "properties": {
+                  "timing_class": {
+                    "const": "OBSERVED_HOST_CPU"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "future_backends": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "document_type",
+        "backends",
+        "npu_inference_verified",
+        "npu_game_frames_consumed"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "1.0.0"
+        },
+        "document_type": {
+          "const": "docksr_future_backends"
+        },
+        "backends": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "status",
+                "evidence"
+              ],
+              "properties": {
+                "name": {
+                  "const": "VitisAiNpuBackend"
+                },
+                "status": {
+                  "const": "NOT_IMPLEMENTED"
+                },
+                "evidence": {
+                  "const": "NOT_RUN"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "status",
+                "evidence"
+              ],
+              "properties": {
+                "name": {
+                  "const": "FutureXrtBackend"
+                },
+                "status": {
+                  "const": "NOT_IMPLEMENTED"
+                },
+                "evidence": {
+                  "const": "NOT_RUN"
+                }
+              }
+            }
+          ],
+          "items": false
+        },
+        "npu_inference_verified": {
+          "const": false
+        },
+        "npu_game_frames_consumed": {
+          "const": false
+        }
+      }
+    }
+  }
+}

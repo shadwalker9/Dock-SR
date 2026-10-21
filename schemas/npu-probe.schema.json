@@ -1,0 +1,385 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docksr.local/schemas/npu-probe.schema.json",
+  "title": "DockSR read-only device-day probe preparation",
+  "description": "Only inventory and unexecuted preparation. Existing hardware-evidence.schema.json remains the sole physical measurement contract. A valid JSON document is not an attestation.",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "document_type": {
+      "const": "docksr_npu_probe_preparation"
+    },
+    "generated_at_utc": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "scope": {
+      "const": "READ_ONLY_INVENTORY_AND_UNEXECUTED_PROCEDURE"
+    },
+    "physical_test_status": {
+      "const": "NOT_RUN"
+    },
+    "evidence_class": {
+      "const": "VERIFIED_LOCAL"
+    },
+    "hardware_execution_verified": {
+      "const": false
+    },
+    "npu_device_detected": {
+      "const": false
+    },
+    "npu_runtime_ready": {
+      "const": false
+    },
+    "npu_inference_verified": {
+      "const": false
+    },
+    "npu_game_frames_consumed": {
+      "const": false
+    },
+    "inventory": {
+      "type": "object",
+      "properties": {
+        "read_only": {
+          "const": true
+        },
+        "npu_ready": {
+          "const": false
+        },
+        "hardware_validated": {
+          "const": false
+        }
+      },
+      "required": [
+        "read_only",
+        "npu_ready",
+        "hardware_validated"
+      ],
+      "additionalProperties": true
+    },
+    "runtime": {
+      "type": "object",
+      "properties": {
+        "packages": {
+          "type": "object",
+          "properties": {
+            "onnxruntime": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "onnxruntime-vitisai": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "onnxruntime-directml": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "onnxruntime",
+            "onnxruntime-vitisai",
+            "onnxruntime-directml"
+          ],
+          "additionalProperties": false
+        },
+        "provider_listing_state": {
+          "enum": [
+            "NOT_RUN",
+            "LISTED",
+            "UNAVAILABLE"
+          ]
+        },
+        "available_providers": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "provider_registration_is_execution": {
+          "const": false
+        }
+      },
+      "required": [
+        "packages",
+        "provider_listing_state",
+        "available_providers",
+        "provider_registration_is_execution"
+      ],
+      "additionalProperties": false
+    },
+    "model": {
+      "type": "object",
+      "properties": {
+        "model_id": {
+          "const": "amd/sesr-m7-256x256-tiles-amdnpu"
+        },
+        "source_revision": {
+          "const": "edbe46281e894e31da3f42aa353db1e04a50f00a"
+        },
+        "expected_sha256": {
+          "const": "63d2600fa41b21c2326d1740f75486f24e0b791c490ea73a898bf64fdd429ab1"
+        },
+        "expected_size_bytes": {
+          "const": 107131
+        },
+        "state": {
+          "enum": [
+            "NOT_SUPPLIED",
+            "VERIFIED_LOCAL",
+            "FAILED"
+          ]
+        },
+        "actual_sha256": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          ]
+        },
+        "actual_size_bytes": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "error_code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "execution_performed": {
+          "const": false
+        }
+      },
+      "required": [
+        "model_id",
+        "source_revision",
+        "expected_sha256",
+        "expected_size_bytes",
+        "state",
+        "actual_sha256",
+        "actual_size_bytes",
+        "error_code",
+        "execution_performed"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "VERIFIED_LOCAL"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "actual_sha256": {
+                "const": "63d2600fa41b21c2326d1740f75486f24e0b791c490ea73a898bf64fdd429ab1"
+              },
+              "actual_size_bytes": {
+                "const": 107131
+              },
+              "error_code": {
+                "const": null
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "enum": [
+                  "NOT_SUPPLIED",
+                  "FAILED"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "actual_sha256": {
+                "const": null
+              },
+              "actual_size_bytes": {
+                "const": null
+              }
+            }
+          }
+        }
+      ]
+    },
+    "planned_probe": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "const": "VitisAIExecutionProvider"
+        },
+        "target": {
+          "const": "X2"
+        },
+        "target_selection_state": {
+          "const": "PLANNED_AFTER_SUPPORTED_DEVICE_RUNTIME_CHECK"
+        },
+        "model_mutation": {
+          "const": false
+        },
+        "provider_requested": {
+          "const": false
+        },
+        "compiled_model_cache_identity": {
+          "const": null
+        },
+        "operator_placement_status": {
+          "const": "NOT_RUN"
+        },
+        "cpu_partition_status": {
+          "const": "NOT_RUN"
+        },
+        "comparison_status": {
+          "const": "NOT_RUN"
+        },
+        "comparison_atol": {
+          "const": null
+        },
+        "comparison_rtol": {
+          "const": null
+        },
+        "initialization_duration_ms": {
+          "const": null
+        },
+        "compilation_duration_ms": {
+          "const": null
+        },
+        "warm_inference_samples_ms": {
+          "const": []
+        },
+        "physical_npu_self_test_verified": {
+          "const": false
+        },
+        "neural_result_consumed_in_presented_frame": {
+          "const": false
+        },
+        "hardware_evidence_schema": {
+          "const": "hardware-evidence.schema.json"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "provider",
+        "target",
+        "target_selection_state",
+        "model_mutation",
+        "provider_requested",
+        "compiled_model_cache_identity",
+        "operator_placement_status",
+        "cpu_partition_status",
+        "comparison_status",
+        "comparison_atol",
+        "comparison_rtol",
+        "initialization_duration_ms",
+        "compilation_duration_ms",
+        "warm_inference_samples_ms",
+        "physical_npu_self_test_verified",
+        "neural_result_consumed_in_presented_frame",
+        "hardware_evidence_schema"
+      ]
+    },
+    "external_memory": {
+      "type": "object",
+      "properties": {
+        "ort_interop_api_status": {
+          "const": "UNKNOWN"
+        },
+        "api_query_status": {
+          "const": "NOT_RUN"
+        },
+        "api_basis": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "provider_importer_status": {
+          "const": "NOT_RUN"
+        },
+        "handle_type_status": {
+          "const": "NOT_RUN"
+        },
+        "memory_import_status": {
+          "const": "NOT_RUN"
+        },
+        "imported_memory_inference_status": {
+          "const": "NOT_RUN"
+        },
+        "vulkan_xrt_sharing_status": {
+          "const": "NOT_RUN"
+        },
+        "zero_copy_verified": {
+          "const": false
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "ort_interop_api_status",
+        "api_query_status",
+        "api_basis",
+        "provider_importer_status",
+        "handle_type_status",
+        "memory_import_status",
+        "imported_memory_inference_status",
+        "vulkan_xrt_sharing_status",
+        "zero_copy_verified"
+      ]
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 20,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 512
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "document_type",
+    "generated_at_utc",
+    "scope",
+    "physical_test_status",
+    "evidence_class",
+    "hardware_execution_verified",
+    "npu_device_detected",
+    "npu_runtime_ready",
+    "npu_inference_verified",
+    "npu_game_frames_consumed",
+    "inventory",
+    "runtime",
+    "model",
+    "planned_probe",
+    "external_memory",
+    "limitations"
+  ],
+  "additionalProperties": false
+}

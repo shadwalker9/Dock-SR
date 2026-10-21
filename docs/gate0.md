@@ -1,6 +1,6 @@
 # R005-G0A: evidence and model readiness
 
-Gate-0A provides provenance, bounded ONNX inspection, CPU reference inference and a separate future hardware-evidence contract. It does not execute an NPU or authorize Gate-0B, driver work, training or game integration. **Infrastructure is host-tested; SESR-specific graph/reference validation is blocked by artifact download.** See [acquisition evidence](model-acquisition.md).
+Gate-0A provides provenance, bounded ONNX inspection, CPU reference inference and a separate future hardware-evidence contract. It does not execute an NPU or authorize driver work, training or game integration. **The owner-provided SESR bytes, graph and deterministic CPU reference are verified.** DSR011 extends that reference to full frames using one reusable CPU session; physical XDNA2 execution remains NOT_RUN. See [acquisition evidence](model-acquisition.md).
 
 ## Optional host environment
 
@@ -65,11 +65,11 @@ The CLI parses in an isolated worker with bounded file/report/message/node/depth
 
 Use the layout appropriate to the inspected model; it is a caller declaration, not a transformation. `UNSPECIFIED` is the default. `--input TILE.npy` accepts a bounded numeric array without pickle, implicit transposition or dtype conversion. Otherwise a deterministic raw tensor is generated. Static dimensions come from the graph; symbolic input/output dimensions require explicit `--shape`/`--output-shape` comma-separated overrides. An override may not replace a static graph dimension. No RGB normalization, channel order or natural-image preprocessing is inferred from a filename.
 
-The first runner supports one numeric input/output and standard ONNX domains only. External weights, custom domains, nested graphs, functions, training graphs and sparse initializers are rejected before session creation. It passes inspected bytes directly to a sequential single-thread `CPUExecutionProvider` session. Inputs/outputs have shape/dtype/finite checks and byte limits; unexpected identity results fail unless `--allow-identity` is explicitly requested. Reports identify session initialization separately from warmups/measured inference and record model/input/output hashes, preprocessing assumptions, providers and comparison policy. The inference engine is not a hostile-model sandbox: internal graph allocations/runtime calls are not separately capped. Use supplied, owned or reviewed pinned models.
+The shared `CpuReferenceSession` and CLI support one numeric input/output and standard ONNX domains only. External weights, custom domains, nested graphs, functions, training graphs and sparse initializers are rejected before session creation. It passes inspected bytes directly to a sequential single-thread `CPUExecutionProvider` session. Inputs/outputs have shape/dtype/finite checks and byte limits; unexpected identity results fail unless `--allow-identity` is explicitly requested. Reports identify session initialization separately from warmups/measured inference and record model/input/output hashes, preprocessing assumptions, providers and comparison policy. The inference engine is not a hostile-model sandbox: internal graph allocations/runtime calls are not separately capped. Use supplied, owned or reviewed pinned models.
 
 The new 0700 output directory contains 0600 `input.npy`, `output.npy` and `report.json`. Existing directories are protected; failed attempts do not leave a success artifact. Repeats within one CPU run must be bit-identical. Host-session reproducibility is independently tested on the owned fixture, not asserted for every graph/provider/platform. The default future comparison policy is `atol=1e-6, rtol=1e-5`; real NPU tolerances must be declared and justified for that graph/quantization rather than assumed from these host defaults.
 
-Current retained evidence is under ignored `results/session-007/owned-reference/`: two fresh CPU CLI sessions on an owned Resize+Add graph agree with an independent NumPy `repeat + 0.125` result. That is **REAL_CPU**, not SESR accuracy, image quality, game FPS or NPU performance. No rights-cleared natural-image inputs were supplied, so natural-image references are NOT RUN.
+Historical owned-tool evidence is under ignored `results/session-007/owned-reference/`: two fresh CPU CLI sessions on an owned Resize+Add graph agree with an independent NumPy `repeat + 0.125` result. That is **REAL_CPU**, not SESR accuracy, image quality, game FPS or NPU performance. No rights-cleared natural-image inputs were supplied, so natural-image references are NOT RUN.
 
 Selected fields from an executed owned-fixture CPU report:
 
@@ -78,6 +78,22 @@ Selected fields from an executed owned-fixture CPU report:
 ```
 
 With the optional packages absent, the CPU CLI instead returns exit code 1 and selected fields `{"status":"NOT_RUN","evidence":"NONE","error":{"code":"OPTIONAL_DEPENDENCY_MISSING"},"npu_executed":false}`. These excerpts omit other report fields; the complete retained JSON is authoritative.
+
+## DSR011 reuse and deployment boundary
+
+`CpuReferenceSession` shares the existing inspector, shape/type bounds and
+CPU-only session policy between the original CLI, [full-frame tiler](fullframe-reference.md)
+and prototype worker executor. It initializes once, supports validated caller-owned
+CPU output buffers, rejects aliasing/noncontiguous storage and keeps runtime-internal
+allocation/copy costs unknown. It does not change the original SESR graph/opset.
+
+The [exact3× contract](espcn-contract.md) is an owned untrained FLOAT32 fixture,
+not AMD model weights or an INT8 deployment result. Current AMD documentation
+recommends opset17 for new graphs; that is separate from the unchanged SESR
+opset19 host reference. CPU ORT1.20.1 is also distinct from Ryzen AI1.8.0.
+Operator support tables, EP registration and generic external-memory APIs do not
+establish placement or imported-memory inference on the target. See
+[device-day preparation and source corrections](npu-device-probe.md).
 
 ## Host-tooling license observations (2026-10-20)
 
