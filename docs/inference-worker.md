@@ -48,6 +48,10 @@ wall-clock timestamps and backward time are rejected. Completion at the exact
 deadline is late. The owner supplies time; the generic scheduler itself reads
 no physical clock. Simulated tests use explicitly simulated values and never
 turn those values into measured latency.
+The worker records execution start separately from submission. A successful completion
+cannot precede that start, and inference duration must fit between start and
+completion. Later receipt delivery remains valid if it meets the deadline;
+submit-to-complete accounting still includes time spent queued.
 
 Unstarted expired/invalidated jobs may be cancelled, and ready output that no
 consumer acquired may be discarded. A deadline, configuration change or
@@ -58,6 +62,9 @@ rejects new admission and waits for these acknowledgements. An explicit trusted
 quiescence acknowledgement means every producer and consumer stopped accessing
 memory; elapsed time alone does not prove quiescence. The owner must keep the
 `Worker` object alive until active views are released or quiescence is established.
+Workers cannot be copied, moved or assigned: copying active tickets would
+duplicate ownership, and replacing an owner could invalidate outstanding views
+without either producer or consumer acknowledgement.
 
 `consume` is not physical frame presentation. No method in this library marks
 a frame displayed, and all serialized results have `presented=false` and four

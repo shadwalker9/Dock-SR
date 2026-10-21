@@ -157,6 +157,13 @@ struct Counts {
 class Worker {
  public:
   Worker(std::string session_id, std::uint64_t generation = 1, Limits limits = {});
+  // This owner has stable identity while request/result views escape. Copying
+  // would duplicate active tickets; assignment/movement can invalidate views
+  // without the producer/consumer acknowledgements required below.
+  Worker(const Worker&) = delete;
+  Worker& operator=(const Worker&) = delete;
+  Worker(Worker&&) = delete;
+  Worker& operator=(Worker&&) = delete;
   Submission submit(Request request, std::vector<std::uint8_t> input, Nanoseconds now);
   std::optional<WorkItem> start_next(Nanoseconds now);
   bool complete(Ticket, Result, Nanoseconds now);
@@ -188,6 +195,7 @@ class Worker {
     Ticket ticket;
     std::uint64_t output_reservation{};
     Phase phase{Phase::Queued};
+    Nanoseconds started_at{};
     bool invalidated{}, fallback_reported{};
   };
   std::string session_id_;

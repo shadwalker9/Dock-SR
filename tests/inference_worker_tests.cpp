@@ -6,9 +6,17 @@
 #include <limits>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 namespace inf = docksr::inference;
+// Active producer/consumer views must never be retired by copying, moving or
+// replacing their owning worker. These assertions fail compilation if the
+// unsafe implicit special members are accidentally restored.
+static_assert(!std::is_copy_constructible_v<inf::Worker>);
+static_assert(!std::is_copy_assignable_v<inf::Worker>);
+static_assert(!std::is_move_constructible_v<inf::Worker>);
+static_assert(!std::is_move_assignable_v<inf::Worker>);
 namespace {
 unsigned checks{}, failures{}, groups{};
 std::vector<std::string> observations;
@@ -180,6 +188,51 @@ void result_guards() {
   check(worker.release(job.ticket,12),"ready output may be deliberately discarded");
 }
 
+void queued_execution_timestamps() {
+  ++groups;
+  // Submission and execution start can be far apart. A receipt cannot claim
+  // completion/inference before its producer started, but may arrive later.
+  for (int scenario = 0; scenario < 3; ++scenario) {
+    inf::Worker worker("contract-session");
+    const auto r = request(1, 1, 10, 200);
+    check(worker.submit(r, input(r), 10).accepted, "queued timing request admitted");
+    const auto job = worker.start_next(100);
+    check(job.has_value(), "producer starts after queue delay");
+    auto result = mock(r);
+    result.completion_timestamp = scenario == 0 ? 11 : 101;
+    result.inference_duration = scenario == 1 ? 2 : 1;
+    if (scenario < 2) {
+      check(!worker.complete(job->ticket, std::move(result), 110), "pre-start timing rejected");
+      check(worker.last_error() == (scenario == 0 ? "RESULT_TIMESTAMP" : "INFERENCE_DURATION"),
+            "pre-start timing has precise failure reason");
+      check(worker.in_flight() == 0, "stopped invalid producer storage released");
+    } else {
+      check(worker.complete(job->ticket, std::move(result), 110), "delayed receipt accepted after real completion");
+      const auto* output = worker.consume(job->ticket, r.session_id, 1, 1, 112);
+      check(output && output->ledger.submit_to_complete_duration == 91 &&
+            output->ledger.complete_to_consume_duration == 11,
+            "queue delay and delayed delivery remain correctly accounted");
+      check(worker.release(job->ticket, 113), "delayed result explicitly released");
+    }
+  }
+  // Unstarted backend failures intentionally carry submission time. Preserve
+  // their specific fallback reason rather than claiming invalid CPU timing.
+  for (int scenario = 0; scenario < 2; ++scenario) {
+    inf::Worker worker("contract-session");
+    const auto r = request(1, 1, 10, 200);
+    check(worker.submit(r, input(r), 10).accepted, "queued fallback request admitted");
+    const auto job = worker.start_next(100);
+    check(job.has_value(), "queued fallback producer dispatched");
+    inf::UnavailableBackend unavailable;
+    inf::CpuReferenceBackend missing({});
+    auto result = scenario == 0 ? unavailable.execute(r, job->input) : missing.execute(r, job->input);
+    check(!worker.complete(job->ticket, std::move(result), 110), "unstarted backend failure rejected");
+    check(worker.last_error() == (scenario == 0 ? "BACKEND_UNAVAILABLE" : "CPU_EXECUTOR_UNAVAILABLE"),
+          "queued unstarted failure preserves exact reason");
+    check(worker.in_flight() == 0, "queued failed backend storage retired");
+  }
+}
+
 void invalidation_and_ordering() {
   ++groups;inf::Worker worker("contract-session");const auto first=request();const auto job=start(worker,first);
   check(worker.submit(request(2),input(request(2)),10).accepted,"second queued frame");
@@ -249,7 +302,7 @@ void nonfinite_tensors() {
 int main(int argc,char** argv) {
   const bool json=argc==2 && std::string(argv[1])=="--emit-json";
   if(argc>1 && !json)return 2;
-  try{signatures();admission_limits();lifecycle();deadlines();result_guards();invalidation_and_ordering();shutdown_and_backends();nonfinite_tensors();}
+  try{signatures();admission_limits();lifecycle();deadlines();result_guards();queued_execution_timestamps();invalidation_and_ordering();shutdown_and_backends();nonfinite_tensors();}
   catch(const std::exception& e){++failures;std::cerr<<"Unexpected exception: "<<e.what()<<'\n';}
   if(failures){std::cerr<<failures<<" failures in "<<checks<<" checks\n";return 1;}
   if(json)for(const auto& document:observations)std::cout<<document<<'\n';

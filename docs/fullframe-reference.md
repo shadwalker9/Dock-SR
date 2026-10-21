@@ -122,6 +122,9 @@ pipeline has no presentation consumer/deadline and leaves those measurements
 null. Native worker accounting separately handles lifecycle/deadline failures;
 an exception here does not publish an assembled success artifact or imply zero
 runtime work.
+Requested seam checks must pass before any output directory is published. A
+shifted-grid or safe-patch mismatch returns `FAILED` with a nonzero CLI exit
+status. An explicitly skipped seam check remains `NOT_RUN` in the report.
 
 ## Reproduce
 

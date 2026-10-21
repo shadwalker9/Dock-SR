@@ -389,7 +389,9 @@ def run_fullframe(model, output_dir, *, samples=2, seam_check=True):
             maximum = max(maximum, int(row_difference.max(initial=0)))
         patch_check = shifted_patch_check(reference, processor.halo)
         seam_pass = differing == 0 and patch_check["safe_differing_components"] == 0
-        seams = {"status": "PASS" if seam_pass else "OBSERVED_DIFFERENCE",
+        if not seam_pass:
+            raise TilingError("Requested seam checks found differing output")
+        seams = {"status": "PASS",
                  "default_vs_shifted_grid": {"shift_xy": [13, 17], "compared_components": int(baseline.size),
                      "differing_components": differing, "max_abs_rgb8_difference": maximum,
                      "default_sha256": hashes[-1], "shifted_sha256": array_hash(shifted),

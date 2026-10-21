@@ -1,4 +1,7 @@
 """Independent placement/dependency goldens; generated fixtures are not SESR."""
+import contextlib
+import io
+import json
 from pathlib import Path
 import tempfile
 import sys
@@ -15,7 +18,8 @@ from onnx import TensorProto as T, helper as h, numpy_helper
 from import_sesr import ImportFailure, PINNED_IDENTITY
 from onnx_reference import CpuReferenceSession, ReferenceError
 from sesr_fullframe import (FrameProcessor, TilingError, array_hash, owned_pattern,
-                           receptive_field, reflected_indices, run_fullframe, tile_plan)
+                           main as fullframe_main, receptive_field, reflected_indices,
+                           run_fullframe, tile_plan)
 
 
 def dependency_fixture():
@@ -88,6 +92,17 @@ class SubpixelPlacementFixture:
 
 
 class FullFrameTests(unittest.TestCase):
+    def fullframe_reference_fixture(self):
+        reference = SubpixelPlacementFixture()
+        reference.proto, reference.onnx = dependency_fixture(), onnx
+        reference.inspection = {"model": {"sha256": PINNED_IDENTITY.sha256}}
+        reference.initialize = mock.Mock()
+        reference.initialization_ms = 0.0
+        reference.session = mock.Mock()
+        reference.session.get_providers.return_value = ["CPUExecutionProvider"]
+        reference.ort = mock.Mock(__version__="owned-test-fixture")
+        return reference
+
     def test_structural_receptive_field_tracks_maximum_branch(self):
         result = receptive_field(dependency_fixture(), onnx)
         self.assertEqual(result["halo_input_pixels"], 11)
@@ -235,6 +250,46 @@ class FullFrameTests(unittest.TestCase):
                     run_fullframe(model, root / "new-output")
                 constructor.assert_not_called()
             self.assertFalse((root / "new-output").exists())
+
+    def test_seam_mismatches_fail_cli_before_output_publication(self):
+        original_process = FrameProcessor.process
+        for failure in ("shifted_grid", "safe_patch"):
+            with self.subTest(failure=failure), tempfile.TemporaryDirectory(prefix="docksr-seam-rejection-") as directory:
+                output = Path(directory) / "new-output"
+                reference = self.fullframe_reference_fixture()
+
+                def process(processor, source, **kwargs):
+                    result = original_process(processor, source, **kwargs)
+                    if failure == "shifted_grid" and kwargs.get("shift_x"):
+                        result[0][0, 0, 0] ^= np.uint8(1)
+                    return result
+
+                stdout = io.StringIO()
+                with mock.patch("sesr_fullframe._read_verified"), \
+                     mock.patch("sesr_fullframe.CpuReferenceSession", return_value=reference), \
+                     mock.patch.object(FrameProcessor, "process", process), \
+                     mock.patch("sesr_fullframe.shifted_patch_check", return_value={
+                         "safe_differing_components": int(failure == "safe_patch")}), \
+                     contextlib.redirect_stdout(stdout):
+                    exit_code = fullframe_main([str(Path(directory) / "owned-fixture.onnx"),
+                                                "--output-dir", str(output)])
+                self.assertEqual(exit_code, 1)
+                report = json.loads(stdout.getvalue())
+                self.assertEqual(report["status"], "FAILED")
+                self.assertIn("seam checks", report["error"])
+                self.assertFalse(output.exists())
+
+    def test_explicitly_skipped_seam_check_remains_not_run(self):
+        with tempfile.TemporaryDirectory(prefix="docksr-seam-skipped-") as directory:
+            output = Path(directory) / "new-output"
+            with mock.patch("sesr_fullframe._read_verified"), \
+                 mock.patch("sesr_fullframe.CpuReferenceSession", return_value=self.fullframe_reference_fixture()), \
+                 mock.patch("sesr_fullframe.shifted_patch_check") as check:
+                report = run_fullframe(Path(directory) / "owned-fixture.onnx", output, seam_check=False)
+            check.assert_not_called()
+            self.assertEqual(report["status"], "PASS")
+            self.assertEqual(report["seam_tests"]["status"], "NOT_RUN")
+            self.assertEqual(sorted(p.name for p in output.iterdir()), ["output.npy", "report.json", "source.npy"])
 
 
 if __name__ == "__main__":

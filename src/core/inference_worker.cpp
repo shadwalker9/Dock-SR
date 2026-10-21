@@ -347,6 +347,7 @@ std::optional<WorkItem> Worker::start_next(Nanoseconds now) {
   }
   if (!next) return {};
   next->phase = Phase::Running;
+  next->started_at = now;
   return WorkItem{next->ticket, &next->request, next->input};
 }
 
@@ -362,6 +363,7 @@ bool Worker::complete(Ticket ticket, Result result, Nanoseconds now) {
   else if (!evidence_matches(result)) reason = "BACKEND_EVIDENCE_MISMATCH";
   else if (result.completion_timestamp < entry->request.submit_timestamp || result.completion_timestamp > now) reason = "RESULT_TIMESTAMP";
   else if (!result.valid) reason = identifier(result.fallback_reason) ? result.fallback_reason : "BACKEND_FAILED";
+  else if (result.completion_timestamp < entry->started_at) reason = "RESULT_TIMESTAMP";
   else if (!result.fallback_reason.empty()) reason = "VALID_RESULT_HAS_FALLBACK";
   else if (result.output_extent != entry->request.expected_output_extent || result.output_format != entry->request.expected_output_format ||
            result.output_shape != entry->request.expected_output_shape || result.output_dtype != entry->request.expected_output_dtype ||
@@ -369,7 +371,7 @@ bool Worker::complete(Ticket ticket, Result result, Nanoseconds now) {
            result.output.capacity() > entry->output_reservation) reason = "RESULT_SIGNATURE_OR_SIZE";
   else if (!finite_buffer(result.output, result.output_dtype)) reason = "NONFINITE_OUTPUT";
   else if (!ledger_matches(entry->request, result)) reason = "RESULT_LEDGER";
-  else if (*result.inference_duration > result.completion_timestamp - entry->request.submit_timestamp) reason = "INFERENCE_DURATION";
+  else if (*result.inference_duration > result.completion_timestamp - entry->started_at) reason = "INFERENCE_DURATION";
   else if (entry->invalidated || entry->request.configuration_generation != generation_) reason = "CONFIGURATION_INVALIDATED";
   else if (now >= entry->request.deadline) reason = "DEADLINE_MISSED";
   const auto completed = scheduler_.complete(ticket, now);
