@@ -66,6 +66,10 @@ passive discovery](docs/steamos-first-readiness.md),
 preparation tools and unexecuted device protocols. SteamOS compatibility, physical
 NPU acceleration, update survival and gaming benefit remain **NOT_TESTED**.
 
+**R-010 amendment** adds a [dated evidence review](docs/research/R-010.md), passive
+systemd/package metadata and future gated experiment plans. It preserves the
+current staged SESR/Vitis path and does not advance physical NPU acceptance.
+
 **DSR014-H knowledge and H1 laboratory** adds the [research hub](docs/research/README.md)
 with twelve revisable decisions and the [bounded persistent H1 runner](docs/h1-inference-harness.md).
 The unchanged SESR executes in CPU-reference mode with an independently executed

@@ -7,6 +7,11 @@ Confidence describes the engineering rationale, not a physical performance
 result. R-008 is unavailable; its later handoff outline is not primary evidence.
 All target-hardware validation below remains **NOT_TESTED**.
 
+R-010 review2026-10-22 [retains these twelve decisions](R-010.md): Vitis is
+KEEP_CONDITIONALLY, while IRON/MLIR-AIE, xdna-engine and Triton-XDNA remain
+conditional research. Additional passive metadata and future capability/H3 plans
+do not establish a physical result or authorize a backend/system-stack change.
+
 ## C-001 — SteamOS first
 
 - Source: owner v2.2/v2.3; supersedes R-009's Ubuntu-first suggestion.

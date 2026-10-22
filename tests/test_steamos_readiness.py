@@ -54,7 +54,7 @@ class ReadinessTests(unittest.TestCase):
         r.validate(record)
         self.assertEqual(record['physical_test_status'], 'NOT_TESTED')
         self.assertEqual([row['status'] for row in record['inventory']['nodes']], ['absent', 'absent'])
-        self.assertEqual([row['status'] for row in record['inventory']['commands']], ['missing_tool'] * 3)
+        self.assertEqual([row['status'] for row in record['inventory']['commands']], ['missing_tool'] * len(r.COMMANDS))
         self.assertTrue(all(row['exit_status'] is None for row in record['inventory']['commands']))
         self.assertEqual(runner.calls, [list(v) for v in r.COMMANDS])
 
@@ -202,6 +202,59 @@ class ReadinessTests(unittest.TestCase):
             self.assertEqual(set(row), {'id','description','evidence_category','baseline','required_capability','measurement','falsification','stop_go','hardware_dependency','steamos_host_prerequisite','current_state'})
             self.assertTrue(row['steamos_host_prerequisite'])
             self.assertEqual(row['current_state'], 'NOT_TESTED')
+
+    def test_systemd_memlock_bytes_infinity_and_privacy(self):
+        class Manager(Runner):
+            def run(self, argv):
+                if argv == list(r.SYSTEMD_COMMAND):
+                    return {'status':'ok','returncode':0,'stdout':'DefaultLimitMEMLOCK=infinity\nDefaultLimitMEMLOCKSoft=8388608\nUser=/home/PRIVATE_CANARY\n','stderr':'PRIVATE_CANARY'}
+                return super().run(argv)
+        with tempfile.TemporaryDirectory() as directory:
+            value=r.discover(fs=r.docksr_detect.FileSystem(directory),runner=Manager(),tool_lookup=lambda _:None)
+        r.validate(value)
+        observed=value['inventory']['user_systemd_memlock']
+        self.assertTrue(observed['hard_unlimited']);self.assertIsNone(observed['hard'])
+        self.assertEqual(observed['soft'],8388608);self.assertFalse(observed['soft_unlimited'])
+        self.assertNotIn('PRIVATE_CANARY',json.dumps(value))
+        self.assertEqual(set(row['status'] for row in value['areas'].values()),{'NOT_TESTED'})
+        observed['hard']=1
+        with self.assertRaises(ValueError): r.validate(value)
+
+    def test_systemd_missing_failed_and_unparseable_are_not_zero(self):
+        for status, output in [('missing_tool',''),('command_failed',''),('timeout',''),('ok','DefaultLimitMEMLOCK=8M\nDefaultLimitMEMLOCKSoft=-1'),('ok','DefaultLimitMEMLOCK=8192\nDefaultLimitMEMLOCK=infinity\nDefaultLimitMEMLOCKSoft=1')]:
+            class Manager(Runner):
+                def run(self,argv):
+                    if argv==list(r.SYSTEMD_COMMAND):return {'status':status,'returncode':0 if status=='ok' else 1,'stdout':output}
+                    return super().run(argv)
+            with tempfile.TemporaryDirectory() as directory:
+                value=r.discover(fs=r.docksr_detect.FileSystem(directory),runner=Manager(),tool_lookup=lambda _:None)
+            r.validate(value);observed=value['inventory']['user_systemd_memlock']
+            self.assertIsNone(observed['soft']);self.assertIsNone(observed['hard'])
+            self.assertEqual(observed['status'],'unavailable_properties' if status=='ok' else status)
+
+    def test_arch_local_package_query_preserves_partial_results_only(self):
+        class Packages(Runner):
+            def run(self,argv):
+                self.calls.append(argv)
+                if argv==list(r.PACMAN_COMMAND):return {'status':'command_failed','returncode':1,'stdout':'xrt-base 202620.2.26.0-1\nxrt-plugin-amdxdna-intree 2.26.0-1\nunrelated PRIVATE_CANARY\nxrt-npu /home/PRIVATE_CANARY','stderr':'PRIVATE_CANARY'}
+                return {'status':'missing_tool','argv':argv}
+        with tempfile.TemporaryDirectory() as directory:
+            p=Path(directory)/'etc/os-release';p.parent.mkdir();p.write_text('ID=steamos')
+            runner=Packages();value=r.discover(fs=r.docksr_detect.FileSystem(directory),runner=runner,tool_lookup=lambda _:None)
+        r.validate(value);metadata=value['inventory']['installed_runtime_metadata']
+        self.assertEqual(len(metadata['packages']),2);self.assertFalse(metadata['loaded_runtime_verified'])
+        self.assertEqual(runner.calls,[list(v) for v in (*r.COMMANDS,r.PACMAN_COMMAND)])
+        self.assertNotIn('PRIVATE_CANARY',json.dumps(value))
+
+    def test_new_metadata_is_optional_and_never_imports_runtime(self):
+        with tempfile.TemporaryDirectory() as directory,patch.object(r.importlib.metadata,'version',side_effect=lambda name:'1.8.0' if name=='voe' else None):
+            value=r.discover(fs=r.docksr_detect.FileSystem(directory),runner=Runner(),tool_lookup=lambda _:None)
+        r.validate(value);self.assertEqual(value['inventory']['installed_runtime_metadata']['vitis_python_packages']['voe'],'1.8.0')
+        value['inventory']['installed_runtime_metadata']['loaded_runtime_verified']=True
+        with self.assertRaises(ValueError): r.validate(value)
+        value['inventory']['installed_runtime_metadata']['loaded_runtime_verified']=False
+        del value['inventory']['user_systemd_memlock'];del value['inventory']['installed_runtime_metadata']
+        r.validate(value)
 
 
 if __name__ == '__main__':

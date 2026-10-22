@@ -2,7 +2,8 @@
 
 [Research hub](README.md) | [Consensus](CONSENSUS.md)
 
-Access/review date: **2026-10-21**. Exact pinned source was inspected during project
+Initial access/review date: **2026-10-21**; R-010 additions below: **2026-10-22**.
+Exact pinned source was inspected during project
 work; mutable documentation can change. This is a documentary register, not a
 claim that an API executed on the target device. Refer to each exact installed
 version before testing. No private paper, internal path or operational artifact
@@ -27,3 +28,21 @@ figures or vendor software. Formal DockSR licensing remains pending. External
 source visibility alone does not authorize reuse; review applicable component,
 model, runtime and dataset terms separately. License/contribution policy and
 owner approval are prerequisites for a responsible future public release.
+
+## R-010 amendment sources — reviewed2026-10-22
+
+| ID | Title / organization / public URL | Version/revision | Evidence and limitations |
+| --- | --- | --- | --- |
+| S-011 | AMD, [Triton-XDNA README](https://github.com/amd/Triton-XDNA/blob/b0ecabc1916d32b2242865ca6e563c8508372665/README.md) | Paper pin b0ecabc1916d32b2242865ca6e563c8508372665, retrieved2026-10-22 | Source documents experimental XRT/HSA paths, HSA/HIP shared pages, staging counters/pooling. Mapping timings are PROJECT_AUTHOR_REPORTED, not DockSR measurements or Vulkan compatibility. Current upstream HEAD has moved. |
+| S-012 | AMD, [IRON](https://github.com/amd/IRON/blob/b3ba3cf3a138c21e021d5ee2d6794573cd7a3287/README.md) | b3ba3cf3a138c21e021d5ee2d6794573cd7a3287 | Verified source describes close-to-metal NPU programming; conditional low-level fallback, not installed and not a turnkey SESR/ONNX backend. |
+| S-013 | Project author, [xdna-engine](https://github.com/atassis/xdna-engine/blob/5489d40fcfd14497650f293821a9c81a1f8b3c93/README.md) | 5489d40fcfd14497650f293821a9c81a1f8b3c93 | Author reports Linux ESPCN/EDSR and CPU-oracle checks on Ryzen AI9465. No DockSR reproduction. Root license does not resolve the paper-reported component-license discrepancy; no code/weights adopted. |
+| S-014 | Craig Chandler, [Ryzen AI on Arch/CachyOS](https://github.com/craigchandler/ryzen-ai-arch/blob/5eb7e6cf20aefedd8b2cd59030d45e0b39aea6d2/README.md) | 5eb7e6cf20aefedd8b2cd59030d45e0b39aea6d2 | COMMUNITY_REPORTED Ryzen AI1.8/ORT1.27.0/Vitis with in-tree driver; different hardware and transformer-derived workload/CPU partitions. Its compatibility/security/installation changes are not approved SteamOS instructions. |
+| S-015 | AMD, [Adrenalin26.10.1 release notes](https://www.amd.com/en/resources/support-articles/release-notes/RN-RAD-WIN-26-10-1.html) | Mutable page retrieved2026-10-22 | Primary notes identify Windows packages and exclude generic handheld support in favor of OEM drivers. Not SteamOS FSR/Vitis support; broader eligibility/performance claims were not independently established here. |
+| S-016 | systemd, [manager D-Bus properties](https://github.com/systemd/systemd/blob/v258/src/core/dbus-manager.c) | v258, DefaultLimitMEMLOCK/Soft read from Manager.defaults.rlimit | Supports read-only default-limit query. Defaults differ from actual running-unit limits, manager process hard cap and explicit overrides; no limit change prescribed. |
+| S-017 | Microsoft/ORT, [generic Vitis provider page](https://onnxruntime.ai/docs/execution-providers/Vitis-AI-ExecutionProvider.html) | Access attempt2026-10-22 unavailable | R-010 reports a Ryzen-Linux support-table conflict with AMD1.8 docs. This amendment could not retrieve that page; conflict remains RESEARCH_REPORTED_NOT_RECHECKED. AMD's Linux quicktest documentation was independently retrieved. |
+
+The pinned XDNA README in S-004 was re-read: Arch package names support only a
+local `pacman -Q` inventory, never installation. AMD's Linux documentation was
+also re-read and explicitly describes compiling/running a CNN quicktest. Exact
+retrieved-byte hashes are in [upstream notes](../../notes/UPSTREAM.md). No source
+text, installation script, binary, model or private research body was copied.

@@ -88,3 +88,32 @@ Halo/ROCm and idle/resume reports remain unreplicated on the target; no suggeste
 host repair was applied. Intel source is studied conceptually, not added as an
 AMD dependency. Model/runtime/component licenses remain separate unresolved
 shipping reviews; no project license selected.
+
+## R-010 amendment source review — 2026-10-22
+
+Source inspection only; no downloaded code/installers executed. SHA-256 below
+identifies retrieved bytes, not a reproduced workload or target compatibility.
+
+| Source | Pinned revision / document | Retrieved SHA-256 |
+| --- | --- | --- |
+| amd/Triton-XDNA README.md | `b0ecabc1916d32b2242865ca6e563c8508372665` (paper snapshot) | `14a1100870c6a69b4007c7c7abdc973b3759754e291a4a8eff51b456927d60be` |
+| amd/IRON README.md | `b3ba3cf3a138c21e021d5ee2d6794573cd7a3287` | `d550fe018aec9d8eb6f049ff9c3dcabe8ab148be66d9f2165f697c216a54d1f2` |
+| atassis/xdna-engine README.md | `5489d40fcfd14497650f293821a9c81a1f8b3c93` | `98e592955733b5364595b4ae186da7055e16e4b26008cd6daaf6586d76b62f11` |
+| craigchandler/ryzen-ai-arch README.md | `5eb7e6cf20aefedd8b2cd59030d45e0b39aea6d2` | `849529444240c94a09c65d8e1fbd531888e3ce27564df8738f3260698b5c5c5a` |
+| amd/xdna-driver README.md | `bc5dd96b6a11fcdba0884c492f897c9e6ed5aa79` (unchanged) | `87565ad20ca0034bc4d82e072bfefe403d08c63234ebb079a48e13308045dd7c` |
+| AMD Linux documentation | 1.8.0; mutable page re-read | `4c19e889fd50f3f88017803a7ac79aab7d55ced5ecc73954d6aa9b9cb3372d13` |
+| AMD Adrenalin release notes | 26.10.1; mutable page | `318e0c2c0dcff2ce58a163cb6a9142c66f88420b3187a121500a11d7c9aa696a` |
+| systemd src/core/dbus-manager.c | tag `v258` | `e182de0dd3da33780c338af5b89a1ec1c6c4c3f5d3015b96b546d07b022a41b4` |
+
+Triton-XDNA HEAD queried as `9076c11c455830fe65fabf007cb6471a885e5f97`;
+the paper-pinned revision above was reviewed instead of silently substituting HEAD.
+HSA/HIP sharing and author mapping timings do not prove a Vulkan/Vitis importer.
+Arch package names support passive local-database queries only; compatibility
+patches/security changes are not a SteamOS procedure. Systemd properties describe
+manager defaults, not actual running-unit/process limits.
+
+The generic ORT Vitis documentation page could not be retrieved, and its attempted
+raw-repository alternative returned404. The paper's Windows-table discrepancy is
+RESEARCH_REPORTED_NOT_RECHECKED. The xdna-engine component tree was unavailable;
+its reported root/SR license conflict remains unresolved. No exact shipping
+SteamOS kernel or SteamOS FSR eligibility is established by this review.

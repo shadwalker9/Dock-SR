@@ -7,6 +7,7 @@ No installer, provider import, XRT workload, Vulkan probe or device-node open.
 from __future__ import annotations
 
 import argparse
+import importlib.metadata
 from datetime import datetime, timezone
 import json
 import os
@@ -27,7 +28,10 @@ STAGES = ('HOST_STAGING', 'VULKAN_DMA_BUF_EXPORTED', 'XRT_BO_IMPORTED',
           'ORT_IMPORTER_AVAILABLE', 'EXTERNAL_TENSOR_BOUND',
           'ACTUAL_NPU_CONSUMPTION_VERIFIED', 'SHARED_SYNCHRONIZATION_VERIFIED',
           'END_TO_END_PERFORMANCE_BENEFIT_VERIFIED')
-COMMANDS = (('uname', '-r'), ('uname', '-m'), ('lspci', '-n'))
+SYSTEMD_COMMAND = ('systemctl', '--user', 'show', '--property=DefaultLimitMEMLOCK', '--property=DefaultLimitMEMLOCKSoft')
+XRT_PACKAGES = ('xrt-base', 'xrt-npu', 'xrt-plugin-amdxdna', 'xrt-plugin-amdxdna-intree', 'amdxdna-driver')
+PACMAN_COMMAND = ('pacman', '-Q', *XRT_PACKAGES)
+COMMANDS = (('uname', '-r'), ('uname', '-m'), ('lspci', '-n'), SYSTEMD_COMMAND)
 FAILURES = {
     'NPU_DEVICE_ABSENT': 'HOST', 'DRIVER_NOT_BOUND': 'HOST',
     'FIRMWARE_MISSING_OR_MISMATCHED': 'HOST', 'XRT_KERNEL_PLUGIN_INCOMPATIBLE': 'HOST_OR_USERSPACE',
@@ -55,19 +59,31 @@ def os_identity(fs):
     return {'read_status': raw['status'], 'fields': values}
 
 
-def command_log(runner):
+def command_log(runner, os_id=None):
     rows = []
-    for argv in COMMANDS:
+    commands = (*COMMANDS, PACMAN_COMMAND) if os_id in ('steamos', 'arch', 'cachyos') else COMMANDS
+    for argv in commands:
         raw = runner.run(list(argv))
         status = raw['status']
         status = status if status in ('ok', 'missing_tool', 'permission_denied', 'timeout', 'error', 'command_failed') else 'error'
         # Keep exit status, not stdout/stderr or resolved executable/home path.
         values = []
-        if status == 'ok':
+        if status == 'ok' or (argv == PACMAN_COMMAND and status == 'command_failed'):
             if argv[0] == 'uname':
                 value = token(raw.get('stdout', '').strip())
                 if value is not None:
                     values.append(value)
+            elif argv == SYSTEMD_COMMAND:
+                for line in raw.get('stdout', '').splitlines()[:16]:
+                    key, sep, value = line.partition('=')
+                    if sep and key in ('DefaultLimitMEMLOCK', 'DefaultLimitMEMLOCKSoft') and (
+                            value == 'infinity' or re.fullmatch(r'[0-9]{1,20}', value) and int(value) < 2**64):
+                        values.append(key + '=' + value)
+            elif argv == PACMAN_COMMAND:
+                for line in raw.get('stdout', '').splitlines()[:32]:
+                    fields = line.split()
+                    if len(fields) == 2 and fields[0] in XRT_PACKAGES and re.fullmatch(r'[A-Za-z0-9_.:+~-]{1,128}', fields[1]):
+                        values.append(' '.join(fields))
             else:
                 for line in raw.get('stdout', '').splitlines()[:512]:
                     match = re.fullmatch(r'([0-9a-fA-F:.]{7,12}) ([0-9a-fA-F]{4}): ([0-9a-fA-F]{4}):([0-9a-fA-F]{4})(?: \(rev [0-9a-fA-F]{2}\))?', line)
@@ -77,6 +93,33 @@ def command_log(runner):
                      'exit_status': raw.get('returncode') if status in ('ok', 'command_failed') else None,
                      'observations': values, 'raw_output_retained': False})
     return rows
+
+
+def passive_runtime_limits(commands):
+    """Manager defaults/package database only; never loads XRT or an EP."""
+    manager = next(row for row in commands if row['argv'] == list(SYSTEMD_COMMAND))
+    fields = dict(line.split('=', 1) for line in manager['observations'])
+    result = {'status': manager['status'], 'scope': 'USER_MANAGER_DEFAULTS_NOT_RUNNING_UNIT_LIMITS',
+              'unit': 'bytes', 'soft': None, 'hard': None, 'soft_unlimited': False, 'hard_unlimited': False}
+    if len(fields) != len(manager['observations']):
+        fields = {}  # Conflicting/duplicate properties are not reliable limits.
+    for field, property_name in (('soft', 'DefaultLimitMEMLOCKSoft'), ('hard', 'DefaultLimitMEMLOCK')):
+        if property_name in fields:
+            result[field + '_unlimited'] = fields[property_name] == 'infinity'
+            result[field] = None if result[field + '_unlimited'] else int(fields[property_name])
+    if manager['status'] == 'ok' and len(fields) != 2:
+        result['status'] = 'unavailable_properties'
+    package = next((row for row in commands if row['argv'] == list(PACMAN_COMMAND)), None)
+    metadata = {'status': package['status'] if package else 'not_queried_non_arch',
+                'source': 'PACMAN_LOCAL_DATABASE', 'packages': [], 'vitis_python_packages': {},
+                'loaded_runtime_verified': False}
+    if package:
+        metadata['packages'] = [{'name': line.split()[0], 'version': line.split()[1]} for line in package['observations']]
+    for name in ('voe', 'vaip'):
+        try: value = importlib.metadata.version(name)
+        except importlib.metadata.PackageNotFoundError: value = None
+        metadata['vitis_python_packages'][name] = token(value)
+    return result, metadata
 
 
 def discover(*, fs=None, runner=None, timestamp=None, tool_lookup=None):
@@ -123,6 +166,8 @@ def discover(*, fs=None, runner=None, timestamp=None, tool_lookup=None):
             firmware[name] = {key: token(fs.read_text('/sys/class/accel/' + name + '/device/' + key).get('value'))
                               for key in ('firmware_version', 'fw_version')}
     runtime = npu_probe.runtime_inventory(False)
+    commands = command_log(runner, os_id)
+    systemd_limits, installed_metadata = passive_runtime_limits(commands)
     inventory = {
         'os': identity, 'cpu': cpu, 'pci': pci, 'nodes': nodes,
         'kernel_release': token(fs.read_text('/proc/sys/kernel/osrelease').get('value')),
@@ -133,10 +178,12 @@ def discover(*, fs=None, runner=None, timestamp=None, tool_lookup=None):
         'firmware_directory_status': fs.entries('/usr/lib/firmware/amdnpu')['status'],
         'memlock_bytes': {'soft': None if soft == resource.RLIM_INFINITY else soft,
                           'hard': None if hard == resource.RLIM_INFINITY else hard},
+        'user_systemd_memlock': systemd_limits,
+        'installed_runtime_metadata': installed_metadata,
         'tools_available': {tool: tool_lookup(tool) is not None for tool in ('xrt-smi', 'python3', 'lspci', 'modinfo')},
         'runtime_packages': {key: token(value) for key, value in runtime['packages'].items()},
         'provider_query_status': 'NOT_TESTED',
-        'commands': command_log(runner),
+        'commands': commands,
     }
     return {'schema_version': '1.0.0', 'document_type': 'docksr_steamos_readiness',
             'generated_at_utc': timestamp or datetime.now(timezone.utc).isoformat(),
@@ -179,6 +226,13 @@ def validate(record):
                 raise ValueError('Failed command needs nonzero exit status')
             if command['status'] not in ('ok', 'command_failed') and command['exit_status'] is not None:
                 raise ValueError('Unexecuted or interrupted command has no exit status')
+        limits = inventory.get('user_systemd_memlock')
+        if limits:
+            for field in ('soft', 'hard'):
+                if limits[field + '_unlimited'] and limits[field] is not None:
+                    raise ValueError('Unlimited memlock cannot also be a finite byte value')
+                if limits['status'] == 'ok' and limits[field] is None and not limits[field + '_unlimited']:
+                    raise ValueError('Observed memlock requires a finite value or explicit infinity')
     for failure in record['failures']:
         if not set(failure['evidence_refs']) <= refs.keys():
             raise ValueError('Unresolved failure evidence reference')

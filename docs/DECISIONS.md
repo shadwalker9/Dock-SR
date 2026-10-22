@@ -1,8 +1,14 @@
 # Current owner decisions
 
-Updated 2026-10-21. This is the implementation decision record; it does not replace private session reports.
+Updated 2026-10-22. This is the implementation decision record; it does not replace private session reports.
 
-Current directive: **v2.3 DSR014-H, research knowledge hub and bounded persistent H1 laboratory**. Latest appended decisions supersede conflicting earlier deployment order. The DSR010 Gamescope experiment and DSR011–013 host infrastructure are retained.
+Current directive: **v2.4 R-010 amendment to DSR014-H**. Add source-classified research,
+missing passive H0 metadata, and future capability-only/H3 plans; preserve the
+unchanged SESR/Vitis staged proof and strict REAL_NPU policy. Conditional IRON,
+xdna-engine and Triton research is not dependency or backend authorization.
+Exact3× remains future research. No active hardware or host changes authorized.
+Latest appended decisions supersede conflicting earlier deployment order. The
+DSR010 Gamescope experiment and DSR011–014 host infrastructure are retained.
 
 ## Reading order and authority
 

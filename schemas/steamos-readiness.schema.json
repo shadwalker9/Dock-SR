@@ -511,7 +511,7 @@
             },
             "commands": {
               "type": "array",
-              "maxItems": 3,
+              "maxItems": 5,
               "items": {
                 "type": "object",
                 "properties": {
@@ -528,6 +528,22 @@
                       [
                         "lspci",
                         "-n"
+                      ],
+                      [
+                        "systemctl",
+                        "--user",
+                        "show",
+                        "--property=DefaultLimitMEMLOCK",
+                        "--property=DefaultLimitMEMLOCKSoft"
+                      ],
+                      [
+                        "pacman",
+                        "-Q",
+                        "xrt-base",
+                        "xrt-npu",
+                        "xrt-plugin-amdxdna",
+                        "xrt-plugin-amdxdna-intree",
+                        "amdxdna-driver"
                       ]
                     ]
                   },
@@ -573,6 +589,141 @@
                 ],
                 "additionalProperties": false
               }
+            },
+            "user_systemd_memlock": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "enum": [
+                    "ok",
+                    "missing_tool",
+                    "permission_denied",
+                    "timeout",
+                    "error",
+                    "command_failed",
+                    "unavailable_properties"
+                  ]
+                },
+                "scope": {
+                  "const": "USER_MANAGER_DEFAULTS_NOT_RUNNING_UNIT_LIMITS"
+                },
+                "unit": {
+                  "const": "bytes"
+                },
+                "soft": {
+                  "anyOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 18446744073709551615
+                    }
+                  ]
+                },
+                "hard": {
+                  "anyOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 18446744073709551615
+                    }
+                  ]
+                },
+                "soft_unlimited": {
+                  "type": "boolean"
+                },
+                "hard_unlimited": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "status",
+                "scope",
+                "unit",
+                "soft",
+                "hard",
+                "soft_unlimited",
+                "hard_unlimited"
+              ],
+              "additionalProperties": false
+            },
+            "installed_runtime_metadata": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "enum": [
+                    "ok",
+                    "missing_tool",
+                    "permission_denied",
+                    "timeout",
+                    "error",
+                    "command_failed",
+                    "not_queried_non_arch"
+                  ]
+                },
+                "source": {
+                  "const": "PACMAN_LOCAL_DATABASE"
+                },
+                "packages": {
+                  "type": "array",
+                  "maxItems": 5,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "enum": [
+                          "xrt-base",
+                          "xrt-npu",
+                          "xrt-plugin-amdxdna",
+                          "xrt-plugin-amdxdna-intree",
+                          "amdxdna-driver"
+                        ]
+                      },
+                      "version": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z0-9_.:+~-]{1,128}$"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "version"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "vitis_python_packages": {
+                  "type": "object",
+                  "properties": {
+                    "voe": {
+                      "$ref": "#/$defs/token"
+                    },
+                    "vaip": {
+                      "$ref": "#/$defs/token"
+                    }
+                  },
+                  "required": [
+                    "voe",
+                    "vaip"
+                  ],
+                  "additionalProperties": false
+                },
+                "loaded_runtime_verified": {
+                  "const": false
+                }
+              },
+              "required": [
+                "status",
+                "source",
+                "packages",
+                "vitis_python_packages",
+                "loaded_runtime_verified"
+              ],
+              "additionalProperties": false
             }
           },
           "required": [

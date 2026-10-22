@@ -32,7 +32,7 @@ class ResearchHubTests(unittest.TestCase):
 
     def test_research_and_decision_ids(self):
         page = (HUB / 'README.md').read_text()
-        self.assertEqual(set(re.findall(r'R-00[5-9]', page)), {f'R-{i:03}' for i in range(5, 10)})
+        self.assertEqual(set(re.findall(r'R-(?:00[5-9]|010)', page)), {f'R-{i:03}' for i in range(5, 11)})
         self.assertIn('original document was unavailable', page)
         consensus = (HUB / 'CONSENSUS.md').read_text()
         self.assertEqual(re.findall(r'^## (C-\d{3})', consensus, re.M), [f'C-{i:03}' for i in range(1, 13)])
@@ -55,8 +55,15 @@ class ResearchHubTests(unittest.TestCase):
         unknowns = text.split('## What We Have Not Proven Yet')[1].split('## How to Continue')[0]
         self.assertEqual(len(re.findall(r'^- No ', unknowns, re.M)), 9)
         sources = (HUB / 'SOURCES.md').read_text()
-        self.assertEqual(re.findall(r'^\| (S-\d{3})', sources, re.M), [f'S-{i:03}' for i in range(1, 11)])
+        self.assertEqual(re.findall(r'^\| (S-\d{3})', sources, re.M), [f'S-{i:03}' for i in range(1, 18)])
         self.assertIn('SteamOS is the primary', text)
+
+    def test_r010_limits_and_conditional_research(self):
+        text=(HUB/'R-010.md').read_text()
+        self.assertEqual(set(re.findall(r'R10-HYP-\d{3}',text)),{f'R10-HYP-{i:03}' for i in range(1,11)})
+        for marker in ('KEEP_CONDITIONALLY','COMMUNITY_REPORTED','PROJECT_AUTHOR_REPORTED','NOT_TESTED','IRON','Triton','ESPCN'):
+            self.assertIn(marker,text)
+        self.assertIn('No active test is executed',text)
 
 
 if __name__ == '__main__':

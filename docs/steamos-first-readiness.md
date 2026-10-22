@@ -81,9 +81,11 @@ Discovery reuses `docksr_detect.FileSystem`, `npu_probe.kernel_config`, runtime
 **distribution metadata only**, and the existing private writer. It stats nodes
 and checks access without opening them. It reads allowlisted OS/CPU fields,
 numeric AMD PCI identity/binding, selected module/firmware attributes, memlock and
-kernel config. Default commands are exactly `uname -r`, `uname -m`, `lspci -n`:
-no hostname or named peripheral inventory. The latter retains numeric AMD lines
-only. Each command records argv, outcome and actual exit status (null for missing,
+kernel config. Default commands are `uname -r`, `uname -m`, `lspci -n` and
+`systemctl --user show --property=DefaultLimitMEMLOCK --property=DefaultLimitMEMLOCKSoft`.
+The PCI query retains numeric AMD lines only; the systemd query retains only the
+two numeric-byte or explicit-infinity properties. There is no hostname or named
+peripheral inventory. Each command records argv, outcome and actual exit status (null for missing,
 interrupted or unlaunched tools); raw stdout/stderr and executable paths are
 discarded. Failed tools and absent tools are different. Public commands are
 bounded by the existing runner's deadline and retained-text limit; this is not a
@@ -95,8 +97,27 @@ script deliberately omits `uname -a`, raw `/proc/version`, raw `lspci -nn`, raw
 os-release and arbitrary error text. Firmware filenames, runtime library paths
 and exact provider/options remain separate reviewed H0 evidence, not guesses.
 
+On SteamOS/Arch/CachyOS only, a fixed `pacman -Q` query reads the local database
+for `xrt-base`, `xrt-npu`, `xrt-plugin-amdxdna`, `xrt-plugin-amdxdna-intree` and
+`amdxdna-driver`. Partial allowlisted package results survive a nonzero exit
+when other requested packages are absent. Missing tools/database entries or a
+relocatable runtime do not establish absence of a usable runtime. Other OSes do
+not run this query. No package installation/update or service start is performed.
+`voe`/`vaip`, like existing ONNX/ORT versions, are distribution metadata only;
+they do not identify loaded libraries or prove a usable Vitis provider.
+
+`memlock_bytes` is the current collector process's inherited shell limit.
+`user_systemd_memlock` reports user-manager **defaults**, not its actual process
+hard cap or any running service's overridden limits. Missing/unavailable readings
+remain null, never inferred zero. No numeric threshold diagnoses compatibility
+and no limit is raised. These inventory fields are optional additive schema1.0.0
+extensions; historical records still validate. H1's exact-inventory guard still
+requires a freshly reviewed matching H0; do not bypass it for changed inventory.
+Existing sysfs binding/module/firmware checks retain unknowns where attributes
+are absent; directory presence does not identify loaded firmware.
+
 Discovery never invokes XRT, modinfo, Vulkan, ORT module imports, inference,
-services, package managers or device validation; tool availability is a boolean.
+device validation or service modification; tool availability is a boolean.
 It does not label the cloud as the target device. Even discovery on SteamOS
 leaves all hardware gate statuses NOT_TESTED until independently evaluated.
 There is no automatic failure diagnosis or repair.

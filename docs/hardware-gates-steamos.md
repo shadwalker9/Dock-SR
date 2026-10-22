@@ -120,6 +120,20 @@ before acquisition. Tile throughput alone never selects the winner.
 
 ## H3 — shared APU budget
 
+R-010 refinement: after stable H1/H2 and separate owner approval, ramp gradually:
+NPU alone → modest repeatable Vulkan workload plus NPU → representative game
+workload plus NPU. At each GPU level keep a matching GPU-only control and
+alternating paired trials. Do not start with maximum GPU/NPU stress or ROCm/HIP
+LLM reproductions. Predeclare duration, power/thermal conditions and acceptable
+frame-time/queue limits before acquisition; no active test runs automatically.
+
+Abort on the first firmware timeout, reset/context/device loss, stale/wrong output,
+GPU disruption, or predeclared thermal/timing/queue limit violation. Stop only
+DockSR admission, preserve producer/consumer ownership until actual quiescence,
+retain private evidence and leave ordinary gaming independent. Do not restart
+the compositor, change power/firmware/driver policy, suspend or reboot as recovery
+without separate approval. Successful light-load trials do not pass game load.
+
 Compare A: fixed GPU workload only; B: **identical** GPU workload plus physical
 H1/H2-verified background NPU inference, with results discarded; C: integrated
 reconstruction **later**. Use matched power settings, source/output, workload,
@@ -141,6 +155,24 @@ If background NPU work harms gaming enough to outweigh reconstruction benefit,
 the system-level gate fails despite excellent isolated NPU throughput.
 
 ## H4 — capability ladder, input and output separately
+
+R-010 future **capability-only** probe, after genuine H1 and baseline H2:
+
+1. Record the exact installed ORT/Vitis/device/runtime tuple and existing gate
+   evidence. Negotiate a native API supported by that installed build, not a
+   development header/version guess. No compatible API/device catalog means
+   API_UNAVAILABLE/UNKNOWN, not proof that every Vitis version lacks an importer.
+2. Identify the actual Vitis EP device; request its external-resource importer.
+   A successful call returning null means IMPORTER_UNAVAILABLE for this tuple.
+3. If non-null, query `CanImportMemory` and `CanImportSemaphore` for exact handle
+   types in that ABI. Record booleans/status/error availability; never relabel a
+   Vulkan DMA_BUF handle as OPAQUE_FD.
+4. Release the capability object. Do not allocate/export/import buffers, bind
+   tensors, import semaphores or execute inference. No zero-copy stage passes
+   from these queries alone. Loading/enumerating an EP may initialize a device,
+   so even this future probe needs owner review and is not passive H0 inventory.
+
+No capability-probe code or DMA-BUF integration is added in this amendment.
 
 | Stage | Required distinct proof |
 | --- | --- |

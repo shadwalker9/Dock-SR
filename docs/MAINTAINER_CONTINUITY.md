@@ -2,7 +2,13 @@
 
 Start with [PROJECT_STATE.md](PROJECT_STATE.md) and [DECISIONS.md](DECISIONS.md), then the current task's code and newest owner handoff. Do not re-ingest every historical research paper. Inspect the current branch, HEAD and dirty files; preserve unrelated work. Cloud tasks are isolated and do not need an extra worktree unless requested.
 
-The latest scope is v2.3 **DSR014-H: research hub and persistent H1 laboratory**.
+The latest scope is v2.4 **R-010 amendment to DSR014-H**. Read the
+[R-010 summary](research/R-010.md): keep the current staged SESR/Vitis path;
+H0's added systemd/default-limit and local package queries are passive metadata,
+not loaded-runtime proof. Importer capability work and graduated H3 remain plans
+after genuine H1/H2; no new backend, dependency or DMA-BUF implementation.
+
+The preserved v2.3 scope is **DSR014-H: research hub and persistent H1 laboratory**.
 Start with the [research hub](research/README.md), [consensus](research/CONSENSUS.md)
 and [H1 runner](h1-inference-harness.md). The runner's supervisor alone publishes
 accepted records after reaping/receipt/artifact checks. CPU-reference mode is

@@ -1,6 +1,25 @@
 # Dock SR project state
 
-Updated 2026-10-21 America/Chicago. Read this and [DECISIONS.md](DECISIONS.md) before resuming. Latest assignment: **v2.3 DSR014-H, research hub and persistent single-tile H1 laboratory**. Primary target is AMD Ryzen AI Z2 Extreme running SteamOS; other distributions are secondary diagnostics, not substitutes. No AGENTS.md or docs/OWNER_UPDATES.md exists here; approved O-002 targets are recorded in DECISIONS.md.
+Updated 2026-10-22 America/Chicago. Read this and [DECISIONS.md](DECISIONS.md) before resuming. Latest assignment: **v2.4 R-010 amendment to DSR014-H**. Primary target is AMD Ryzen AI Z2 Extreme running SteamOS; other distributions are secondary diagnostics, not substitutes. No AGENTS.md or docs/OWNER_UPDATES.md exists here; approved O-002 targets are recorded in DECISIONS.md.
+
+## R-010 research amendment
+
+[R-010](research/R-010.md) retains the unchanged SESR256 INT8 persistent Vitis/ORT
+staged proof path. Passive H0 adds user-systemd memlock defaults and allowlisted
+Arch-family local package versions plus Vitis Python distribution metadata.
+These are inventory, never loaded-runtime or physical-execution proof. Existing
+binding/firmware/process-memlock checks remain; unknown identity stays unknown.
+[Future importer capability queries and graduated H3](hardware-gates-steamos.md)
+are plans only, gated after genuine H1/H2 evidence. No DMA-BUF implementation,
+new backend/dependency, model replacement or host modification was introduced.
+All physical gates remain NOT_TESTED; current H1 still cannot emit REAL_NPU.
+
+Fresh amendment configure/build/CTest results: **42/42 SDK,36/36 preview,30/30
+host and17/17 library** groups, zero failures/skips; configurations overlap.
+Readiness has23 passing methods and research/navigation has5. A passive cloud
+record validates with Debian13, process memlock8388608 bytes, unavailable
+user-systemd defaults and no loaded-runtime proof. These are cloud observations,
+not target compatibility or NPU results.
 
 ## DSR014-H knowledge and single-tile laboratory
 

@@ -91,6 +91,12 @@ See [SteamOS readiness](../docs/steamos-first-readiness.md) and explicitly ficti
 
 ## DSR014-H H1 laboratory extension
 
+R-010 adds optional `user_systemd_memlock` and `installed_runtime_metadata` to
+readiness inventory without changing schema1.0.0. Historical inventories remain
+valid. Manager defaults are byte/infinity observations, not running-unit limits;
+allowlisted local package/Python metadata never attests loaded runtime execution.
+The command allowlist also permits the fixed read-only systemctl/pacman queries.
+
 The canonical hardware schema optionally accepts `h1_run`; no second evidence
 format replaces it. `validate_gate0.py` adds model/mode/provider/comparison and
 lifecycle ns/ms consistency checks. The current extension deliberately prohibits

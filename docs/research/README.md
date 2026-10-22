@@ -10,7 +10,7 @@ preserving the GPU capacity and whole-device budget games need. Neither a model
 benchmark nor an NPU capability listing establishes that benefit.
 
 This hub contains original summaries of project research, not copies of private
-papers. R-005, R-006, R-007 and R-009 were available for source review. **R-008's
+papers. R-005, R-006, R-007, R-009 and R-010 were available for source review. **R-008's
 original document was unavailable**: its entry below is the later owner handoff's
 editorial outline, cross-checked against existing implementation plans, not an
 independent summary of the missing paper. Not every upstream claim in the papers
@@ -26,6 +26,7 @@ support from DockSR measurements; later owner decisions supersede older proposal
 | R-007 | INT8 feasibility and an NPU-first division of work; unchanged SESR-M7 2× for hardware proof, native3× low-resolution ESPCN-class networks for later production research. Temporal FSR inputs/weights cannot simply be assumed available to a final-frame compositor. | Actual SESR CPU reference; untrained FLOAT32 exact3× contract, no trained/quantized production model |
 | R-008 | **Original missing; detailed contents not independently rechecked.** Later handoffs describe runtime/firmware coupling, host staging, reproducible H0–H6 gates and fixed-power comparisons. Treat this as an outline requiring reconciliation. | Existing gate/analysis preparation, not a physical result or verified account of the missing paper |
 | R-009 | Cross-vendor memory sharing, hidden copies, compiler-aware tiles and bounded concurrency. Learn context/lifetime/copy visibility from Intel; do not infer identical AMD APIs. Prefer persistent sessions, buffers and cache reuse before speculative transport/custom engines. | Relevant source capabilities documented; AMD complete path and performance unmeasured |
+| [R-010](R-010.md) | Emerging Linux runtime evidence retains Vitis conditionally; compares IRON/xdna-engine/Triton as deferred alternatives, distinguishes HSA/HIP sharing from Vulkan, adds caller/user-manager memlock and graduated H3 planning. | Source mechanisms and community observations; SteamOS/Z2 execution and benefit remain NOT_TESTED |
 
 R-009 and the R-008 outline proposed an Ubuntu reference environment before
 gaming distributions. **The owner superseded that order: SteamOS is the primary
